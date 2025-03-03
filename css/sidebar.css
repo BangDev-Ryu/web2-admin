@@ -60,6 +60,7 @@ body {
     padding: 14px 12px;
     border-radius: 8px;
     text-decoration: none;
+    color: black;
 }
 
 .item .nav-link:hover {
@@ -80,5 +81,15 @@ body {
 
 .item .nav-link:hover .icon,
 .item .nav-link:hover .link {
-    color: #333333  ;
+    color: #333;
+}
+
+.nav-link.active {
+    background-color: #F0F0F0;
+    color: #333;
+}
+
+#content {
+    margin-left: 260px;
+    padding: 20px;
 }
