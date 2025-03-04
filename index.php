@@ -14,6 +14,7 @@
         <?php
             // trang chủ mặc định
             include_once("./view/pages/trangChu.php");
+
         ?>
     </div>
     

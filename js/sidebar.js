@@ -3,7 +3,7 @@ $(document).ready(function() {
     
     $('.nav-link').click(function(e) {
         e.preventDefault();
-        var page = $(this).attr('href');
+        var page = $(this).data("page");
         
         $('.nav-link').removeClass('active');
         
@@ -13,13 +13,14 @@ $(document).ready(function() {
 
     function loadPage(page) {
         $.ajax({
-            url: page,
+            url: "./view/pages/" + page + ".php",
             type: 'GET',
             success: function(data) {
                 $('#content').html(data);
+                history.pushState(null, "", "index.php?page=" + page);
             },
             error: function(xhr, status, error) {
-                $('#content').html('<h2>Có lỗi xảy ra: ' + error + '</h2>');
+                $('#content').html('<h1>Có lỗi xảy ra: ' + error + '</h1>');
             }
         });
     }
