@@ -13,14 +13,15 @@ $(document).ready(function() {
 
     function loadPage(page) {
         $.ajax({
-            url: "./view/pages/" + page + ".php",
+            url: "./controller/loadpage.controller.php",
             type: 'GET',
+            data: {page: page},
             success: function(data) {
                 $('#content').html(data);
-                history.pushState(null, "", "index.php?page=" + page);
+                history.pushState({page: page}, "", "?page=" + page);
             },
-            error: function(xhr, status, error) {
-                $('#content').html('<h1>Có lỗi xảy ra: ' + error + '</h1>');
+            error: function(error) {
+                $('#content').html('<h1>Trang không hợp lệ: ' + error + '</h1>');
             }
         });
     }
