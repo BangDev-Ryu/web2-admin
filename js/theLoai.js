@@ -2,35 +2,30 @@ $(document).ready(function () {
     let currentPage = 1;
     const limit = 8;
 
-    function loadProducts(page) {
+    function loadTheLoais(page) {
         $.ajax({
-            url: "./controller/sanPham.controller.php",
+            url: "./controller/theLoai.controller.php",
             type: "GET",
-            data: { action: "listSanPham", page: page, limit: limit },
+            data: { action: "listTheLoai", page: page, limit: limit },
             dataType: "json",
             success: function (response) {
-                $("#productList").html("");
-                response.products.forEach(product => {
+                $("#theLoaiList").html("");
+                response.theLoais.forEach(theLoai => {
                     let row = `
-                        <tr> 
-                            <td>${product.id}</td>
-                            <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
-                            <td>${product.name}</td>
-                            <td>${product.selling_price}</td>
-                            <td>${product.stock_quantity}</td>
-                            <td>${product.theloai_name}</td>
-                            <td>${product.trangthai_name}</td>
-                            <td>${product.updated_at}</td>
+                        <tr>
+                            <td>${theLoai.id}</td>
+                            <td>${theLoai.name}</td>
+                            <td>${theLoai.description}</td>
+                            <td>${theLoai.trangthai_name}</td>
                             <td>
-                                <button class="btn edit-btn" data-id="${product.id}">Sửa</button>
-                                <button class="btn delete-btn" data-id="${product.id}">Xóa</button>
+                                <button class="btn edit-btn" data-id="${theLoai.id}">Sửa</button>
+                                <button class="btn delete-btn" data-id="${theLoai.id}">Xóa</button>
                             </td>
                         </tr>
                     `;
-                    $("#productList").append(row);
+                    $("#theLoaiList").append(row);
                 });
 
-                // Render pagination
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -43,7 +38,7 @@ $(document).ready(function () {
 
     function renderPagination(totalPages, currentPage) {
         $("#pagination").html("");
-
+        
         if (currentPage > 1) {
             $("#pagination").append(
                 `<button class="page-btn prev-btn" data-page="${currentPage - 1}"> < </button>`
@@ -73,22 +68,18 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadProducts(page);
+            loadTheLoais(page);
         });
     }
 
-    loadProducts(currentPage);
+    // Xử lý tìm kiếm
+    let searchTimeout;
+    $("#searchCategory").on("input", function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            loadTheLoais(1);
+        }, 500);
+    });
+
+    loadTheLoais(currentPage);
 });
-
-// function getRandomColor() {
-//     var letters = '0123456789ABCDEF';
-//     var color = '#';
-//     for (var i = 0; i < 6; i++) {
-//       color += letters[Math.floor(Math.random() * 16)];
-//     }
-//     return color;
-// }
-
-// setInterval(function() {
-//     document.querySelector('.table-content').style.boxShadow = "0px 8px 24px" + getRandomColor();
-// }, 200)

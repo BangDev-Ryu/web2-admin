@@ -8,14 +8,15 @@ class SanPhamModel {
         $this->db = new connectDB();
     }
 
-    public function getTotalProducts() {
+    public function getTotalSanPhams() {
         return $this->db->totalByCondition('sanpham', '', '1=1', []);
     }
 
-    public function getProducts($limit, $offset) {
+    public function getSanPhams($limit, $offset) {
         $sql = "SELECT * FROM sanpham
                 LIMIT ? OFFSET ?";
-        return $this->db->executePrepared($sql, [$limit, $offset]);
+        $result = $this->db->executePrepared($sql, [$limit, $offset]);
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
 }

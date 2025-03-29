@@ -2,32 +2,31 @@ $(document).ready(function () {
     let currentPage = 1;
     const limit = 8;
 
-    function loadProducts(page) {
+    function loadNhaCungCaps(page) {
         $.ajax({
-            url: "./controller/sanPham.controller.php",
+            url: "./controller/nhaCungCap.controller.php",
             type: "GET",
-            data: { action: "listSanPham", page: page, limit: limit },
+            data: { action: "listNhaCungCap", page: page, limit: limit },
             dataType: "json",
             success: function (response) {
-                $("#productList").html("");
-                response.products.forEach(product => {
+                $("#nhaCungCapList").html("");
+                response.nhaCungCaps.forEach(ncc => {
                     let row = `
                         <tr> 
-                            <td>${product.id}</td>
-                            <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
-                            <td>${product.name}</td>
-                            <td>${product.selling_price}</td>
-                            <td>${product.stock_quantity}</td>
-                            <td>${product.theloai_name}</td>
-                            <td>${product.trangthai_name}</td>
-                            <td>${product.updated_at}</td>
+                            <td>${ncc.id}</td>
+                            <td>${ncc.name}</td>
+                            <td>${ncc.contact_person}</td>
+                            <td>${ncc.contact_email}</td>
+                            <td>${ncc.contact_phone}</td>
+                            <td>${ncc.address}</td>
+                            <td>${ncc.trangthai_name}</td>
                             <td>
-                                <button class="btn edit-btn" data-id="${product.id}">Sửa</button>
-                                <button class="btn delete-btn" data-id="${product.id}">Xóa</button>
+                                <button class="btn edit-btn" data-id="${ncc.id}">Sửa</button>
+                                <button class="btn delete-btn" data-id="${ncc.id}">Xóa</button>
                             </td>
                         </tr>
                     `;
-                    $("#productList").append(row);
+                    $("#nhaCungCapList").append(row);
                 });
 
                 // Render pagination
@@ -73,22 +72,9 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadProducts(page);
+            loadNhaCungCaps(page);
         });
     }
 
-    loadProducts(currentPage);
+    loadNhaCungCaps(currentPage);
 });
-
-// function getRandomColor() {
-//     var letters = '0123456789ABCDEF';
-//     var color = '#';
-//     for (var i = 0; i < 6; i++) {
-//       color += letters[Math.floor(Math.random() * 16)];
-//     }
-//     return color;
-// }
-
-// setInterval(function() {
-//     document.querySelector('.table-content').style.boxShadow = "0px 8px 24px" + getRandomColor();
-// }, 200)

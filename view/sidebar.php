@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/sidebar.css?v=<?php echo filemtime('./css/sidebar.css'); ?>" />
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
+    
     <script src="./js/sidebar.js?v=<?= time() ?>"></script>
 </head>
 <body>
