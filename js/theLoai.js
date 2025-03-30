@@ -18,8 +18,8 @@ $(document).ready(function () {
                             <td>${theLoai.description}</td>
                             <td>${theLoai.trangthai_name}</td>
                             <td>
-                                <button class="btn edit-btn" data-id="${theLoai.id}">Sửa</button>
-                                <button class="btn delete-btn" data-id="${theLoai.id}">Xóa</button>
+                                <button id="editTheLoai" class="btn edit-btn" data-id="${theLoai.id}">Sửa</button>
+                                <button id="deleteTheLoai" class="btn delete-btn" data-id="${theLoai.id}">Xóa</button>
                             </td>
                         </tr>
                     `;
@@ -72,14 +72,113 @@ $(document).ready(function () {
         });
     }
 
-    // Xử lý tìm kiếm
-    let searchTimeout;
-    $("#searchCategory").on("input", function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            loadTheLoais(1);
-        }, 500);
+    loadTheLoais(currentPage);
+
+    // Xử lý modal
+    const theLoaiModal = $("#theLoaiModal");
+    const deleteModal = $("#deleteModal");
+    let deleteId = null;
+
+    // Đóng modal 
+    $(".close, .cancel-btn").click(function() {
+        theLoaiModal.hide();
+        deleteModal.hide();
     });
 
-    loadTheLoais(currentPage);
+    // Nút thêm thể loại
+    $("#addTheLoai").click(function() {
+        $("#modalTitle").text("Thêm Thể Loại");
+        $("#theLoaiForm")[0].reset();
+        $("#theLoaiId").val("");
+        loadTrangThai();
+        theLoaiModal.show();
+    });
+
+    // Load danh sách trạng thái
+    function loadTrangThai() {
+        $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#trangthai").html("");
+                response.trangThais.forEach(tt => {
+                    $("#trangthai").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    }
+
+    // Nút sửa thể loại
+    $(document).on("click", "#editTheLoai", function() {
+        const id = $(this).data("id");
+        $.ajax({
+            url: "./controller/theLoai.controller.php",
+            type: "GET",
+            data: { action: "getTheLoai", id: id },
+            dataType: "json",
+            success: function(response) {
+                theLoaiModal.show();
+                console.log(response);
+                $("#modalTitle").text("Sửa Thể Loại");
+                $("#theLoaiId").val(response.theLoai.id);
+                $("#name").val(response.theLoai.name);
+                $("#description").val(response.theLoai.description);
+                loadTrangThai();
+                setTimeout(() => {
+                    $("#trangthai").val(response.theLoai.trangthai_id);
+                }, 50)
+            }
+        });
+    });
+
+    // Submit form thêm/sửa
+    $("#theLoaiForm").submit(function(e) {
+        e.preventDefault();
+        const data = {
+            id: $("#theLoaiId").val(),
+            name: $("#name").val(),
+            description: $("#description").val(),
+            trangthai_id: $("#trangthai").val(),
+            action: $("#theLoaiId").val() ? "update" : "add"
+        };
+
+        $.ajax({
+            url: "./controller/theLoai.controller.php",
+            type: "POST",
+            data: data,
+            success: function(response) {
+                theLoaiModal.hide();
+                loadTheLoais(currentPage);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    // Nút xóa thể loại
+    $(document).on("click", ".delete-btn", function() {
+        deleteId = $(this).data("id");
+        deleteModal.show();
+    });
+
+    // Xác nhận xóa
+    $("#confirmDelete").click(function() {
+        if (deleteId) {
+            $.ajax({
+                url: "./controller/theLoai.controller.php",
+                type: "POST",
+                data: { action: "delete", id: deleteId },
+                success: function(response) {
+                    deleteModal.hide();
+                    loadTheLoais(currentPage);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    });
 });

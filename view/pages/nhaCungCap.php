@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="./css/nhaCungCap.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
 
     <script src="./js/nhaCungCap.js?v=<?= time() ?>"></script>
 </head>
@@ -14,12 +14,12 @@
             <div class="search-box">
                 <input type="text" id="searchNhaCungCap" placeholder="Tìm kiếm nhà cung cấp...">
             </div>
-            <button id="filterNhaCungCap" class="btn">
+            <button id="filterNhaCungCap" class="btn filter-btn">
                 <i class="fa-solid fa-filter"></i>
                 <span>Lọc</span>
             </button>
         </div>
-        <button id="addNhaCungCap" class="btn">
+        <button id="addNhaCungCap" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
             <span>Thêm nhà cung cấp</span>
         </button>

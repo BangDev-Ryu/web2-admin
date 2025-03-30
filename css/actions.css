@@ -47,17 +47,17 @@
     cursor: pointer;
 }
 
-#addNhaCungCap {
+.add-btn {
     font-weight: 500;
     background-color: #6b69ff;
     color: white;
 }
 
-#addNhaCungCap:hover {
+.add-btn:hover {
     background-color: #4f4dff;
 }
 
-#filterNhaCungCap {
+.filter-btn {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -65,6 +65,6 @@
     background-color: white;
 }
 
-#filterNhaCungCap:hover {
+.filter-btn:hover {
     background-color: #f1f1f1;
 }
