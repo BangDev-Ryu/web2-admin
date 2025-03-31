@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/theLoai.js?v=<? echo time(); ?>"></script>
+    <script src="./js/theLoai.js?v=<?php echo time(); ?>"></script>
 </head>
 <body>
     <div class="table-actions">
@@ -26,6 +26,14 @@
             <i class="fa-solid fa-plus"></i>
             <span>Thêm thể loại</span>
         </button>
+    </div>
+    <div class="filter-section">
+        <div class="filter-box">
+            <label for="filter-theLoai-trangThai">Trạng thái:</label>
+            <select id="filter-theLoai-trangThai" name="filter-theLoai-trangThai">
+                <option value="">Tất cả</option>
+            </select>
+        </div>
     </div>
 
     <div class="table-content">
@@ -54,16 +62,16 @@
             <form id="theLoaiForm">
                 <input type="hidden" id="theLoaiId">
                 <div class="form-group">
-                    <label for="name">Tên thể loại:</label>
-                    <input type="text" id="name" name="name" required>
+                    <label for="theLoai-name">Tên thể loại:</label>
+                    <input type="text" id="theLoai-name" name="theLoai-name" required>
                 </div>
                 <div class="form-group">
-                    <label for="description">Mô tả:</label>
-                    <textarea id="description" name="description"></textarea>
+                    <label for="theLoai-description">Mô tả:</label>
+                    <textarea id="theLoai-description" name="theLoai-description"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="trangthai">Trạng thái:</label>
-                    <select id="trangthai" name="trangthai" required>
+                    <label for="theLoai-trangThai">Trạng thái:</label>
+                    <select id="theLoai-trangThai" name="theLoai-trangThai" required>
 
                     </select>
                 </div>
@@ -81,7 +89,7 @@
             <h2>Xác nhận xóa</h2>
             <p>Bạn có chắc chắn muốn xóa thể loại này?</p>
             <div class="form-actions">
-                <button id="confirmDelete" class="btn delete-btn">Xóa</button>
+                <button id="confirmDelete" class="btn confirm-delete-btn">Xóa</button>
                 <button class="btn cancel-btn">Hủy</button>
             </div>
         </div>

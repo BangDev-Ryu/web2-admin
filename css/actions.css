@@ -68,3 +68,13 @@
 .filter-btn:hover {
     background-color: #f1f1f1;
 }
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.confirm-delete-btn {
+    background-color: #dc3545;
+    color: white;
+}

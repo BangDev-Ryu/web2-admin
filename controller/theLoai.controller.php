@@ -46,8 +46,6 @@ class TheLoaiController {
 
     public function getTheLoai($id) {
         $theLoai = $this->theLoaiModel->getTheLoaiById($id);
-        $name = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
-        $theLoai['trangthai_name'] = $name;
         echo json_encode(['theLoai' => $theLoai]);
     }
 
@@ -65,6 +63,15 @@ class TheLoaiController {
         $result = $this->theLoaiModel->deleteTheLoai($id);
         echo json_encode(['success' => $result]);
     }
+
+    public function searchTheLoai($search) {
+        $theLoais = $this->theLoaiModel->searchTheLoai($search);
+        foreach ($theLoais as &$theLoai) {
+            $name = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
+            $theLoai['trangthai_name'] = $name;
+        }
+        echo json_encode(['theLoais' => $theLoais]);
+    }
 }
 
 // Xử lý các request
@@ -77,19 +84,22 @@ if (isset($_GET['action'])) {
         case 'getTheLoai':
             $controller->getTheLoai($_GET['id']);
             break;
+        case 'searchTheLoai':
+            $controller->searchTheLoai($_GET['search']);
+            break;
     }
 }
 
 if (isset($_POST['action'])) {
     $controller = new TheLoaiController();
     switch ($_POST['action']) {
-        case 'add':
+        case 'addTheLoai':
             $controller->addTheLoai($_POST);
             break;
-        case 'update':
+        case 'updateTheLoai':
             $controller->updateTheLoai($_POST);
             break;
-        case 'delete':
+        case 'deleteTheLoai':
             $controller->deleteTheLoai($_POST['id']);
             break;
     }
