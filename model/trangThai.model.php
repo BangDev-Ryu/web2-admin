@@ -23,24 +23,11 @@ class TrangThaiModel {
         return $result->fetch_assoc()['name'];
     }
 
-    // public function getTrangThaiById($id) {
-    //     $sql = "SELECT * FROM trangthai WHERE id = ?";
-    //     return $this->db->executePrepared($sql, [$id]);
-    // }
-
-    // public function addTrangThai($ten) {
-    //     $sql = "INSERT INTO trangthai (ten) VALUES (?)";
-    //     return $this->db->executePrepared($sql, [$ten]);
-    // }
-
-    // public function updateTrangThai($id, $ten) {
-    //     $sql = "UPDATE trangthai SET ten = ? WHERE id = ?";
-    //     return $this->db->executePrepared($sql, [$ten, $id]);
-    // }
-
-    // public function deleteTrangThai($id) {
-    //     $sql = "DELETE FROM trangthai WHERE id = ?";
-    //     return $this->db->executePrepared($sql, [$id]);
-    // }
+    public function getTrangThaiByType($limit, $offset) {
+        $sql = "SELECT * FROM trangthai
+                LIMIT ? OFFSET ?";
+        $result = $this->db->executePrepared($sql, [$limit, $offset]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>

@@ -29,5 +29,42 @@ class TheLoaiModel {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getTheLoaiById($id) {
+        $sql = "SELECT * FROM theloai WHERE id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc();
+    }
+
+    public function addTheLoai($data) {
+        $sql = "INSERT INTO theloai (name, description, trangthai_id) VALUES (?, ?, ?)";
+        return $this->db->executePrepared($sql, [
+            $data['name'],
+            $data['description'],
+            $data['trangthai_id']
+        ]);
+    }
+
+    public function updateTheLoai($data) {
+        $sql = "UPDATE theloai SET name = ?, description = ?, trangthai_id = ? WHERE id = ?";
+        return $this->db->executePrepared($sql, [
+            $data['name'],
+            $data['description'],
+            $data['trangthai_id'],
+            $data['id']
+        ]);
+    }
+
+    public function deleteTheLoai($id) {
+        $sql = "DELETE FROM theloai WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
+    }
+
+    public function searchTheLoai($search) {
+        $sql = "SELECT * FROM theloai 
+                WHERE id LIKE ? OR name LIKE ?";
+        $searchParam = "%$search%";
+        $result = $this->db->executePrepared($sql, [$searchParam, $searchParam]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>

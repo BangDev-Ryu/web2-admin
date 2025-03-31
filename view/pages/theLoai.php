@@ -4,27 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="./css/theLoai.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/theLoai.js?v=<?= time() ?>"></script>
+    <script src="./js/theLoai.js?v=<?php echo time(); ?>"></script>
 </head>
 <body>
     <div class="table-actions">
         <div class="search-section">
             <div class="search-box">
-                <input type="text" id="searchCategory" placeholder="Tìm kiếm thể loại...">
+                <input type="text" id="searchTheLoai" placeholder="Tìm kiếm thể loại...">
             </div>
-            <button id="filterCategory" class="btn">
+            <button id="filterTheLoai" class="btn filter-btn">
                 <i class="fa-solid fa-filter"></i>
                 <span>Lọc</span>
             </button>
         </div>
-        <button id="addCategory" class="btn">
+        <button id="addTheLoai" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
             <span>Thêm thể loại</span>
         </button>
+    </div>
+    <div class="filter-section">
+        <div class="filter-box">
+            <label for="filter-theLoai-trangThai">Trạng thái:</label>
+            <select id="filter-theLoai-trangThai" name="filter-theLoai-trangThai">
+                <option value="">Tất cả</option>
+            </select>
+        </div>
     </div>
 
     <div class="table-content">
@@ -44,5 +53,46 @@
     </div>
 
     <div id="pagination"></div>
+
+    <!-- Modal Thêm/Sửa Thể Loại -->
+    <div class="modal" id="theLoaiModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Thêm Thể Loại</h2>
+            <form id="theLoaiForm">
+                <input type="hidden" id="theLoaiId">
+                <div class="form-group">
+                    <label for="theLoai-name">Tên thể loại:</label>
+                    <input type="text" id="theLoai-name" name="theLoai-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="theLoai-description">Mô tả:</label>
+                    <textarea id="theLoai-description" name="theLoai-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="theLoai-trangThai">Trạng thái:</label>
+                    <select id="theLoai-trangThai" name="theLoai-trangThai" required>
+
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn save-btn">Lưu</button>
+                    <button type="button" class="btn cancel-btn">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Xác nhận xóa -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h2>Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa thể loại này?</p>
+            <div class="form-actions">
+                <button id="confirmDelete" class="btn confirm-delete-btn">Xóa</button>
+                <button class="btn cancel-btn">Hủy</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
