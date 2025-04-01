@@ -14,15 +14,22 @@ class SanPhamController {
         $this->theLoaiController = new TheLoaiController();
     }
 
-    public function listSanPham() {
-        $limit = 8;
+    public function listSanPham($limit, $search) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
-        $products = $this->sanPhamModel->getSanPhams($limit, $offset);
-        $totalProducts = $this->sanPhamModel->getTotalSanPhams();
-        $totalPages = ceil($totalProducts / $limit);
+        $search = isset($_GET['search']) ? $search : '';
 
+        if (empty($search)) {
+            $products = $this->sanPhamModel->getSanPhams($limit, $offset);
+            $totalProducts = $this->sanPhamModel->getTotalSanPhams();
+        }
+        else {
+            $search = strtolower($search);
+            $products = $this->sanPhamModel->searchSanPham($search, $limit, $offset);
+            $totalProducts = $this->sanPhamModel->getTotalSearchSanPham($search);
+        }
+        $totalPages = ceil($totalProducts / $limit);
         
         foreach ($products as &$product) {
             $trangThaiName = $this->trangThaiController->getNameById($product['trangthai_id']);
@@ -37,10 +44,15 @@ class SanPhamController {
             "currentPage" => $page
         ]);
     }
+
 }
 
-if (isset($_GET['action']) && $_GET['action'] === 'listSanPham') {
+if (isset($_GET['action'])) {
     $controller = new SanPhamController();
-    $controller->listSanPham();
+    switch ($_GET['action']) {
+        case 'listSanPham':
+            $controller->listSanPham($_GET['limit'], $_GET['search']);
+            break;
+    }
 }
 ?>

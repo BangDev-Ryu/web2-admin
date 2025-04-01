@@ -1,36 +1,22 @@
 $(document).ready(function () {
     let currentPage = 1;
-    const limit = 8;
+    const limit = 6;
+    let searchValue = ""; 
 
-    function loadProducts(page) {
+    // Sửa lại hàm loadProducts để hỗ trợ tìm kiếm
+    function loadProducts(page, searchValue) {
         $.ajax({
             url: "./controller/sanPham.controller.php",
             type: "GET",
-            data: { action: "listSanPham", page: page, limit: limit },
+            data: { 
+                action: "listSanPham", 
+                page: page, 
+                limit: limit,
+                search: searchValue 
+            },
             dataType: "json",
             success: function (response) {
-                $("#productList").html("");
-                response.products.forEach(product => {
-                    let row = `
-                        <tr> 
-                            <td>${product.id}</td>
-                            <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
-                            <td>${product.name}</td>
-                            <td>${product.selling_price}</td>
-                            <td>${product.stock_quantity}</td>
-                            <td>${product.theloai_name}</td>
-                            <td>${product.trangthai_name}</td>
-                            <td>${product.updated_at}</td>
-                            <td>
-                                <button class="btn edit-btn" data-id="${product.id}">Sửa</button>
-                                <button class="btn delete-btn" data-id="${product.id}">Xóa</button>
-                            </td>
-                        </tr>
-                    `;
-                    $("#productList").append(row);
-                });
-
-                // Render pagination
+                renderSanPham(response.products);
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -73,12 +59,58 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadProducts(page);
+            loadProducts(page, searchValue); 
         });
     }
 
-    loadProducts(currentPage);
+    loadProducts(currentPage, searchValue);
+
+    // Tìm kiếm
+    let searchTimeout;
+
+    $("#searchProduct").on("input", function() {
+        searchValue = $(this).val().trim();
+        clearTimeout(searchTimeout);
+        
+        currentPage = 1; // Reset về trang 1 khi tìm kiếm
+
+        if (searchValue === "") {
+            loadProducts(currentPage, searchValue);
+            return;
+        }
+
+        searchTimeout = setTimeout(() => {
+            loadProducts(currentPage, searchValue);
+        }, 300);
+    });
 });
+
+function renderSanPham(products) {
+    $("#productList").html("");
+    if (products && products.length > 0) {
+        products.forEach(product => {
+            let row = `
+                <tr> 
+                    <td>${product.id}</td>
+                    <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
+                    <td>${product.name}</td>
+                    <td>${product.selling_price}</td>
+                    <td>${product.stock_quantity}</td>
+                    <td>${product.theloai_name}</td>
+                    <td>${product.trangthai_name}</td>
+                    <td>${product.updated_at}</td>
+                    <td>
+                        <button class="btn edit-btn" data-id="${product.id}">Sửa</button>
+                        <button class="btn delete-btn" data-id="${product.id}">Xóa</button>
+                    </td>
+                </tr>
+            `;
+            $("#productList").append(row);
+        });
+    } else {
+        $("#productList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+    }
+}
 
 // function getRandomColor() {
 //     var letters = '0123456789ABCDEF';

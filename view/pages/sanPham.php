@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/sanPham.js?v=<?= time() ?>"></script>
+    <script src="./js/sanPham.js?v=<?php echo time() ?>"></script>
 </head>
 <body>
     <div class="table-actions">

@@ -61,7 +61,7 @@ class TheLoaiModel {
 
     public function searchTheLoai($search) {
         $sql = "SELECT * FROM theloai 
-                WHERE id LIKE ? OR name LIKE ?";
+                WHERE id LIKE ? OR LOWER(name) LIKE ?";
         $searchParam = "%$search%";
         $result = $this->db->executePrepared($sql, [$searchParam, $searchParam]);
         return $result->fetch_all(MYSQLI_ASSOC);
