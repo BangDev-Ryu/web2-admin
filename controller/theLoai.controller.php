@@ -65,6 +65,7 @@ class TheLoaiController {
     }
 
     public function searchTheLoai($search) {
+        $search = strtolower($search);
         $theLoais = $this->theLoaiModel->searchTheLoai($search);
         foreach ($theLoais as &$theLoai) {
             $name = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
