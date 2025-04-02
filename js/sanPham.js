@@ -4,16 +4,22 @@ $(document).ready(function () {
     let searchValue = ""; 
 
     // Sửa lại hàm loadProducts để hỗ trợ tìm kiếm
-    function loadProducts(page, searchValue) {
+    function loadProducts(page, searchValue, filterData = null) {
+        let data = { 
+            action: "listSanPham", 
+            page: page, 
+            limit: limit,
+            search: searchValue 
+        };
+
+        if (filterData) {
+            data = {...data, ...filterData};
+        }
+
         $.ajax({
             url: "./controller/sanPham.controller.php",
             type: "GET",
-            data: { 
-                action: "listSanPham", 
-                page: page, 
-                limit: limit,
-                search: searchValue 
-            },
+            data: data,
             dataType: "json",
             success: function (response) {
                 renderSanPham(response.products);
@@ -82,6 +88,65 @@ $(document).ready(function () {
         searchTimeout = setTimeout(() => {
             loadProducts(currentPage, searchValue);
         }, 300);
+    });
+
+
+
+    // Xử lý thanh range giá
+    const minPriceRange = $("#minPriceRange");
+    const maxPriceRange = $("#maxPriceRange");
+    const minPriceValue = $("#minPriceValue");
+    const maxPriceValue = $("#maxPriceValue");
+
+    function formatPrice(value) {
+        return parseInt(value).toLocaleString('vi-VN') + 'đ';
+    }
+
+    function updatePriceRanges() {
+        let minVal = parseInt(minPriceRange.val());
+        let maxVal = parseInt(maxPriceRange.val());
+
+        if (minVal >= maxVal && minVal >= 100000) {
+            minVal = maxVal - 100000; 
+            minPriceRange.val(minVal);
+        }
+
+        minPriceValue.text(formatPrice(minVal));
+        maxPriceValue.text(formatPrice(maxVal));
+    }
+
+    minPriceRange.on("input", function() {
+        updatePriceRanges();
+    });
+
+    maxPriceRange.on("input", function() {
+        updatePriceRanges();
+    });
+
+    // Reset filter
+    $("#resetFilter").click(function() {
+        minPriceRange.val(0);
+        maxPriceRange.val(10000000);
+        updatePriceRanges();
+        $("#categoryFilter").val("");
+        $("#statusFilter").val("");
+        $("#startDate").val("");
+        $("#endDate").val("");
+    });
+
+    // Apply filter
+    $("#applyFilter").click(function() {
+        const filterData = {
+            minPrice: minPriceRange.val(),
+            maxPrice: maxPriceRange.val(),
+            category: $("#categoryFilter").val(),
+            status: $("#statusFilter").val(),
+            startDate: $("#startDate").val(),
+            endDate: $("#endDate").val()
+        };
+
+        currentPage = 1; // Reset về trang 1 khi filter
+        loadProducts(currentPage, searchValue, filterData);
     });
 });
 
