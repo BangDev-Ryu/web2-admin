@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/sanPham.js?v=<?php echo time() ?>"></script>
+    <script src="./js/sanPham.js?v=<?php echo time(); ?>"></script>
 </head>
 <body>
     <div class="table-actions">
@@ -23,7 +24,6 @@
         </button>
     </div>
 
-    <!-- Khu vực filter mới -->
     <div class="filter-section">
         <div class="filter-group price-filter">
             <label>Khoảng giá:</label>
@@ -45,14 +45,14 @@
             <div class="filter-group">
                 <label>Thể loại:</label>
                 <select id="categoryFilter">
-                    <option value="">Tất cả thể loại</option>
+                    <option value="0">Tất cả</option>
                 </select>
             </div>
 
             <div class="filter-group">
                 <label>Trạng thái:</label>
                 <select id="statusFilter">
-                    <option value="">Tất cả trạng thái</option>
+                    <option value="0">Tất cải</option>
                 </select>
             </div>
 
@@ -99,5 +99,71 @@
 
     </div>
 
+    <div class="modal" id="sanPhamModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Thêm sản phẩm</h2>
+            <form id="sanPhamForm">
+                <input type="hidden" id="sanPhamId">
+                <div class="form-group">
+                    <label for="sanPham-name">Tên sản phẩm:</label>
+                    <input type="text" id="sanPham-name" name="sanPham-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-description">Mô tả:</label>
+                    <textarea id="sanPham-description" name="sanPham-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-price">Giá bán:</label>
+                    <input type="number" id="sanPham-price" name="sanPham-price" required>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-quantity">Số lượng:</label>
+                    <input type="number" id="sanPham-quantity" name="sanPham-quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-theLoai">Thể loại:</label>
+                    <select id="sanPham-theLoai" name="sanPham-theLoai" required>
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-trangThai">Trạng thái:</label>
+                    <select id="sanPham-trangThai" name="sanPham-trangThai" required>
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-warranty">Ngày bảo hành:</label>
+                    <input type="number" id="sanPham-warranty" name="sanPham-warranty" required>
+                </div>
+                <div class="form-group">
+                    <label for="sanPham-image">Hình ảnh sản phẩm:</label>
+                    <div class="file-upload">
+                        <input type="file" id="sanPham-image" name="sanPham-image" accept="image/*">
+                        <input type="hidden" id="image-base64" name="image-base64">
+                        <div class="image-preview">
+                            <img id="imagePreview" src="" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn save-btn">Lưu</button>
+                    <button type="button" class="btn cancel-btn">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h2>Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa sản phẩm này?</p>
+            <div class="form-actions">
+                <button id="confirmDeleteSanPham" class="btn confirm-delete-btn">Xóa</button>
+                <button class="btn cancel-btn">Hủy</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

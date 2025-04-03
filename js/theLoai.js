@@ -165,7 +165,7 @@ $(document).ready(function () {
     });
 
     // Xác nhận xóa
-    $("#confirmDelete").click(function() {
+    $("#confirmDeleteTheLoai").click(function() {
         if (deleteId) {
             $.ajax({
                 url: "./controller/theLoai.controller.php",

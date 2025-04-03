@@ -89,7 +89,7 @@
             <h2>Xác nhận xóa</h2>
             <p>Bạn có chắc chắn muốn xóa thể loại này?</p>
             <div class="form-actions">
-                <button id="confirmDelete" class="btn confirm-delete-btn">Xóa</button>
+                <button id="confirmDeleteTheLoai" class="btn confirm-delete-btn">Xóa</button>
                 <button class="btn cancel-btn">Hủy</button>
             </div>
         </div>
