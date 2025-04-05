@@ -92,5 +92,19 @@ class SanPhamModel {
         $result = $this->db->executePrepared($sql, [$searchParam, $searchParam, $limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function filterSanPham($filter, $limit, $offset) {
+        $sql = "SELECT * FROM sanpham 
+                WHERE trangthai_id = ? AND theloai_id = ?
+                LIMIT ? OFFSET ?";
+        $result = $this->db->executePrepared($sql, [$filter['trangthai_id'], $filter['theloai_id'], $limit, $offset]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    public function getTotalFilterSanPham($filter) {
+        $sql = "SELECT COUNT(*) as total FROM sanpham 
+                WHERE trangthai_id = ? AND theloai_id = ?";
+        $result = $this->db->executePrepared($sql, [$filter['trangthai_id'], $filter['theloai_id']]);
+        return $result->fetch_assoc()['total'];
+    }
 }
 ?>
