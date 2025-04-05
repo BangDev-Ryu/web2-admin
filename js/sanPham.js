@@ -2,18 +2,24 @@ $(document).ready(function () {
     let currentPage = 1;
     const limit = 6;
     let searchValue = ""; 
+    let filterData = null;
 
-    // Sửa lại hàm loadProducts để hỗ trợ tìm kiếm
-    function loadProducts(page, searchValue) {
+    function loadProducts(page, searchValue, filterData) {
+        let data = { 
+            action: "listSanPham", 
+            page: page, 
+            limit: limit,
+            search: searchValue 
+        };
+
+        if (filterData) {
+            data = {...data, ...filterData};
+        }
+
         $.ajax({
             url: "./controller/sanPham.controller.php",
             type: "GET",
-            data: { 
-                action: "listSanPham", 
-                page: page, 
-                limit: limit,
-                search: searchValue 
-            },
+            data: data,
             dataType: "json",
             success: function (response) {
                 renderSanPham(response.products);
@@ -82,6 +88,194 @@ $(document).ready(function () {
         searchTimeout = setTimeout(() => {
             loadProducts(currentPage, searchValue);
         }, 300);
+    });
+
+
+
+    // Xử lý thanh range giá
+    const minPriceRange = $("#minPriceRange");
+    const maxPriceRange = $("#maxPriceRange");
+    const minPriceValue = $("#minPriceValue");
+    const maxPriceValue = $("#maxPriceValue");
+
+    function formatPrice(value) {
+        return parseInt(value).toLocaleString('vi-VN') + 'đ';
+    }
+
+    function updatePriceRanges() {
+        let minVal = parseInt(minPriceRange.val());
+        let maxVal = parseInt(maxPriceRange.val());
+
+        if (minVal >= maxVal && minVal >= 100000) {
+            minVal = maxVal - 100000; 
+            minPriceRange.val(minVal);
+        }
+
+        minPriceValue.text(formatPrice(minVal));
+        maxPriceValue.text(formatPrice(maxVal));
+    }
+
+    minPriceRange.on("input", function() {
+        updatePriceRanges();
+    });
+
+    maxPriceRange.on("input", function() {
+        updatePriceRanges();
+    });
+
+    // Reset filter
+    $("#resetFilter").click(function() {
+        minPriceRange.val(0);
+        maxPriceRange.val(10000000);
+        updatePriceRanges();
+        $("#categoryFilter").val("");
+        $("#statusFilter").val("");
+        $("#startDate").val("");
+        $("#endDate").val("");
+    });
+
+    // Apply filter
+    $("#applyFilter").click(function() {
+        const filterData = {
+            minPrice: minPriceRange.val(),
+            maxPrice: maxPriceRange.val(),
+            category: $("#categoryFilter").val(),
+            status: $("#statusFilter").val(),
+            startDate: $("#startDate").val(),
+            endDate: $("#endDate").val()
+        };
+
+        currentPage = 1; 
+        console.log(filterData);
+        // loadProducts(currentPage, searchValue, filterData);
+    });
+
+    // Xử lý modal
+    const sanPhamModal = $("#sanPhamModal");
+    
+    // Đóng modal 
+    $(".close, .cancel-btn").click(function() {
+        sanPhamModal.hide();
+    });
+
+    // Load danh sách thể loại
+    function loadTheLoai() {
+        $.ajax({
+            url: "./controller/theLoai.controller.php",
+            type: "GET",
+            data: { action: "listTheLoai" },
+            dataType: "json",
+            success: function(response) {
+                $("#sanPham-theLoai").html("");
+                response.theLoais.forEach(tl => {
+                    $("#sanPham-theLoai").append(`<option value="${tl.id}">${tl.name}</option>`);
+                });
+            }
+        });
+    }
+
+    // Load danh sách trạng thái
+    function loadTrangThai() {
+        $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "sanPham" },
+            dataType: "json",
+            success: function(response) {
+                $("#sanPham-trangThai").html("");
+                response.trangThais.forEach(tt => {
+                    $("#sanPham-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    }
+
+    // Nút thêm sản phẩm
+    $("#addProduct").click(function() {
+        $("#modalTitle").text("Thêm Sản Phẩm");
+        $("#sanPhamForm")[0].reset();
+        $("#sanPhamId").val("");
+        $("#imagePreview").attr("src", "");
+        loadTheLoai();
+        loadTrangThai();
+        sanPhamModal.show();
+    });
+
+    // Nút sửa sản phẩm
+    $(document).on("click", ".edit-btn", function() {
+        const id = $(this).data("id");
+        $.ajax({
+            url: "./controller/sanPham.controller.php",
+            type: "GET",
+            data: { action: "getSanPham", id: id },
+            dataType: "json",
+            success: function(response) {
+                sanPhamModal.show();
+                $("#modalTitle").text("Sửa Sản Phẩm");
+                $("#sanPhamId").val(response.sanPham.id);
+                $("#sanPham-name").val(response.sanPham.name);
+                $("#sanPham-description").val(response.sanPham.description);
+                $("#sanPham-price").val(response.sanPham.selling_price);
+                $("#sanPham-quantity").val(response.sanPham.stock_quantity);
+                $("#sanPham-warranty").val(response.sanPham.warranty_days);
+                $("#imagePreview").attr("src", response.sanPham.image_url);
+                $("#image-base64").val(""); 
+                
+                loadTheLoai();
+                loadTrangThai();
+                
+                setTimeout(() => {
+                    $("#sanPham-theLoai").val(response.sanPham.theloai_id);
+                    $("#sanPham-trangThai").val(response.sanPham.trangthai_id);
+                }, 50);
+            }
+        });
+    });
+
+    // Preview ảnh khi chọn file
+    $("#sanPham-image").change(function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $("#imagePreview").attr("src", e.target.result);
+                $("#image-base64").val(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Submit form thêm/sửa
+    $("#sanPhamForm").submit(function(e) {
+        e.preventDefault();
+        const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        
+        const data = {
+            id: $("#sanPhamId").val(),
+            name: $("#sanPham-name").val(),
+            description: $("#sanPham-description").val(),
+            selling_price: $("#sanPham-price").val(),
+            stock_quantity: $("#sanPham-quantity").val(),
+            theloai_id: $("#sanPham-theLoai").val(),
+            trangthai_id: $("#sanPham-trangThai").val(),
+            warranty_days: $("#sanPham-warranty").val(),
+            image_url: $("#image-base64").val() || $("#imagePreview").attr("src"), 
+            updated_at: now,
+            action: $("#sanPhamId").val() ? "updateSanPham" : "addSanPham"
+        };
+
+        $.ajax({
+            url: "./controller/sanPham.controller.php",
+            type: "POST",
+            data: data,
+            success: function(response) {
+                sanPhamModal.hide();
+                loadProducts(currentPage, searchValue);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
     });
 });
 
