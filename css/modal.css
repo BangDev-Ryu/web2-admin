@@ -7,15 +7,20 @@
     right: 0;
     background-color: rgba(0,0,0,0.5);
     z-index: 1000;
+    overflow-y: auto;
+    max-height: 100vh;
+    padding: 20px;
 }
 
 .modal-content {
     background-color: #fff;
-    margin: 10% auto;
+    margin: 20px auto;
     padding: 20px;
     border-radius: 5px;
     width: 40%;
     position: relative;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
 }
 
 .close {
@@ -49,4 +54,27 @@
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
+}
+
+.image-preview {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.image-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.file-upload input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
