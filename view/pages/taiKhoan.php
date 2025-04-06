@@ -52,5 +52,52 @@
 
     <div id="pagination"></div>
 
+    <div class="modal" id="taiKhoanModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Thêm Tài Khoản</h2>
+            <form id="taiKhoanForm">
+                <input type="hidden" id="taiKhoanId">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="trangthai_id">Trạng thái:</label>
+                    <select id="trangthai_id" name="trangthai_id" required>
+                        <option value="1">Hoạt động</option>
+                        <option value="2">Không hoạt động</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type_account">Loại tài khoản:</label>
+                    <select id="type_account" name="type_account" required>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn save-btn">Lưu</button>
+                    <button type="button" class="btn cancel-btn">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h2>Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa tài khoản này?</p>
+            <div class="form-actions">
+                <button id="confirmDelete" class="btn confirm-delete-btn">Xóa</button>
+                <button class="btn cancel-btn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -46,5 +46,34 @@ class TaiKhoanModel {
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function addTaiKhoan($username, $password, $trangthai_id, $type_account) {
+        $sql = "INSERT INTO taikhoan (username, password, trangthai_id, type_account, created_at) 
+                VALUES (?, ?, ?, ?, NOW())";
+        return $this->db->executePrepared($sql, [
+            $username,
+            password_hash($password, PASSWORD_BCRYPT), // Mã hóa mật khẩu
+            $trangthai_id,
+            $type_account
+        ]);
+    }
+
+    public function updateTaiKhoan($id, $username, $password, $trangthai_id, $type_account) {
+        $sql = "UPDATE taikhoan 
+                SET username = ?, password = ?, trangthai_id = ?, type_account = ? 
+                WHERE id = ?";
+        return $this->db->executePrepared($sql, [
+            $username,
+            password_hash($password, PASSWORD_BCRYPT), // Mã hóa mật khẩu
+            $trangthai_id,
+            $type_account,
+            $id
+        ]);
+    }
+
+    public function deleteTaiKhoan($id) {
+        $sql = "DELETE FROM taikhoan WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
+    }
 }
 ?>

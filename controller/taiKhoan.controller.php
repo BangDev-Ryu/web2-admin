@@ -57,6 +57,33 @@ class TaiKhoanController {
         $taiKhoan = $this->taiKhoanModel->getTaiKhoanById($id);
         echo json_encode(['taiKhoan' => $taiKhoan]);
     }
+
+    public function addTaiKhoan($data) {
+        $result = $this->taiKhoanModel->addTaiKhoan(
+            $data['username'],
+            $data['password'],
+            $data['trangthai_id'],
+            $data['type_account']
+        );
+        echo json_encode(['success' => $result]);
+    }
+    
+    public function updateTaiKhoan($data) {
+        $result = $this->taiKhoanModel->updateTaiKhoan(
+            $data['id'],
+            $data['username'],
+            $data['password'],
+            $data['trangthai_id'],
+            $data['type_account']
+        );
+        echo json_encode(['success' => $result]);
+    }
+    
+    public function deleteTaiKhoan($id) {
+        $result = $this->taiKhoanModel->deleteTaiKhoan($id);
+        echo json_encode(['success' => $result]);
+    }
+
 }
 
 if (isset($_GET['action'])) {
@@ -65,27 +92,27 @@ if (isset($_GET['action'])) {
         case 'listTaiKhoan':
             $controller->listTaiKhoan();
             break;
-        case 'getTheLoai':
+        case 'getTaiKhoan':
             $controller->getTaiKhoan($_GET['id']);
             break;
-        // case 'searchTheLoai':
+        // case 'searchTaiKhoan':
         //     $controller->searchTaiKhoan($_GET['search']);
         //     break;
     }
 }
 
-// if (isset($_POST['action'])) {
-//     $controller = new TaiKhoanController();
-//     switch ($_POST['action']) {
-//         case 'addTaiKhoan':
-//             $controller->addTaiKhoan($_POST);
-//             break;
-//         case 'updateTaiKhoan':
-//             $controller->updateTaiKhoan($_POST);
-//             break;
-//         case 'deleteTaiKhoan':
-//             $controller->deleteTaiKhoan($_POST['id']);
-//             break;
-//     }
-// }
+if (isset($_POST['action'])) {
+    $controller = new TaiKhoanController();
+    switch ($_POST['action']) {
+        case 'addTaiKhoan':
+            $controller->addTaiKhoan($_POST);
+            break;
+        case 'updateTaiKhoan':
+            $controller->updateTaiKhoan($_POST);
+            break;
+        case 'deleteTaiKhoan':
+            $controller->deleteTaiKhoan($_POST['id']);
+            break;
+    }
+}
 ?>

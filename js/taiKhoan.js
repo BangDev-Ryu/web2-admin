@@ -79,4 +79,90 @@ $(document).ready(function () {
     }
 
     loadTaiKhoans(currentPage);
+
+    const  taiKhoanModal = $("#taiKhoanModal");
+    const deleteModal = $("#deleteModal");
+    let deleteId = null;
+
+    // Đóng modal 
+    $(".close, .cancel-btn").click(function() {
+        taiKhoanModal.hide();
+        deleteModal.hide();
+    });
+    
+    // Nút thêm tài khoản
+    $("#addTaiKhoan").click(function () {
+        $("#modalTitle").text("Thêm Tài Khoản");
+        $("#taiKhoanForm")[0].reset();
+        $("#taiKhoanId").val("");
+        $("#taiKhoanModal").show();
+    });
+
+    // Nút sửa tài khoản
+    $(document).on("click", ".edit-btn", function () {
+        const id = $(this).data("id");
+        $.ajax({
+            url: "./controller/taiKhoan.controller.php",
+            type: "GET",
+            data: { action: "getTaiKhoan", id: id },
+            dataType: "json",
+            success: function (response) {
+                $("#modalTitle").text("Sửa Tài Khoản");
+                $("#taiKhoanId").val(response.taiKhoan.id);
+                $("#username").val(response.taiKhoan.username);
+                $("#password").val(""); // Không hiển thị mật khẩu
+                $("#trangthai_id").val(response.taiKhoan.trangthai_id);
+                $("#type_account").val(response.taiKhoan.type_account);
+                $("#taiKhoanModal").show();
+            },
+        });
+    });
+
+    // Submit form thêm/sửa tài khoản
+    $("#taiKhoanForm").submit(function (e) {
+        e.preventDefault();
+        const data = {
+            id: $("#taiKhoanId").val(),
+            username: $("#username").val(),
+            password: $("#password").val(),
+            trangthai_id: $("#trangthai_id").val(),
+            type_account: $("#type_account").val(),
+            action: $("#taiKhoanId").val() ? "updateTaiKhoan" : "addTaiKhoan",
+        };
+
+        $.ajax({
+            url: "./controller/taiKhoan.controller.php",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                $("#taiKhoanModal").hide();
+                loadTaiKhoans(currentPage);
+            },
+        });
+    });
+
+    // Nút xóa tài khoản
+    $(document).on("click", ".delete-btn", function() {
+        deleteId = $(this).data("id");
+        deleteModal.show();
+    });
+
+    // Xác nhận xóa
+    $("#confirmDelete").click(function() {
+        if (deleteId) {
+            $.ajax({
+                url: "./controller/taiKhoan.controller.php",
+                type: "POST",
+                data: { action: "deleteTaiKhoan", id: deleteId },
+                success: function(response) {
+                    deleteModal.hide();
+                    loadTheLoais(currentPage);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    });
+
 });
