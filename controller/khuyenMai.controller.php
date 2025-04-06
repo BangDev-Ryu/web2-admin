@@ -7,20 +7,23 @@ class KhuyenMaiController {
         $this->khuyenMaiModel = new KhuyenmaiModel();
     }
 
-    public function getNameById($id) {
-        $name = $this->khuyenMaiModel->getNameById($id);
-        return $name;
-    }
-
-    public function listKhuyenMai($limit) {
+    public function listKhuyenMai($limit, $search) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
-
-        $khuyenMais = $this->khuyenMaiModel->getKhuyenMais($limit, $offset);
-       
-        $totalProducts = $this->khuyenMaiModel->getTotalKhuyenMais();
-        $totalPages = ceil($totalProducts / $limit);
-
+    
+        $search = isset($_GET['search']) ? $search : '';
+    
+        if (empty($search)) {
+            $khuyenMais = $this->khuyenMaiModel->getKhuyenMais($limit, $offset);
+            $totalKhuyenMais = $this->khuyenMaiModel->getTotalKhuyenMais();
+        }
+        else {
+            $search = strtolower($search);
+            $khuyenMais = $this->khuyenMaiModel->searchKhuyenMai($search, $limit, $offset);
+            $totalKhuyenMais = $this->khuyenMaiModel->getTotalSearchKhuyenMai($search);
+        }
+        $totalPages = ceil($totalKhuyenMais / $limit);
+        
         echo json_encode([
             "khuyenMais" => $khuyenMais,
             "totalPages" => $totalPages,
@@ -28,10 +31,27 @@ class KhuyenMaiController {
         ]);
     }
 
+    public function listKhuyenMaiBySearch($limit, $search) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+    
+        $search = isset($_GET['search']) ? $search : '';
+    
+        $search = strtolower($search);
+        $khuyenMais = $this->khuyenMaiModel->searchKhuyenMai($search, $limit, $offset);
+        $totalKhuyenMais = $this->khuyenMaiModel->getTotalSearchKhuyenMai($search);
+        $totalPages = ceil($totalKhuyenMais / $limit);
+    
+        echo json_encode([
+            "khuyenMais" => $khuyenMais,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+    
+    
 
-
-
-public function getKhuyenMai($id) {
+public function getKhuyenMaiById($id) {
     $khuyenMai = $this->khuyenMaiModel->getKhuyenMaiById($id);
     echo json_encode(['khuyenMai' => $khuyenMai]);
 }
@@ -50,12 +70,6 @@ public function deleteKhuyenMai($id) {
     $result = $this->khuyenMaiModel->deleteKhuyenMai($id);
     echo json_encode(['success' => $result]);
 }
-
-public function searchKhuyenMai($search) {
-    $search = strtolower($search);
-    $khuyenMais = $this->khuyenMaiModel->searchKhuyenMai($search);
-    echo json_encode(['khuyenMais' => $khuyenMais]);
-}
 }
 
 // Xử lý các request
@@ -63,15 +77,12 @@ if (isset($_GET['action'])) {
 $controller = new KhuyenMaiController();
 switch ($_GET['action']) {
     case 'listKhuyenMai':
-        $controller->listKhuyenMai($_GET['limit']);
+        $controller->listKhuyenMai($_GET['limit'], $_GET['search']);
         break;
     case 'getKhuyenMai':
-        $controller->getKhuyenMai($_GET['id']);
+        $controller->getKhuyenMaiById($_GET['id']);
         break;
-    case 'searchKhuyenMai':
-        $controller->searchKhuyenMai($_GET['search']);
-        break;
-}
+    }
 }
 
 if (isset($_POST['action'])) {

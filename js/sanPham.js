@@ -76,6 +76,7 @@ $(document).ready(function () {
 
     $("#searchProduct").on("input", function() {
         searchValue = $(this).val().trim();
+        
         clearTimeout(searchTimeout);
         
         currentPage = 1; // Reset về trang 1 khi tìm kiếm
