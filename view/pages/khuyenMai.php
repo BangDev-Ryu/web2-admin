@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="./js/khuyenMai.js?v=<?= time() ?>"></script>
 </head>
 <body>
@@ -73,27 +74,37 @@
                     <label for="type">Loại:</label>
                     <input type="text" id="type" name="type" required>
                 </div>
+
+
                 <div class="form-group">
                 <label for="startDate">Ngày bắt đầu:</label>
-                <input type="text" 
-                    id="startDate" 
-                    name="startDate" 
-                    placeholder="yyyy-MM-dd HH:mm:ss" 
-                    pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}" 
-                    title="Định dạng: yyyy-MM-dd HH:mm:ss (ví dụ: 2025-06-01 00:00:00)" 
-                    required>
+                <input type="text" id="startDate" name="startDate" placeholder="Nhấp vào để mở lịch chọn ngày" required>
             </div>
+
 
             <div class="form-group">
                     <label for="endDate">Ngày kết thúc:</label>
-                    <input type="text" 
-                        id="endDate" 
-                        name="endDate" 
-                        placeholder="yyyy-MM-dd HH:mm:ss" 
-                        pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}" 
-                        title="Định dạng: yyyy-MM-dd HH:mm:ss (ví dụ: 2025-06-01 23:59:59)" 
-                        required>
+                    <input type="text" id="endDate" name="endDate" placeholder="Nhấp vào để mở lịch chọn ngày" required>
                 </div>
+
+                
+            
+            <script>    
+                flatpickr("#startDate", {
+                    enableTime: true,
+                    time_24hr: true,
+                    enableSeconds: true,
+                    dateFormat: "Y-m-d H:i:S"
+                });
+
+                flatpickr("#endDate", {
+                    enableTime: true,
+                    time_24hr: true,
+                    enableSeconds: true,
+                    dateFormat: "Y-m-d H:i:S"
+                });
+            </script>
+
 
                 <div class="form-actions">
                     <button type="submit" class="btn save-btn">Lưu</button>
