@@ -2,18 +2,23 @@ $(document).ready(function () {
     let currentPage = 1;
     const limit = 6;
     let searchValue = ""; 
-    let filterData = null;
+    let filterData = {};
 
     function loadProducts(page, searchValue, filterData) {
         let data = { 
             action: "listSanPham", 
             page: page, 
             limit: limit,
-            search: searchValue 
         };
 
-        if (filterData) {
-            data = {...data, ...filterData};
+        if (searchValue && searchValue.trim() !== "") {
+            data.action = "listSanPhamBySearch";
+            data.search = searchValue;
+        }
+
+        if (filterData && Object.keys(filterData).length > 0) {
+            data.action = "listSanPhamByFilter";
+            data.filter = filterData;
         }
 
         $.ajax({
@@ -33,6 +38,8 @@ $(document).ready(function () {
         });
     }
 
+    ///////////////////////////////////////// PAGINATION /////////////////////////////////////////
+    
     function renderPagination(totalPages, currentPage) {
         $("#pagination").html("");
 
@@ -65,11 +72,13 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadProducts(page, searchValue); 
+            loadProducts(page, searchValue, filterData); 
         });
     }
 
     loadProducts(currentPage, searchValue);
+
+    ///////////////////////////////////////// SEARCH /////////////////////////////////////////
 
     // Tìm kiếm
     let searchTimeout;
@@ -80,18 +89,19 @@ $(document).ready(function () {
         clearTimeout(searchTimeout);
         
         currentPage = 1; // Reset về trang 1 khi tìm kiếm
+        filterData = {}; // Reset filter khi tìm kiếm
 
         if (searchValue === "") {
-            loadProducts(currentPage, searchValue);
+            loadProducts(currentPage, searchValue, filterData);
             return;
         }
 
         searchTimeout = setTimeout(() => {
-            loadProducts(currentPage, searchValue);
+            loadProducts(currentPage, searchValue, filterData);
         }, 300);
     });
 
-
+    ///////////////////////////////////////// FILTER /////////////////////////////////////////
 
     // Xử lý thanh range giá
     const minPriceRange = $("#minPriceRange");
@@ -124,32 +134,71 @@ $(document).ready(function () {
         updatePriceRanges();
     });
 
+    // xử lý select chủ đề và trạng thái
+    function loadChuDeFilter() {
+        $.ajax({
+            url: "./controller/chuDe.controller.php",
+            type: "GET",
+            data: { action: "listAllChuDe" },
+            dataType: "json",
+            success: function(response) {
+                $("#chuDeFilter").html("");
+                $("#chuDeFilter").append(`<option value="0">Tất cả</option>`);
+                response.chuDes.forEach(cd => {
+                    $("#chuDeFilter").append(`<option value="${cd.id}">${cd.name}</option>`);
+                });
+            }
+        });
+    }
+
+    function loadTrangThaiFilter() {
+        $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "sanPham" },
+            dataType: "json",
+            success: function(response) {
+                $("#trangThaiFilter").html("");
+                $("#trangThaiFilter").append(`<option value="0">Tất cả</option>`);
+                response.trangThais.forEach(tt => {
+                    $("#trangThaiFilter").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    } 
+
+    loadChuDeFilter();
+    loadTrangThaiFilter();
+
     // Reset filter
     $("#resetFilter").click(function() {
         minPriceRange.val(0);
         maxPriceRange.val(10000000);
         updatePriceRanges();
-        $("#categoryFilter").val("");
-        $("#statusFilter").val("");
+        $("#chuDeFilter").val(0);
+        $("#trangThaiFilter").val(0);
         $("#startDate").val("");
         $("#endDate").val("");
     });
 
     // Apply filter
     $("#applyFilter").click(function() {
-        const filterData = {
-            minPrice: minPriceRange.val(),
-            maxPrice: maxPriceRange.val(),
-            category: $("#categoryFilter").val(),
-            status: $("#statusFilter").val(),
-            startDate: $("#startDate").val(),
-            endDate: $("#endDate").val()
+        filterData = {
+            min_price: minPriceRange.val(),
+            max_price: maxPriceRange.val(),
+            chude_id: $("#chuDeFilter").val(),
+            trangthai_id: $("#trangThaiFilter").val(),
+            start_date: $("#startDate").val(),
+            end_date: $("#endDate").val()
         };
 
         currentPage = 1; 
-        console.log(filterData);
-        // loadProducts(currentPage, searchValue, filterData);
+        searchValue = "";
+
+        loadProducts(currentPage, searchValue, filterData);
     });
+
+    ///////////////////////////////////////// MODAL /////////////////////////////////////////
 
     // Xử lý modal
     const sanPhamModal = $("#sanPhamModal");
@@ -159,17 +208,17 @@ $(document).ready(function () {
         sanPhamModal.hide();
     });
 
-    // Load danh sách thể loại
-    function loadTheLoai() {
+    // Load danh sách chủ đề
+    function loadChuDe() {
         $.ajax({
-            url: "./controller/theLoai.controller.php",
+            url: "./controller/chuDe.controller.php",
             type: "GET",
-            data: { action: "listTheLoai" },
+            data: { action: "listAllChuDe" },
             dataType: "json",
             success: function(response) {
-                $("#sanPham-theLoai").html("");
-                response.theLoais.forEach(tl => {
-                    $("#sanPham-theLoai").append(`<option value="${tl.id}">${tl.name}</option>`);
+                $("#sanPham-chuDe").html("");
+                response.chuDes.forEach(cd => {
+                    $("#sanPham-chuDe").append(`<option value="${cd.id}">${cd.name}</option>`);
                 });
             }
         });
@@ -197,13 +246,13 @@ $(document).ready(function () {
         $("#sanPhamForm")[0].reset();
         $("#sanPhamId").val("");
         $("#imagePreview").attr("src", "");
-        loadTheLoai();
+        loadChuDe();
         loadTrangThai();
         sanPhamModal.show();
     });
 
     // Nút sửa sản phẩm
-    $(document).on("click", ".edit-btn", function() {
+    $(document).on("click", "#editProduct", function() {
         const id = $(this).data("id");
         $.ajax({
             url: "./controller/sanPham.controller.php",
@@ -222,11 +271,11 @@ $(document).ready(function () {
                 $("#imagePreview").attr("src", response.sanPham.image_url);
                 $("#image-base64").val(""); 
                 
-                loadTheLoai();
+                loadChuDe();
                 loadTrangThai();
                 
                 setTimeout(() => {
-                    $("#sanPham-theLoai").val(response.sanPham.theloai_id);
+                    $("#sanPham-chuDe").val(response.sanPham.chude_id);
                     $("#sanPham-trangThai").val(response.sanPham.trangthai_id);
                 }, 50);
             }
@@ -291,12 +340,12 @@ function renderSanPham(products) {
                     <td>${product.name}</td>
                     <td>${product.selling_price}</td>
                     <td>${product.stock_quantity}</td>
-                    <td>${product.theloai_name}</td>
+                    <td>${product.chude_name}</td>
                     <td>${product.trangthai_name}</td>
                     <td>${product.updated_at}</td>
                     <td>
-                        <button class="btn edit-btn" data-id="${product.id}">Sửa</button>
-                        <button class="btn delete-btn" data-id="${product.id}">Xóa</button>
+                        <button id="editProduct" class="btn edit-btn" data-id="${product.id}">Sửa</button>
+                        <button id="deleteProduct" class="btn delete-btn" data-id="${product.id}">Xóa</button>
                     </td>
                 </tr>
             `;

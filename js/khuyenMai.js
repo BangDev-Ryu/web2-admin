@@ -62,7 +62,7 @@ $(document).ready(function () {
         }
 
 
-    $(".page-btn").click(function () {
+        $(".page-btn").click(function () {
             const page = $(this).data("page");
             loadKhuyenMais(page, searchValue); 
         });
@@ -104,10 +104,10 @@ $(document).ready(function () {
        clearTimeout(searchTimeout);
        currentPage = 1;
    
-       if (searchValue === "") {
+        if (searchValue === "") {
            loadKhuyenMais(currentPage, searchValue);
            return;
-       }
+        }
    
        searchTimeout = setTimeout(() => {
            loadKhuyenMais(currentPage, searchValue);
