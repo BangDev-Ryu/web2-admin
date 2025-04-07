@@ -92,5 +92,65 @@ class SanPhamModel {
         $result = $this->db->executePrepared($sql, [$searchParam, $searchParam, $limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function filterSanPham($filter, $limit, $offset) {
+        $sql = "SELECT * FROM sanpham 
+            WHERE selling_price BETWEEN ? AND ?";
+
+        $params = [
+            $filter['min_price'],
+            $filter['max_price']
+        ];
+
+        if (!empty($filter['chude_id'])) {
+            $sql .= " AND chude_id = ?";
+            $params[] = $filter['chude_id'];
+        }
+        if (!empty($filter['trangthai_id'])) {
+            $sql .= " AND trangthai_id = ?";
+            $params[] = $filter['trangthai_id'];
+        }
+
+        if (!empty($filter['start_date']) && !empty($filter['end_date'])) {
+            $sql .= " AND updated_at BETWEEN ? AND ?";
+            $params[] = $filter['start_date'];
+            $params[] = $filter['end_date'];
+        }
+
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTotalFilterSanPham($filter) {
+        $sql = "SELECT COUNT(*) as total FROM sanpham 
+                WHERE selling_price BETWEEN ? AND ?";
+
+        $params = [
+            $filter['min_price'],
+            $filter['max_price']
+        ];
+
+        if (!empty($filter['chude_id'])) {
+            $sql .= " AND chude_id = ?";
+            $params[] = $filter['chude_id'];
+        }
+        if (!empty($filter['trangthai_id'])) {
+            $sql .= " AND trangthai_id = ?";
+            $params[] = $filter['trangthai_id'];
+        }
+
+        if (!empty($filter['start_date']) && !empty($filter['end_date'])) {
+            $sql .= " AND updated_at BETWEEN ? AND ?";
+            $params[] = $filter['start_date'];
+            $params[] = $filter['end_date'];
+        }
+         
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
 }
 ?>
