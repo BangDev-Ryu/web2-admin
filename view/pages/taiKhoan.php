@@ -39,6 +39,7 @@
                     <th>Email</th>
                     <th>Số điện thoại</th>
                     <th>Ngày sinh</th>
+                    <th>Chức vụ</th>
                     <th>Loại tài khoản</th>
                     <th>Trạng thái</th>
                     <th>Ngày tạo</th>
@@ -59,6 +60,10 @@
             <form id="taiKhoanForm">
                 <input type="hidden" id="taiKhoanId">
                 <div class="form-group">
+                    <label for="fullname">Họ tên:</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                </div>
+                <div class="form-group">
                     <label for="username">Tên đăng nhập:</label>
                     <input type="text" id="username" name="username" required>
                 </div>
@@ -67,18 +72,44 @@
                     <input type="password" id="password" name="password" required>
                 </div>
                 <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">SĐT:</label>
+                    <input type="text" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="date_of_birth">Ngày sinh:</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" required>
+                </div>
+                <div class="form-group">
+                    <label for="chucvu_id">Chức vụ:</label>
+                    <select id="chucvu_id" name="chucvu_id" required>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="trangthai_id">Trạng thái:</label>
                     <select id="trangthai_id" name="trangthai_id" required>
-                        <option value="1">Hoạt động</option>
-                        <option value="2">Không hoạt động</option>
+
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="type_account">Loại tài khoản:</label>
                     <select id="type_account" name="type_account" required>
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
+
                     </select>
+                    
+                </div>
+                <div class="form-group">
+                    <label for="picture">Hình ảnh:</label>
+                    <div class="file-upload">
+                        <input type="file" id="picture" name="picture" accept="image/*">
+                        <input type="hidden" id="image-base64" name="image-base64">
+                        <div class="image-preview">
+                            <img id="imagePreview" src="" alt="Preview">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn save-btn">Lưu</button>

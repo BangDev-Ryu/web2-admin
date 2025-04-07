@@ -39,9 +39,9 @@ class TaiKhoanController {
         $totalPages = ceil($totalTaiKhoans / $limit);
         
         foreach ($taiKhoans as &$taiKhoan) {
-            
-            $role_name = $this->chucVuController->getNameById($taiKhoan['type_account']);
-            $taiKhoan['role_name'] = $role_name;
+            $taiKhoan['role_name'] = $taiKhoan['type_account'] == 1 ? "Người dùng" : "Admin";
+            $tenchucvu = $this->chucVuController->getNameById($taiKhoan['chucvu_id']);
+            $taiKhoan['chucvu'] = $tenchucvu;
             $username = $this->trangThaiController->getNameById($taiKhoan['trangthai_id']);
             $taiKhoan['trangthai_name'] = $username;
         }
@@ -65,6 +65,18 @@ class TaiKhoanController {
             $data['trangthai_id'],
             $data['type_account']
         );
+        if ($result) {
+            $id = $this->taiKhoanModel->getLastInsertId();
+            $this->nguoiDungController->addNguoiDung(
+                $id,
+                $data['fullname'],
+                $data['email'],
+                $data['phone'],
+                $data['date_of_birth'],
+                $data['chucvu_id'],
+                $data['picture']    
+            );
+        }
         echo json_encode(['success' => $result]);
     }
     
@@ -76,6 +88,18 @@ class TaiKhoanController {
             $data['trangthai_id'],
             $data['type_account']
         );
+        if ($result) {
+            $id = $this->taiKhoanModel->getLastInsertId();
+            $this->nguoiDungController->updateNguoiDung(
+                $id,
+                $data['fullname'],
+                $data['email'],
+                $data['phone'],
+                $data['date_of_birth'],
+                $data['chucvu_id'],
+                $data['picture']    
+            );
+        }
         echo json_encode(['success' => $result]);
     }
     

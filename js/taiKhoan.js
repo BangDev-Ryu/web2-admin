@@ -20,6 +20,7 @@ $(document).ready(function () {
                             <td>${taiKhoan.email}</td>
                             <td>${taiKhoan.phone}</td>
                             <td>${taiKhoan.date_of_birth}</td>
+                            <td>${taiKhoan.chucvu}</td>
                             <td>${taiKhoan.role_name}</td>
                             <td>${taiKhoan.trangthai_name}</td>
                             <td>${taiKhoan.created_at}</td>
@@ -89,6 +90,36 @@ $(document).ready(function () {
         taiKhoanModal.hide();
         deleteModal.hide();
     });
+
+    function loadTrangThai() {
+        $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "taiKhoan" },
+            dataType: "json",
+            success: function(response) {
+                $("#trangthai_id").html("");
+                response.trangThais.forEach(tt => {
+                    $("#trangthai_id").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    }
+
+    function loadChucVu() {
+        $.ajax({
+            url: "./controller/chucVu.controller.php",
+            type: "GET",
+            data: { action: "listChucVu", type: "taiKhoan" },
+            dataType: "json",
+            success: function(response) {
+                $("#chucvu_id").html("");
+                response.chucVus.forEach(cv => {
+                    $("#chucvu_id").append(`<option value="${cv.id}">${cv.role_name}</option>`);
+                });
+            }
+        });
+    }
     
     // Nút thêm tài khoản
     $("#addTaiKhoan").click(function () {
@@ -96,6 +127,8 @@ $(document).ready(function () {
         $("#taiKhoanForm")[0].reset();
         $("#taiKhoanId").val("");
         $("#taiKhoanModal").show();
+        loadTrangThai();
+        loadChucVu();
     });
 
     // Nút sửa tài khoản

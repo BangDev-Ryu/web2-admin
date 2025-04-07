@@ -37,5 +37,28 @@ class nguoiDungController {
         $birth_date = $this->nguoiDungModel->getBirthDateById($id);
         return $birth_date;
     }
+
+    public function addNguoiDung($data) {
+        $result = $this->nguoiDungModel->addNguoiDung($data);
+        echo json_encode(['success' => $result]);
+    }
+
+    public function updateNguoiDung($data) {
+        $result = $this->nguoiDungModel->updateNguoiDung($data);
+        echo json_encode(['success' => $result]);
+    }
+    
+}
+
+if (isset($_POST['action'])) {
+    $controller = new nguoiDungController();
+    switch ($_POST['action']) {
+        case 'addNguoiDung':
+            $controller->addNguoiDung($_POST);
+            break;
+        case 'updateNguoiDung':
+            $controller->updateNguoiDung($_POST);
+            break;
+    }
 }
 ?>

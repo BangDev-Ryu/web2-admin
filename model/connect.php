@@ -82,5 +82,9 @@ class connectDB
         
         return 0; // Trả về 0 nếu không có kết quả
     }
+
+    public function getLastInsertId() {
+        return $this->conn->insert_id;
+    }
 }
 ?>

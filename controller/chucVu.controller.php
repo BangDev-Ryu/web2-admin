@@ -18,10 +18,22 @@ class ChucVuController {
         $role_name = $this->chucVuModel->getNameById($id);
         return $role_name;
     }
+
+    public function getChucVuByType($type) {
+        switch ($type) {
+            case "taiKhoan":
+                $result = $this->chucVuModel->getChucVuByType(3, 0);
+                break;
+        }
+        
+        echo json_encode(["chucVus" => $result]);
+    }
+
+
 }
 
 if (isset($_GET['action']) && $_GET['action'] === "listChucVu") {
     $controller = new ChucVuController();
-    // $controller->getChucVuByType($_GET['type']);
+    $controller->getChucVuByType($_GET['type']);
 }
 ?>
