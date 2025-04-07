@@ -12,8 +12,7 @@ class TheLoaiController {
     }
 
     public function listAllTheLoai() {
-        $result = $this->theLoaiModel->getAllTheLoais();
-        $theLoais = $result->fetch_all(MYSQLI_ASSOC);
+        $theLoais = $this->theLoaiModel->getAllTheLoais();
 
         return $theLoais;
     }

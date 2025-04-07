@@ -1,40 +1,32 @@
 <?php
 require_once "../model/sanPham.model.php";
 require_once "./trangThai.controller.php";
-require_once "./theLoai.controller.php";
+require_once "./chuDe.controller.php";
 
 class SanPhamController {
     private $sanPhamModel;
     private $trangThaiController;
-    private $theLoaiController;
+    private $chuDeController;
 
     public function __construct() {
         $this->sanPhamModel = new SanPhamModel();
         $this->trangThaiController = new TrangThaiController();
-        $this->theLoaiController = new TheLoaiController();
+        $this->chuDeController = new ChuDeController();
     }
 
-    public function listSanPham($limit, $search) {
+    // load danh sách sản phẩm
+    public function listSanPham($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
-        $search = isset($_GET['search']) ? $search : '';
-
-        if (empty($search)) {
-            $products = $this->sanPhamModel->getSanPhams($limit, $offset);
-            $totalProducts = $this->sanPhamModel->getTotalSanPhams();
-        }
-        else {
-            $search = strtolower($search);
-            $products = $this->sanPhamModel->searchSanPham($search, $limit, $offset);
-            $totalProducts = $this->sanPhamModel->getTotalSearchSanPham($search);
-        }
+        $products = $this->sanPhamModel->getSanPhams($limit, $offset);
+        $totalProducts = $this->sanPhamModel->getTotalSanPhams();
         $totalPages = ceil($totalProducts / $limit);
         
         foreach ($products as &$product) {
             $trangThaiName = $this->trangThaiController->getNameById($product['trangthai_id']);
-            $theLoaiName = $this->theLoaiController->getNameById($product['theloai_id']);
-            $product['theloai_name'] = $theLoaiName;
+            $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
+            $product['chude_name'] = $chuDeName;
             $product['trangthai_name'] = $trangThaiName;
         }
 
@@ -45,12 +37,12 @@ class SanPhamController {
         ]);
     }
 
+    // load danh sách sản phẩm theo search
     public function listSanPhamBySearch($limit, $search) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
         $search = isset($_GET['search']) ? $search : '';
-
         $search = strtolower($search);
         $products = $this->sanPhamModel->searchSanPham($search, $limit, $offset);
         $totalProducts = $this->sanPhamModel->getTotalSearchSanPham($search);
@@ -58,8 +50,33 @@ class SanPhamController {
         
         foreach ($products as &$product) {
             $trangThaiName = $this->trangThaiController->getNameById($product['trangthai_id']);
-            $theLoaiName = $this->theLoaiController->getNameById($product['theloai_id']);
-            $product['theloai_name'] = $theLoaiName;
+            $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
+            $product['chude_name'] = $chuDeName;
+            $product['trangthai_name'] = $trangThaiName;
+        }
+
+        echo json_encode([
+            "products" => $products,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+
+    // load danh sách sản phẩm theo filter
+    public function listSanPhamByFilter($limit, $filter) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $filter = isset($_GET['filter']) ? $filter : [];
+        $products = $this->sanPhamModel->filterSanPham($filter, $limit, $offset);
+
+        $totalProducts = $this->sanPhamModel->getTotalFilterSanPham($filter);
+        $totalPages = ceil($totalProducts / $limit);
+        
+        foreach ($products as &$product) {
+            $trangThaiName = $this->trangThaiController->getNameById($product['trangthai_id']);
+            $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
+            $product['chude_name'] = $chuDeName;
             $product['trangthai_name'] = $trangThaiName;
         }
 
@@ -85,20 +102,27 @@ class SanPhamController {
         echo json_encode(['success' => $result]);
     }
     
-
 }
 
 if (isset($_GET['action'])) {
     $controller = new SanPhamController();
     switch ($_GET['action']) {
         case 'listSanPham':
-            $controller->listSanPham($_GET['limit'], $_GET['search']);
+            $controller->listSanPham($_GET['limit']);
+            break;
+        case 'listSanPhamBySearch':
+            $controller->listSanPhamBySearch($_GET['limit'], $_GET['search']);
+            break;
+        case 'listSanPhamByFilter':
+            $controller->listSanPhamByFilter($_GET['limit'], $_GET['filter']);
             break;
         case 'getSanPham':
             $controller->getSanPhamById($_GET['id']);
             break;
     }
-} else if (isset($_POST['action'])) {
+}
+
+if (isset($_POST['action'])) {
     $controller = new SanPhamController();
     switch ($_POST['action']) {
         case 'addSanPham':

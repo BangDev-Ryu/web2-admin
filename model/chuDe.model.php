@@ -1,43 +1,43 @@
 <?php
 require_once '../model/connect.php';
 
-class TheLoaiModel {
+class ChuDeModel {
     private $db;
 
     public function __construct() {
         $this->db = new connectDB();
     }
 
-    public function getTotalTheLoais() {
-        return $this->db->totalByCondition('theloai', '', '1=1', []);
+    public function getTotalChuDes() {
+        return $this->db->totalByCondition('chude', '', '1=1', []);
     }
 
-    public function getAllTheLoais() {
-        $result = $this->db->selectAll('theloai');
+    public function getAllChuDes() {
+        $result = $this->db->selectAll('chude');
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getNameById($id) {
-        $sql = "SELECT name FROM theloai WHERE id = ?";
+        $sql = "SELECT name FROM chude WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);
         return $result->fetch_assoc()['name'];
     }
 
-    public function getTheLoais($limit, $offset) {
-        $sql = "SELECT * FROM theloai
+    public function getChuDes($limit, $offset) {
+        $sql = "SELECT * FROM chude
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getTheLoaiById($id) {
-        $sql = "SELECT * FROM theloai WHERE id = ?";
+    public function getChuDeById($id) {
+        $sql = "SELECT * FROM chude WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);
         return $result->fetch_assoc();
     }
 
-    public function addTheLoai($data) {
-        $sql = "INSERT INTO theloai (name, description, trangthai_id) VALUES (?, ?, ?)";
+    public function addChuDe($data) {
+        $sql = "INSERT INTO chude (name, description, trangthai_id) VALUES (?, ?, ?)";
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['description'],
@@ -45,8 +45,8 @@ class TheLoaiModel {
         ]);
     }
 
-    public function updateTheLoai($data) {
-        $sql = "UPDATE theloai SET name = ?, description = ?, trangthai_id = ? WHERE id = ?";
+    public function updateChuDe($data) {
+        $sql = "UPDATE chude SET name = ?, description = ?, trangthai_id = ? WHERE id = ?";
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['description'],
@@ -55,14 +55,16 @@ class TheLoaiModel {
         ]);
     }
 
-    public function deleteTheLoai($id) {
-        $sql = "DELETE FROM theloai WHERE id = ?";
+    public function deleteChuDe($id) {
+        $sql = "DELETE FROM chude WHERE id = ?";
         return $this->db->executePrepared($sql, [$id]);
     }
 
-    public function searchTheLoai($search) {
-        $sql = "SELECT * FROM theloai 
-                WHERE id LIKE ? OR LOWER(name) LIKE ?";
+    public function searchChuDe($search) {
+        $sql = "SELECT cd.*, tt.name as trangthai_name 
+                FROM chude cd
+                LEFT JOIN trangthai tt ON cd.trangthai_id = tt.id
+                WHERE cd.id LIKE ? OR LOWER(cd.name) LIKE ?";
         $searchParam = "%$search%";
         $result = $this->db->executePrepared($sql, [$searchParam, $searchParam]);
         return $result->fetch_all(MYSQLI_ASSOC);
