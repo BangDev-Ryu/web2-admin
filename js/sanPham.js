@@ -1,8 +1,9 @@
 $(document).ready(function () {
     let currentPage = 1;
     const limit = 6;
-    let searchValue = ""; 
-    let filterData = {};
+
+    let searchValue = ""; // giá trị ô input tìm kiếm
+    let filterData = {}; // các thuộc tính lọc
 
     function loadProducts(page, searchValue, filterData) {
         let data = { 
@@ -269,7 +270,6 @@ $(document).ready(function () {
                 $("#sanPham-quantity").val(response.sanPham.stock_quantity);
                 $("#sanPham-warranty").val(response.sanPham.warranty_days);
                 $("#imagePreview").attr("src", response.sanPham.image_url);
-                $("#image-base64").val(""); 
                 
                 loadChuDe();
                 loadTrangThai();
@@ -289,7 +289,6 @@ $(document).ready(function () {
             const reader = new FileReader();
             reader.onload = function(e) {
                 $("#imagePreview").attr("src", e.target.result);
-                $("#image-base64").val(e.target.result);
             };
             reader.readAsDataURL(file);
         }
@@ -300,24 +299,52 @@ $(document).ready(function () {
         e.preventDefault();
         const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
         
-        const data = {
-            id: $("#sanPhamId").val(),
-            name: $("#sanPham-name").val(),
-            description: $("#sanPham-description").val(),
-            selling_price: $("#sanPham-price").val(),
-            stock_quantity: $("#sanPham-quantity").val(),
-            theloai_id: $("#sanPham-theLoai").val(),
-            trangthai_id: $("#sanPham-trangThai").val(),
-            warranty_days: $("#sanPham-warranty").val(),
-            image_url: $("#image-base64").val() || $("#imagePreview").attr("src"), 
-            updated_at: now,
-            action: $("#sanPhamId").val() ? "updateSanPham" : "addSanPham"
-        };
+        let formData = new FormData();
+        formData.append("action", $("#sanPhamId").val() ? "updateSanPham" : "addSanPham");
+        formData.append("id", $("#sanPhamId").val());
+        formData.append("name", $("#sanPham-name").val());
+        formData.append("description", $("#sanPham-description").val());
+        formData.append("selling_price", $("#sanPham-price").val());
+        formData.append("stock_quantity", $("#sanPham-quantity").val());
+        formData.append("chude_id", $("#sanPham-chuDe").val());
+        formData.append("trangthai_id", $("#sanPham-trangThai").val());
+        formData.append("warranty_days", $("#sanPham-warranty").val());
+        formData.append("updated_at", now);
+
+        // const data = {
+        //     id: $("#sanPhamId").val(),
+        //     name: $("#sanPham-name").val(),
+        //     description: $("#sanPham-description").val(),
+        //     selling_price: $("#sanPham-price").val(),
+        //     stock_quantity: $("#sanPham-quantity").val(),
+        //     theloai_id: $("#sanPham-theLoai").val(),
+        //     trangthai_id: $("#sanPham-trangThai").val(),
+        //     warranty_days: $("#sanPham-warranty").val(),
+        //     updated_at: now,
+        //     action: $("#sanPhamId").val() ? "updateSanPham" : "addSanPham"
+        // };
+
+        // Thêm file ảnh nếu có
+        const imageFile = $("#sanPham-image")[0].files[0];
+        if (imageFile) {
+            // data.img = imageFile;
+            // data.image_url = "";
+            formData.append("img", imageFile);
+            formData.append("image_url", "");
+        } 
+        else if ($("#imagePreview").attr("src")) {
+            // Nếu không có file mới, giữ lại ảnh cũ
+            // data.image_url = $("#imagePreview").attr("src");
+            formData.append("image_url", data.image_url);
+        }
+        console.log(formData);
 
         $.ajax({
             url: "./controller/sanPham.controller.php",
             type: "POST",
-            data: data,
+            data: formData,
+            processData: false, 
+            contentType: false, 
             success: function(response) {
                 sanPhamModal.hide();
                 loadProducts(currentPage, searchValue);

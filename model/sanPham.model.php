@@ -25,13 +25,30 @@ class SanPhamModel {
         return $result->fetch_assoc();
     }
 
+    public function getLastId() {
+        $sql = "SELECT id FROM sanpham ORDER BY id DESC LIMIT 1";
+        $result = $this->db->executePrepared($sql, []);
+        return $result->fetch_assoc()['id'];
+    }
+
     public function addSanPham($data) {
+        if (isset($data['img'])) {
+            $newId = $this->getLastId() + 1; // lấy id mới nhất
+            $ext = pathinfo($data['img']['name'], PATHINFO_EXTENSION); // lấy đuôi file
+            $targetDir = __DIR__ . "/../assets/img/product-img/"; // tạo đường dẫn
+            $targetFile = $targetDir . "product_" . $newId . "." . $ext; // đường dẫn hoàn chỉnh
+
+            move_uploaded_file($data["img"]["tmp_name"], $targetFile); // 
+            $image_url = "./assets/img/product-img/product_" . $newId . "." . $ext; // đường dẫn hoàn chỉnh
+            $data['image_url'] = $image_url; 
+        } 
+
         $sql = "INSERT INTO sanpham (
                     name, 
                     description, 
                     selling_price, 
                     stock_quantity, 
-                    theloai_id, 
+                    chude_id, 
                     trangthai_id, 
                     warranty_days, 
                     image_url, 
@@ -42,7 +59,7 @@ class SanPhamModel {
             $data['description'],
             $data['selling_price'],
             $data['stock_quantity'],
-            $data['theloai_id'],
+            $data['chude_id'],
             $data['trangthai_id'],
             $data['warranty_days'],
             $data['image_url'],
@@ -51,12 +68,22 @@ class SanPhamModel {
     }
 
     public function updateSanPham($data) {
+        if (isset($data['img'])) {
+            $ext = pathinfo($data['img']['name'], PATHINFO_EXTENSION); // lấy đuôi file
+            $targetDir = __DIR__ . "/../assets/img/product-img/"; // tạo đường dẫn
+            $targetFile = $targetDir . "product_" . $data['id'] . "." . $ext; // đường dẫn hoàn chỉnh
+
+            move_uploaded_file($data["img"]["tmp_name"], $targetFile); 
+            $image_url = "./assets/img/product-img/product_" . $data['id'] . "." . $ext; // đường dẫn hoàn chỉnh
+            $data['image_url'] = $image_url; 
+        } 
+
         $sql = "UPDATE sanpham SET 
                     name = ?, 
                     description = ?, 
                     selling_price = ?, 
                     stock_quantity = ?, 
-                    theloai_id = ?, 
+                    chude_id = ?, 
                     trangthai_id = ?, 
                     warranty_days = ?, 
                     image_url = ?, 
@@ -67,7 +94,7 @@ class SanPhamModel {
             $data['description'],
             $data['selling_price'],
             $data['stock_quantity'],
-            $data['theloai_id'],
+            $data['chude_id'],
             $data['trangthai_id'],
             $data['warranty_days'],
             $data['image_url'],
