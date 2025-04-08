@@ -94,7 +94,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 id="modalTitle">Thêm sản phẩm</h2>
-            <form id="sanPhamForm">
+            <form id="sanPhamForm" enctype="multipart/form-data">
                 <input type="hidden" id="sanPhamId">
                 <div class="form-group">
                     <label for="sanPham-name">Tên sản phẩm:</label>
@@ -131,8 +131,7 @@
                 <div class="form-group">
                     <label for="sanPham-image">Hình ảnh sản phẩm:</label>
                     <div class="file-upload">
-                        <input type="file" id="sanPham-image" name="sanPham-image" accept="image/*">
-                        <input type="hidden" id="image-base64" name="image-base64">
+                        <input type="file" id="sanPham-image" name="sanPham-image">
                         <div class="image-preview">
                             <img id="imagePreview" src="" alt="Preview">
                         </div>

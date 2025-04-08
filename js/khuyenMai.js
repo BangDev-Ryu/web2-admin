@@ -129,10 +129,10 @@ $(document).ready(function () {
  
      
      $("#addKhuyenMai").click(function() {
-         $("#modalTitle").text("Thêm khuyến mãi");
-         $("#khuyenMaiForm")[0].reset();
-         $("#khuyenMaiId").val("");
-         khuyenMaiModal.show();
+        $("#modalTitle").text("Thêm khuyến mãi");
+        $("#khuyenMaiForm")[0].reset();
+        $("#khuyenMaiId").val("");
+        khuyenMaiModal.show();
      });
  
  
