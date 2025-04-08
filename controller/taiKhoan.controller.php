@@ -69,6 +69,7 @@ class TaiKhoanController {
             $id = $this->taiKhoanModel->getLastInsertId();
             $this->nguoiDungController->addNguoiDung(
                 $id,
+                $data['taikhoan_id'],
                 $data['fullname'],
                 $data['email'],
                 $data['phone'],
@@ -92,6 +93,7 @@ class TaiKhoanController {
             $id = $this->taiKhoanModel->getLastInsertId();
             $this->nguoiDungController->updateNguoiDung(
                 $id,
+                $data['taikhoan_id'],
                 $data['fullname'],
                 $data['email'],
                 $data['phone'],

@@ -121,6 +121,7 @@ $(document).ready(function () {
         });
     }
     
+    
     // Nút thêm tài khoản
     $("#addTaiKhoan").click(function () {
         $("#modalTitle").text("Thêm Tài Khoản");
@@ -142,10 +143,17 @@ $(document).ready(function () {
             success: function (response) {
                 $("#modalTitle").text("Sửa Tài Khoản");
                 $("#taiKhoanId").val(response.taiKhoan.id);
+                $("#fullname").val(response.taiKhoan.fullname);
                 $("#username").val(response.taiKhoan.username);
                 $("#password").val(""); // Không hiển thị mật khẩu
+                $("#chucvu_id").val(response.taiKhoan.chucvu_id);
+                $("#email").val(response.taiKhoan.email)
+                $("#phone").val(response.taiKhoan.phone);
+                $("#date_of_birth").val(response.taiKhoan.date_of_birth);    
                 $("#trangthai_id").val(response.taiKhoan.trangthai_id);
                 $("#type_account").val(response.taiKhoan.type_account);
+                $("#imagePreview").attr("src", response.taiKhoan.picture);
+                $("#image-base64").val(""); 
                 $("#taiKhoanModal").show();
             },
         });
@@ -156,10 +164,16 @@ $(document).ready(function () {
         e.preventDefault();
         const data = {
             id: $("#taiKhoanId").val(),
+            fullname: $("#fullname").val(),
             username: $("#username").val(),
             password: $("#password").val(),
+            email: $("#email").val(),
+            phone: $("#phone").val(),
+            date_of_birth: $("#date_of_birth").val(),
+            chucvu_id: $("#chucvu_id").val(),
             trangthai_id: $("#trangthai_id").val(),
             type_account: $("#type_account").val(),
+            picture: $("#image-base64").val() || $("#imagePreview").attr("src"),
             action: $("#taiKhoanId").val() ? "updateTaiKhoan" : "addTaiKhoan",
         };
 

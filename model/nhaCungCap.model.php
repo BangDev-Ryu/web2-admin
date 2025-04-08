@@ -12,13 +12,6 @@ class NhaCungCapModel {
         return $this->db->totalByCondition('nhacungcap', '', '1=1', []);
     }
 
-    public function getNameById($id) {
-        $sql = "SELECT name FROM nhacungcap WHERE id = ?";
-        $result = $this->db->executePrepared($sql, [$id]);
-        return $result->fetch_assoc()['name'];
-    }
-
-
     public function getNhaCungCaps($limit, $offset) {
         $sql = "SELECT * FROM nhacungcap
                 LIMIT ? OFFSET ?";
@@ -62,23 +55,42 @@ class NhaCungCapModel {
         return $this->db->executePrepared($sql, [$id]);
     }
 
-    public function searchNhaCungCap($search) {
+    public function getTotalSearchNhaCungCap($search) {
+        $sql = "SELECT COUNT(*) as total FROM nhacungcap 
+                WHERE id LIKE ? OR LOWER(name) LIKE ?
+                OR LOWER(contact_person) LIKE ? 
+                OR LOWER(contact_email) LIKE ? 
+                OR LOWER(contact_phone) LIKE ? 
+                OR LOWER(address) LIKE ?
+                OR lower(trangthai_id) LIKE ?";
+    
+        $searchParam = "%$search%";
+        $params = array_fill(0, 7, $searchParam); 
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
+    
+    public function searchNhaCungCap($search, $limit, $offset) {
         $sql = "SELECT * FROM nhacungcap 
                 WHERE id LIKE ? 
                 OR LOWER(name) LIKE ? 
                 OR LOWER(contact_person) LIKE ? 
                 OR LOWER(contact_email) LIKE ? 
                 OR LOWER(contact_phone) LIKE ? 
-                OR LOWER(address) LIKE ?";
-        
-        $searchParam = "%" . strtolower($search) . "%";
-        $result = $this->db->executePrepared($sql, [
-            $searchParam, $searchParam, $searchParam,
-            $searchParam, $searchParam, $searchParam
-        ]);
-        
+                OR LOWER(address) LIKE ?
+                OR lower(trangthai_id) LIKE ?
+                LIMIT ? OFFSET ?";
+    
+        $searchParam = "%$search%";
+        $params = array_fill(0, 7, $searchParam); 
+        $params[] = $limit;
+        $params[] = $offset;
+    
+        $result = $this->db->executePrepared($sql, $params);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+    
     
 
 

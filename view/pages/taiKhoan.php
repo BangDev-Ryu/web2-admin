@@ -61,7 +61,7 @@
                 <input type="hidden" id="taiKhoanId">
                 <div class="form-group">
                     <label for="fullname">Họ tên:</label>
-                    <input type="text" id="fullname" name="fullname" required>
+                    <input type="text" id="fullname" name="fullname">
                 </div>
                 <div class="form-group">
                     <label for="username">Tên đăng nhập:</label>
@@ -77,11 +77,11 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">SĐT:</label>
-                    <input type="text" id="phone" name="phone" required>
+                    <input type="text" id="phone" name="phone">
                 </div>
                 <div class="form-group">
                     <label for="date_of_birth">Ngày sinh:</label>
-                    <input type="date" id="date_of_birth" name="date_of_birth" required>
+                    <input type="date" id="date_of_birth" name="date_of_birth">
                 </div>
                 <div class="form-group">
                     <label for="chucvu_id">Chức vụ:</label>
@@ -97,7 +97,8 @@
                 <div class="form-group">
                     <label for="type_account">Loại tài khoản:</label>
                     <select id="type_account" name="type_account" required>
-
+                        <option value="1">Người dùng</option>
+                        <option value="0">Admin</option>
                     </select>
                     
                 </div>

@@ -11,25 +11,27 @@ class NhaCungCapController {
         $this->trangThaiController = new TrangThaiController();
     }
 
-    public function getNameById($id) {
-        $name = $this->nhaCungCapModel->getNameById($id);
-        return $name;
-    }
-
-    public function listNhaCungCap($limit) {
+    public function listNhaCungCap($limit, $search) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
-        $nhaCungCaps = $this->nhaCungCapModel->getNhaCungCaps($limit, $offset);
-       
-        $totalProducts = $this->nhaCungCapModel->getTotalNhaCungCaps();
-        $totalPages = ceil($totalProducts / $limit);
+        $search = isset($_GET['search']) ? $search : '';
 
+        if (empty($search)) {
+            $nhaCungCaps = $this->nhaCungCapModel->getNhaCungCaps($limit, $offset);
+            $totalNhaCungCaps = $this->nhaCungCapModel->getTotalNhaCungCaps();
+        }
+        else {
+            $search = strtolower($search);
+            $nhaCungCaps = $this->nhaCungCapModel->searchNhaCungCap($search, $limit, $offset);
+            $totalNhaCungCaps = $this->nhaCungCapModel->getTotalSearchNhaCungCap($search);
+        }
+        $totalPages = ceil($totalNhaCungCaps / $limit);
+        
         foreach ($nhaCungCaps as &$nhaCungCap) {
             $trangThaiName = $this->trangThaiController->getNameById($nhaCungCap['trangthai_id']);
             $nhaCungCap['trangthai_name'] = $trangThaiName;
         }
-        
 
         echo json_encode([
             "nhaCungCaps" => $nhaCungCaps,
@@ -38,13 +40,33 @@ class NhaCungCapController {
         ]);
     }
 
+    public function listNhaCungCapBySearch($limit, $search) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
 
+        $search = isset($_GET['search']) ? $search : '';
 
+        $search = strtolower($search);
+        $nhaCungCaps = $this->nhaCungCapModel->searchNhaCungCap($search, $limit, $offset);
+        $totalNhaCungCaps = $this->nhaCungCapModel->getTotalSearchNhaCungCap($search);
+        $totalPages = ceil($totalNhaCungCaps / $limit);
+        
+        foreach ($nhaCungCaps as &$nhaCungCap) {
+            $trangThaiName = $this->trangThaiController->getNameById($nhaCungCap['trangthai_id']);
+            $nhaCungCap['trangthai_name'] = $trangThaiName;
+        }
 
-public function getNhaCungCap($id) {
+        echo json_encode([
+            "nhaCungCaps" => $nhaCungCaps,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+
+public function getNhaCungCapById($id) {
     $nhaCungCap = $this->nhaCungCapModel->getNhaCungCapById($id);
     echo json_encode(['nhaCungCap' => $nhaCungCap]);
-}
+    }
 
 public function addNhaCungCap($data) {
     $result = $this->nhaCungCapModel->addNhaCungCap($data);
@@ -61,15 +83,6 @@ public function deleteNhaCungCap($id) {
     echo json_encode(['success' => $result]);
 }
 
-public function searchNhaCungCap($search) {
-    $search = strtolower($search);
-    $nhaCungCaps = $this->nhaCungCapModel->searchNhaCungCap($search);
-    foreach ($nhaCungCaps as &$nhaCungCap) {
-        $name = $this->trangThaiController->getNameById($nhaCungCap['trangthai_id']);
-        $nhaCungCap['trangthai_name'] = $name;
-    }
-    echo json_encode(['nhaCungCaps' => $nhaCungCaps]);
-}
 }
 
 // Xử lý các request
@@ -77,15 +90,12 @@ if (isset($_GET['action'])) {
 $controller = new NhaCungCapController();
 switch ($_GET['action']) {
     case 'listNhaCungCap':
-        $controller->listNhaCungCap($_GET['limit']);
+        $controller->listNhaCungCap($_GET['limit'], $_GET['search']);
         break;
     case 'getNhaCungCap':
-        $controller->getNhaCungCap($_GET['id']);
+        $controller->getNhaCungCapById($_GET['id']);
         break;
-    case 'searchNhaCungCap':
-        $controller->searchNhaCungCap($_GET['search']);
-        break;
-}
+    }
 }
 
 if (isset($_POST['action'])) {
@@ -100,10 +110,7 @@ switch ($_POST['action']) {
     case 'deleteNhaCungCap':
         $controller->deleteNhaCungCap($_POST['id']);
         break;
+    }   
 }
-}
-
-
-
 
 ?>

@@ -1,36 +1,27 @@
 $(document).ready(function () {
     let currentPage = 1;
-    const limit = 8;
+    const limit = 6;
+    let searchValue = ""; 
 
-    function loadKhuyenMais(page) {
+    function loadKhuyenMais(page, searchValue, filterData) {
+        let data = { 
+            action: "listKhuyenMai", 
+            page: page, 
+            limit: limit,
+            search: searchValue 
+        };
+
+        if (filterData) {
+            data = {...data, ...filterData};
+        }
+
         $.ajax({
             url: "./controller/khuyenMai.controller.php",
             type: "GET",
-            data: { action: "listKhuyenMai", page: page, limit: limit },
+            data: data,
             dataType: "json",
             success: function (response) {
-                console.log(response)
-                $("#khuyenMaiList").html("");
-                response.khuyenMais.forEach(km => {
-                    let row = `
-                        <tr> 
-                            <td>${km.id}</td>
-                            <td>${km.name}</td>
-                            <td>${km.code}</td>
-                            <td>${km.profit}</td>
-                            <td>${km.type}</td>
-                            <td>${km.startDate}</td>
-                            <td>${km.endDate}</td>
-                            <td>
-                                <button id = "editKhuyenMai" class="btn edit-btn" data-id="${km.id}">Sửa</button>
-                                <button id = "deleteKhuyenMai" class="btn delete-btn" data-id="${km.id}">Xóa</button>
-                            </td>
-                        </tr>
-                    `;
-                    $("#khuyenMaiList").append(row);
-                });
-
-                // Render pagination
+                renderKhuyenMai(response.khuyenMais);
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -40,7 +31,6 @@ $(document).ready(function () {
             }
         });
     }
-
     function renderPagination(totalPages, currentPage) {
         $("#pagination").html("");
 
@@ -71,15 +61,59 @@ $(document).ready(function () {
             );
         }
 
-        $(".page-btn").click(function () {
+
+    $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadNhaCungCaps(page);
+            loadKhuyenMais(page, searchValue); 
         });
     }
 
-    loadKhuyenMais(currentPage);
+    loadKhuyenMais(currentPage, searchValue);
 
 
+    function renderKhuyenMai(khuyenMais) {
+        $("#khuyenMaiList").html("");
+        if (khuyenMais && khuyenMais.length > 0) {
+            khuyenMais.forEach(km => {
+                let row = `
+                    <tr> 
+                        <td>${km.id}</td>
+                        <td>${km.name}</td>
+                        <td>${km.code}</td>
+                        <td>${km.profit}</td>
+                        <td>${km.type}</td>
+                        <td>${km.startDate}</td>
+                        <td>${km.endDate}</td>
+                        <td>
+                            <button class="btn edit-btn" data-id="${km.id}">Sửa</button>
+                            <button class="btn delete-btn" data-id="${km.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#khuyenMaiList").append(row);
+            });
+        } else {
+            $("#khuyenMaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
+
+    let searchTimeout;
+ 
+    $("#searchKhuyenMai").on("input", function () {
+       const searchValue = $(this).val().trim();
+       clearTimeout(searchTimeout);
+       currentPage = 1;
+   
+       if (searchValue === "") {
+           loadKhuyenMais(currentPage, searchValue);
+           return;
+       }
+   
+       searchTimeout = setTimeout(() => {
+           loadKhuyenMais(currentPage, searchValue);
+       }, 300);
+   });
+    
 
 
      // Xử lý modal
@@ -191,59 +225,5 @@ $(document).ready(function () {
              });
          }
      });
- 
-     // dùng timeout để debounce
-     let searchTimeout;
-     // tìm kiếm 
-     $("#searchKhuyenMai").on("input", function() {
-         const searchValue = $("#searchKhuyenMai").val().trim();
-         clearTimeout(searchTimeout);
-         
-         if (searchValue === "") {
-             loadKhuyenMais(currentPage);
-             return;
-         }
- 
-         searchTimeout = setTimeout(() => {
-             $.ajax({
-                 url: "./controller/khuyenMai.controller.php",
-                 type: "GET",
-                 data: { 
-                     action: "searchKhuyenMai",
-                     search: searchValue 
-                 },
-                 dataType: "json",
-                 success: function(response) {
-                     $("#khuyenMaiList").html("");
-                     if (response.khuyenMais && response.khuyenMais.length > 0) {
-                         response.khuyenMais.forEach(km => {
-                             let row = `
-                                 <tr>
-                                     <td>${km.id}</td>
-                                     <td>${km.name}</td>
-                                     <td>${km.code}</td>
-                                     <td>${km.profit}</td>
-                                     <td>${km.type}</td>
-                                     <td>${km.startDate}</td>
-                                     <td>${km.endDate}</td>
-                                     <td>
-                                         <button class="btn edit-btn" data-id="${km.id}">Sửa</button>
-                                         <button class="btn delete-btn" data-id="${km.id}">Xóa</button>
-                                     </td>
-                                 </tr>
-                             `;
-                             $("#khuyenMaiList").append(row);
-                         });
-                     } else {
-                         $("#khuyenMaiList").append('<tr><td colspan="5">Không tìm thấy kết quả</td></tr>');
-                     }
-                     // sẽ chỉnh sau
-                     $("#pagination").html("");
-                 },
-                 error: function(xhr, status, error) {
-                     console.error("Lỗi tìm kiếm:", error);
-                 }
-             });
-         }, 300);
-     });
-});
+
+    })

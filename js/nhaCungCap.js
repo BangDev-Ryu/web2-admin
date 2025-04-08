@@ -1,36 +1,28 @@
 $(document).ready(function () {
     let currentPage = 1;
-    const limit = 8;
+    const limit = 6;
+    let searchValue = ""; 
 
-    function loadNhaCungCaps(page) {
+
+    function loadNhaCungCaps(page, searchValue, filterData) {
+        let data = { 
+            action: "listNhaCungCap", 
+            page: page, 
+            limit: limit,
+            search: searchValue 
+        };
+
+        if (filterData) {
+            data = {...data, ...filterData};
+        }
+
         $.ajax({
             url: "./controller/nhaCungCap.controller.php",
             type: "GET",
-            data: { action: "listNhaCungCap", page: page, limit: limit },
+            data: data,
             dataType: "json",
             success: function (response) {
-                console.log(response)
-                $("#nhaCungCapList").html("");
-                response.nhaCungCaps.forEach(ncc => {
-                    let row = `
-                        <tr> 
-                            <td>${ncc.id}</td>
-                            <td>${ncc.name}</td>
-                            <td>${ncc.contact_person}</td>
-                            <td>${ncc.contact_email}</td>
-                            <td>${ncc.contact_phone}</td>
-                            <td>${ncc.address}</td>
-                            <td>${ncc.trangthai_name}</td>
-                            <td>
-                                <button id = "editNhaCungCap" class="btn edit-btn" data-id="${ncc.id}">Sửa</button>
-                                <button id = "deleteNhaCungCap" class="btn delete-btn" data-id="${ncc.id}">Xóa</button>
-                            </td>
-                        </tr>
-                    `;
-                    $("#nhaCungCapList").append(row);
-                });
-
-                // Render pagination
+                renderNhaCungCap(response.nhaCungCaps);
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -71,26 +63,69 @@ $(document).ready(function () {
             );
         }
 
-        $(".page-btn").click(function () {
+
+    $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadNhaCungCaps(page);
+            loadNhaCungCaps(page, searchValue); 
         });
     }
 
-    loadNhaCungCaps(currentPage);
+    loadNhaCungCaps(currentPage, searchValue);
+
+    function renderNhaCungCap(nhaCungCaps) {
+        $("#nhaCungCapList").html("");
+        if (nhaCungCaps && nhaCungCaps.length > 0) {
+            nhaCungCaps.forEach(ncc => {
+                let row = `
+                    <tr> 
+                        <td>${ncc.id}</td>
+                        <td>${ncc.name}</td>
+                        <td>${ncc.contact_person}</td>
+                        <td>${ncc.contact_email}</td>
+                        <td>${ncc.contact_phone}</td>
+                        <td>${ncc.address}</td>
+                        <td>${ncc.trangthai_name}</td>
+                        <td>
+                            <button class="btn edit-btn" data-id="${ncc.id}">Sửa</button>
+                            <button class="btn delete-btn" data-id="${ncc.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#nhaCungCapList").append(row);
+            });
+        } else {
+            $("#nhaCungCapList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
 
 
+    let searchTimeout;
+ 
+    $("#searchNhaCungCap").on("input", function () {
+       const searchValue = $(this).val().trim();
+       clearTimeout(searchTimeout);
+       currentPage = 1;
+   
+       if (searchValue === "") {
+           loadNhaCungCaps(currentPage, searchValue);
+           return;
+       }
+   
+       searchTimeout = setTimeout(() => {
+           loadNhaCungCaps(currentPage, searchValue);
+       }, 300);
+   });
 
 
      // Xử lý modal
      const nhaCungCapModal = $("#nhaCungCapModal");
-     const deleteModal = $("#deleteModal");
-     let deleteId = null;
+     //const deleteModal = $("#deleteModal");
+    // let deleteId = null;
  
      // Đóng modal 
      $(".close, .cancel-btn").click(function() {
          nhaCungCapModal.hide();
-         deleteModal.hide();
+         //deleteModal.hide();
      });
  
      // Nút thêm nhà cung cấp
@@ -197,58 +232,5 @@ $(document).ready(function () {
          }
      });
  
-     // dùng timeout để debounce
-     let searchTimeout;
- 
-     $("#searchNhaCungCap").on("input", function() {
-         const searchValue = $("#searchNhaCungCap").val().trim();
-         clearTimeout(searchTimeout);
-         
-         if (searchValue === "") {
-             loadNhaCungCaps(currentPage);
-             return;
-         }
- 
-         searchTimeout = setTimeout(() => {
-             $.ajax({
-                 url: "./controller/nhaCungCap.controller.php",
-                 type: "GET",
-                 data: { 
-                     action: "searchNhaCungCap",
-                     search: searchValue 
-                 },
-                 dataType: "json",
-                 success: function(response) {
-                     $("#nhaCungCapList").html("");
-                     if (response.nhaCungCaps && response.nhaCungCaps.length > 0) {
-                         response.nhaCungCaps.forEach(nhaCungCap => {
-                             let row = `
-                                 <tr>
-                                     <td>${nhaCungCap.id}</td>
-                                     <td>${nhaCungCap.name}</td>
-                                     <td>${nhaCungCap.contact_person}</td>
-                                     <td>${nhaCungCap.contact_email}</td>
-                                     <td>${nhaCungCap.contact_phone}</td>
-                                     <td>${nhaCungCap.address}</td>
-                                     <td>${nhaCungCap.trangthai_name}</td>
-                                     <td>
-                                         <button id="editNhaCungCap" class="btn edit-btn" data-id="${nhaCungCap.id}">Sửa</button>
-                                         <button id="deleteNhaCungCap" class="btn delete-btn" data-id="${nhaCungCap.id}">Xóa</button>
-                                     </td>
-                                 </tr>
-                             `;
-                             $("#nhaCungCapList").append(row);
-                         });
-                     } else {
-                         $("#nhaCungCapList").append('<tr><td colspan="5">Không tìm thấy kết quả</td></tr>');
-                     }
-                     // sẽ chỉnh sau
-                     $("#pagination").html("");
-                 },
-                 error: function(xhr, status, error) {
-                     console.error("Lỗi tìm kiếm:", error);
-                 }
-             });
-         }, 300);
-     });
+    
 });
