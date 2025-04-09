@@ -130,6 +130,7 @@ $(document).ready(function () {
         $("#taiKhoanModal").show();
         loadTrangThai();
         loadChucVu();
+        taiKhoanModal.show();
     });
 
     // Nút sửa tài khoản
@@ -141,6 +142,7 @@ $(document).ready(function () {
             data: { action: "getTaiKhoan", id: id },
             dataType: "json",
             success: function (response) {
+                taiKhoanModal.show();
                 $("#modalTitle").text("Sửa Tài Khoản");
                 $("#taiKhoanId").val(response.taiKhoan.id);
                 $("#fullname").val(response.taiKhoan.fullname);
@@ -154,7 +156,6 @@ $(document).ready(function () {
                 $("#type_account").val(response.taiKhoan.type_account);
                 $("#imagePreview").attr("src", response.taiKhoan.picture);
                 $("#image-base64").val(""); 
-                $("#taiKhoanModal").show();
             },
         });
     });
@@ -169,22 +170,26 @@ $(document).ready(function () {
             password: $("#password").val(),
             email: $("#email").val(),
             phone: $("#phone").val(),
+            taiKhoan_id: $("#taiKhoanId").val(),
             date_of_birth: $("#date_of_birth").val(),
             chucvu_id: $("#chucvu_id").val(),
             trangthai_id: $("#trangthai_id").val(),
             type_account: $("#type_account").val(),
             picture: $("#image-base64").val() || $("#imagePreview").attr("src"),
-            action: $("#taiKhoanId").val() ? "updateTaiKhoan" : "addTaiKhoan",
+            action: $("#taiKhoanId").val() ? "updateTaiKhoan" : "addTaiKhoan"
         };
-
+            console.log(data);
         $.ajax({
             url: "./controller/taiKhoan.controller.php",
             type: "POST",
             data: data,
             success: function (response) {
-                $("#taiKhoanModal").hide();
+                taiKhoanModal.hide();
                 loadTaiKhoans(currentPage);
             },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
         });
     });
 

@@ -66,10 +66,9 @@ class TaiKhoanController {
             $data['type_account']
         );
         if ($result) {
-            $id = $this->taiKhoanModel->getLastInsertId();
-            $this->nguoiDungController->addNguoiDung(
-                $id,
-                $data['taikhoan_id'],
+            $tkid = $this->taiKhoanModel->getLastInsertId();
+            $second_result = $this->nguoiDungController->addNguoiDung(
+                $tkid,
                 $data['fullname'],
                 $data['email'],
                 $data['phone'],
@@ -78,7 +77,7 @@ class TaiKhoanController {
                 $data['picture']    
             );
         }
-        echo json_encode(['success' => $result]);
+        echo json_encode(['success' => $second_result]);
     }
     
     public function updateTaiKhoan($data) {
@@ -90,10 +89,9 @@ class TaiKhoanController {
             $data['type_account']
         );
         if ($result) {
-            $id = $this->taiKhoanModel->getLastInsertId();
-            $this->nguoiDungController->updateNguoiDung(
-                $id,
-                $data['taikhoan_id'],
+            $tkid = $this->taiKhoanModel->getLastInsertId();
+            $second_result = $this->nguoiDungController->updateNguoiDung(
+                $tkid,
                 $data['fullname'],
                 $data['email'],
                 $data['phone'],
@@ -102,7 +100,7 @@ class TaiKhoanController {
                 $data['picture']    
             );
         }
-        echo json_encode(['success' => $result]);
+        echo json_encode(['success' => $second_result]);
     }
     
     public function deleteTaiKhoan($id) {

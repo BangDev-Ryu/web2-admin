@@ -25,34 +25,25 @@
     </div>
 
     <div class="filter-section">
-        <div class="filter-group price-filter">
-            <label>Khoảng giá:</label>
-            <div class="price-range-container">
-                <div class="price-range-group">
-                    <div class="range-wrapper">
-                        <label class="sub-label">Giá từ: <span id="minPriceValue">0đ</span></label>
-                        <input type="range" id="minPriceRange" min="0" max="10000000" step="100000" value="0">
-                    </div>
-                    <div class="range-wrapper">
-                        <label class="sub-label">Giá đến: <span id="maxPriceValue">10,000,000đ</span></label>
-                        <input type="range" id="maxPriceRange" min="0" max="10000000" step="100000" value="10000000">
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="filter-row">
             <div class="filter-group">
-                <label>Thể loại:</label>
-                <select id="categoryFilter">
-                    <option value="0">Tất cả</option>
+                <label>Khoảng giá:</label>
+                <label class="sub-label">Giá từ: <span id="minPriceValue">0đ</span></label>
+                <input type="range" id="minPriceRange" min="0" max="10000000" step="100000" value="0">
+                <label class="sub-label">Giá đến: <span id="maxPriceValue">10,000,000đ</span></label>
+                <input type="range" id="maxPriceRange" min="0" max="10000000" step="100000" value="10000000">
+            </div>
+
+            <div class="filter-group">
+                <label>Chủ đề:</label>
+                <select id="chuDeFilter">
                 </select>
             </div>
 
             <div class="filter-group">
                 <label>Trạng thái:</label>
-                <select id="statusFilter">
-                    <option value="0">Tất cải</option>
+                <select id="trangThaiFilter">
                 </select>
             </div>
 
@@ -82,7 +73,7 @@
                     <th>Tên sản phẩm</th>
                     <th>Giá</th>
                     <th>Số lượng</th>
-                    <th>Thể loại</th>
+                    <th>Chủ đề</th>
                     <th>Trạng thái</th>
                     <th>Ngày cập nhật</th>
                     <th>Hành động</th>
@@ -122,8 +113,8 @@
                     <input type="number" id="sanPham-quantity" name="sanPham-quantity" required>
                 </div>
                 <div class="form-group">
-                    <label for="sanPham-theLoai">Thể loại:</label>
-                    <select id="sanPham-theLoai" name="sanPham-theLoai" required>
+                    <label for="sanPham-chuDe">Chủ đề</label>
+                    <select id="sanPham-chuDe" name="sanPham-chuDe" required>
 
                     </select>
                 </div>

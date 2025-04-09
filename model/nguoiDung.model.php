@@ -62,8 +62,7 @@ class NguoiDungModel {
             $data['email'],
             $data['phone'],
             $data['date_of_birth'],
-            $data['chucvu_id'],
-            $data['picture']
+            $data['chucvu_id']
         ]);
     }
 
