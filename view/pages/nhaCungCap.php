@@ -15,16 +15,27 @@
             <div class="search-box">
                 <input type="text" id="searchNhaCungCap" placeholder="Tìm kiếm nhà cung cấp...">
             </div>
-            <button id="filterNhaCungCap" class="btn filter-btn">
-                <i class="fa-solid fa-filter"></i>
-                <span>Lọc</span>
-            </button>
         </div>
         <button id="addNhaCungCap" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
             <span>Thêm nhà cung cấp</span>
         </button>
     </div>
+
+    <div class="filter-nhaCungCapsection">
+    <div class="filter-nhaCungCaprow">
+        <div class="filter-nhaCungCapgroup">
+            <label>Trạng thái:</label>
+            <select id="trangThaiFilter">
+            </select>
+        </div>
+    </div>
+
+    <div class="filter-actions">
+        <button class="btn" id="resetFilter">Đặt lại</button>
+        <button class="btn save-btn" id="applyFilter">Áp dụng</button>
+    </div>
+</div>
 
     <div class="table-content">
         <table>

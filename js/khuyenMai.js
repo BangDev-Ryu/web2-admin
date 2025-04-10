@@ -2,17 +2,24 @@ $(document).ready(function () {
     let currentPage = 1;
     const limit = 6;
     let searchValue = ""; 
+    let filterData = {};
+
 
     function loadKhuyenMais(page, searchValue, filterData) {
         let data = { 
             action: "listKhuyenMai", 
             page: page, 
             limit: limit,
-            search: searchValue 
         };
 
-        if (filterData) {
-            data = {...data, ...filterData};
+        if (searchValue && searchValue.trim() !== "") {
+            data.action = "listKhuyenMaiBySearch";
+            data.search = searchValue;
+        }
+
+        if (filterData && Object.keys(filterData).length > 0) {
+            data.action = "listKhuyenMaiByFilter";
+            data.filter = filterData;
         }
 
         $.ajax({
@@ -31,6 +38,7 @@ $(document).ready(function () {
             }
         });
     }
+
     function renderPagination(totalPages, currentPage) {
         $("#pagination").html("");
 
@@ -64,7 +72,7 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadKhuyenMais(page, searchValue); 
+            loadKhuyenMais(page, searchValue, filterData); 
         });
     }
 
@@ -94,23 +102,76 @@ $(document).ready(function () {
             });
         } else {
             $("#khuyenMaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+            return;
         }
     }
+
+    const minProfitRange = $("#minProfitRange");
+    const maxProfitRange = $("#maxProfitRange");
+    const minProfitValue = $("#minProfitValue");
+    const maxProfitValue = $("#maxProfitValue");
+
+    function formatProfit(value) {
+        return parseInt(value).toLocaleString('vi-VN') + 'đ';
+    }
+
+    function updateProfitRanges() {
+        let minVal = parseInt(minProfitRange.val());
+        let maxVal = parseInt(maxProfitRange.val());
+
+        if (minVal >= maxVal) {
+            minVal = Math.max(0, maxVal - 10000); 
+            minProfitRange.val(minVal);
+        }
+
+        minProfitValue.text(formatProfit(minVal));
+        maxProfitValue.text(formatProfit(maxVal));
+    }
+
+    minProfitRange.on("input", function() {
+        updateProfitRanges();
+    });
+
+    maxProfitRange.on("input", function() {
+        updateProfitRanges();
+    });
+
+    $("#resetFilter").click(function() {
+        filterDate = {};
+        minProfitRange.val(0);
+        maxProfitRange.val(10000000);
+        updateProfitRanges();
+    });
+
+    // Apply filter
+    $("#applyFilter").click(function() {
+        filterData = {
+            min_Profit: minProfitRange.val(),
+            max_Profit: maxProfitRange.val(),
+        };
+
+        currentPage = 1; 
+        searchValue = "";
+
+        loadKhuyenMais(currentPage, searchValue, filterData);
+    });
+
+    
 
     let searchTimeout;
  
     $("#searchKhuyenMai").on("input", function () {
-       const searchValue = $(this).val().trim();
-       clearTimeout(searchTimeout);
-       currentPage = 1;
+    searchValue = $(this).val().trim();
+    clearTimeout(searchTimeout);
+    currentPage = 1;
    
         if (searchValue === "") {
-           loadKhuyenMais(currentPage, searchValue);
+           loadKhuyenMais(currentPage, searchValue, filterData);
            return;
         }
    
        searchTimeout = setTimeout(() => {
-           loadKhuyenMais(currentPage, searchValue);
+           loadKhuyenMais(currentPage, searchValue, filterData);
        }, 300);
    });
     
@@ -137,7 +198,7 @@ $(document).ready(function () {
  
  
      
-     $(document).on("click", "#editKhuyenMai", function() {
+     $(document).on("click", ".edit-btn", function() {
          const id = $(this).data("id");
          $.ajax({
              url: "./controller/khuyenMai.controller.php",
@@ -166,22 +227,21 @@ $(document).ready(function () {
      // Submit form thêm/sửa
      $("#khuyenMaiForm").submit(function(e) {
          e.preventDefault();
+
+         
          const data = {
              id: $("#khuyenMaiId").val(),
              name: $("#khuyenMai-name").val(),
-             code: $("#code").val(),
-             profit: $("#profit").val(),
-             type: $("#type").val(),
+             code: $("#khuyenMai-code").val(),
+             profit: $("#khuyenMai-profit").val(),
+             type: $("#khuyenMai-type").val(),
              startDate: $("#startDate").val(),
              endDate: $("#endDate").val(),
              action: $("#khuyenMaiId").val() ? "updateKhuyenMai" : "addKhuyenMai"
          };
 
-            const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-        if (!datetimeRegex.test(data.startDate) || !datetimeRegex.test(data.endDate)) {
-            alert("Ngày bắt đầu/kết thúc sai định dạng. Vui lòng nhập lại!");
-            return;
-}
+
+    
 
  
          $.ajax({
@@ -191,11 +251,9 @@ $(document).ready(function () {
              success: function(response) {
                  khuyenMaiModal.hide();
                  loadKhuyenMais(currentPage);
-                 alert("Lưu khuyến mãi thành công!");
              },
              error: function(xhr, status, error) {
                  console.error(error);
-                 alert("Lưu khuyến mãi thất bại. Vui lòng thử lại.");
              }
          });
      });
@@ -215,7 +273,7 @@ $(document).ready(function () {
                  data: { action: "deleteKhuyenMai", id: deleteId },
                  success: function(response) {
                      deleteModal.hide();
-                     loadKhuyenMais(currentPage);
+                     loadKhuyenMais(currentPage, searchValue, filterData);
                      alert("Xóa khuyến mãi thành công!");
                  },
                  error: function(xhr, status, error) {
