@@ -28,16 +28,8 @@
 
         <div class="filter-row">
             <div class="filter-group">
-                <label>Khoảng giá:</label>
-                <label class="sub-label">Giá từ: <span id="minPriceValue">0đ</span></label>
-                <input type="range" id="minPriceRange" min="0" max="10000000" step="100000" value="0">
-                <label class="sub-label">Giá đến: <span id="maxPriceValue">10,000,000đ</span></label>
-                <input type="range" id="maxPriceRange" min="0" max="10000000" step="100000" value="10000000">
-            </div>
-
-            <div class="filter-group">
-                <label>Chủ đề:</label>
-                <select id="chuDeFilter">
+                <label>Chức vụ:</label>
+                <select id="chucVuFilter">
                 </select>
             </div>
 
@@ -48,14 +40,9 @@
             </div>
 
             <div class="filter-group">
-                <label>Từ ngày:</label>
-                <input type="date" id="startDate">
-            </div>
-
-            <div class="filter-group">
-                <label>Đến ngày:</label>
-                <input type="date" id="endDate">
-            </div>
+                <label>Loại tài khoản</label>
+                <select id="loaiTKFilter">
+                </select>
         </div>
 
         <div class="filter-actions">
@@ -94,7 +81,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 id="modalTitle">Thêm sản phẩm</h2>
-            <form id="sanPhamForm">
+            <form id="sanPhamForm" enctype="multipart/form-data">
                 <input type="hidden" id="sanPhamId">
                 <div class="form-group">
                     <label for="sanPham-name">Tên sản phẩm:</label>
@@ -131,8 +118,7 @@
                 <div class="form-group">
                     <label for="sanPham-image">Hình ảnh sản phẩm:</label>
                     <div class="file-upload">
-                        <input type="file" id="sanPham-image" name="sanPham-image" accept="image/*">
-                        <input type="hidden" id="image-base64" name="image-base64">
+                        <input type="file" id="sanPham-image" name="sanPham-image">
                         <div class="image-preview">
                             <img id="imagePreview" src="" alt="Preview">
                         </div>

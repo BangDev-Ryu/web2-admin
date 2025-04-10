@@ -27,7 +27,38 @@
             <span>Thêm tài khoản</span>
         </button>
     </div>
-    
+
+    <div class="filter-section">
+
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Chức vụ:</label>
+                <select id="chucVuFilter">
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Trạng thái:</label>
+                <select id="trangThaiFilter">
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Loại tài khoản:</label>
+                <select id="loaiTKFilter">
+                    <option value="2">Tất cả</option>
+                    <option value="1">Người dùng</option>
+                    <option value="0">Admin</option>
+                </select>
+            </div>
+
+        <div class="filter-actions">
+            <button class="btn" id="resetFilter">Đặt lại</button>
+            <button class="btn save-btn" id="applyFilter">Áp dụng</button>
+        </div>
+    </div>
+
+
     <div class="table-content">
         <table>
             <thead>
@@ -57,7 +88,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 id="modalTitle">Thêm Tài Khoản</h2>
-            <form id="taiKhoanForm">
+            <form id="taiKhoanForm" enctype="multipart/form-data">
                 <input type="hidden" id="taiKhoanId">
                 <div class="form-group">
                     <label for="fullname">Họ tên:</label>
@@ -105,8 +136,7 @@
                 <div class="form-group">
                     <label for="picture">Hình ảnh:</label>
                     <div class="file-upload">
-                        <input type="file" id="picture" name="picture" accept="image/*">
-                        <input type="hidden" id="image-base64" name="image-base64">
+                        <input type="file" id="picture" name="picture">
                         <div class="image-preview">
                             <img id="imagePreview" src="" alt="Preview">
                         </div>

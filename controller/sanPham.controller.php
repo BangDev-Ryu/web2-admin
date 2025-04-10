@@ -101,7 +101,6 @@ class SanPhamController {
         $result = $this->sanPhamModel->updateSanPham($data);
         echo json_encode(['success' => $result]);
     }
-    
 }
 
 if (isset($_GET['action'])) {
@@ -126,9 +125,15 @@ if (isset($_POST['action'])) {
     $controller = new SanPhamController();
     switch ($_POST['action']) {
         case 'addSanPham':
+            if(isset($_FILES['img'])) {
+                $_POST['img'] = $_FILES['img'];
+            }
             $controller->addSanPham($_POST);
             break;
         case 'updateSanPham':
+            if(isset($_FILES['img'])) {
+                $_POST['img'] = $_FILES['img'];
+            }
             $controller->updateSanPham($_POST);
             break;
     }
