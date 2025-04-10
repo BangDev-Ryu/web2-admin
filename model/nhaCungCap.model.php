@@ -61,11 +61,10 @@ class NhaCungCapModel {
                 OR LOWER(contact_person) LIKE ? 
                 OR LOWER(contact_email) LIKE ? 
                 OR LOWER(contact_phone) LIKE ? 
-                OR LOWER(address) LIKE ?
-                OR lower(trangthai_id) LIKE ?";
+                OR LOWER(address) LIKE ?";
     
         $searchParam = "%$search%";
-        $params = array_fill(0, 7, $searchParam); 
+        $params = array_fill(0, 6, $searchParam); 
     
         $result = $this->db->executePrepared($sql, $params);
         return $result->fetch_assoc()['total'];
@@ -79,11 +78,28 @@ class NhaCungCapModel {
                 OR LOWER(contact_email) LIKE ? 
                 OR LOWER(contact_phone) LIKE ? 
                 OR LOWER(address) LIKE ?
-                OR lower(trangthai_id) LIKE ?
                 LIMIT ? OFFSET ?";
     
         $searchParam = "%$search%";
-        $params = array_fill(0, 7, $searchParam); 
+        $params = array_fill(0, 6, $searchParam); 
+        $params[] = $limit;
+        $params[] = $offset;
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_all(MYSQLI_ASSOC);
+
+    }
+
+    public function filterNhaCungCap($filter, $limit, $offset) {
+        $sql = "SELECT * FROM nhacungcap";
+        $params = [];
+    
+        if (!empty($filter['trangthai_id'])) {
+            $sql .= " WHERE trangthai_id = ?";
+            $params[] = $filter['trangthai_id'];
+        }
+    
+        $sql .= " LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
     
@@ -92,7 +108,20 @@ class NhaCungCapModel {
     }
     
     
+    public function getTotalFilterNhaCungCap($filter) {
+        $sql = "SELECT COUNT(*) as total FROM nhacungcap";
+        $params = []; // ✅ Khởi tạo mảng rỗng tránh lỗi
+    
+        if (!empty($filter['trangthai_id'])) {
+            $sql .= " WHERE trangthai_id = ?";
+            $params[] = $filter['trangthai_id'];
+        }
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
+    
+    }
+    
 
-
-}
 ?>

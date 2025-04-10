@@ -7,21 +7,11 @@ class KhuyenMaiController {
         $this->khuyenMaiModel = new KhuyenmaiModel();
     }
 
-    public function listKhuyenMai($limit, $search) {
+    public function listKhuyenMai($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
-    
-        $search = isset($_GET['search']) ? $search : '';
-    
-        if (empty($search)) {
-            $khuyenMais = $this->khuyenMaiModel->getKhuyenMais($limit, $offset);
-            $totalKhuyenMais = $this->khuyenMaiModel->getTotalKhuyenMais();
-        }
-        else {
-            $search = strtolower($search);
-            $khuyenMais = $this->khuyenMaiModel->searchKhuyenMai($search, $limit, $offset);
-            $totalKhuyenMais = $this->khuyenMaiModel->getTotalSearchKhuyenMai($search);
-        }
+        $khuyenMais = $this->khuyenMaiModel->getKhuyenMais($limit, $offset);
+        $totalKhuyenMais = $this->khuyenMaiModel->getTotalKhuyenMais();
         $totalPages = ceil($totalKhuyenMais / $limit);
         
         echo json_encode([
@@ -42,6 +32,24 @@ class KhuyenMaiController {
         $totalKhuyenMais = $this->khuyenMaiModel->getTotalSearchKhuyenMai($search);
         $totalPages = ceil($totalKhuyenMais / $limit);
     
+        echo json_encode([
+            "khuyenMais" => $khuyenMais,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+
+    public function listKhuyenMaiByFilter($limit, $filter) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $filter = isset($_GET['filter']) ? $filter : [];
+        $khuyenMais = $this->khuyenMaiModel->filterKhuyenMai($filter, $limit, $offset);
+
+        $totalKhuyenMais = $this->khuyenMaiModel->getTotalFilterKhuyenMai($filter);
+        $totalPages = ceil($totalKhuyenMais / $limit);
+        
+
         echo json_encode([
             "khuyenMais" => $khuyenMais,
             "totalPages" => $totalPages,
@@ -77,8 +85,14 @@ if (isset($_GET['action'])) {
 $controller = new KhuyenMaiController();
 switch ($_GET['action']) {
     case 'listKhuyenMai':
-        $controller->listKhuyenMai($_GET['limit'], $_GET['search']);
+        $controller->listKhuyenMai($_GET['limit']);
         break;
+        case 'listKhuyenMaiBySearch':
+            $controller->listKhuyenMaiBySearch($_GET['limit'], $_GET['search']);
+            break;
+        case 'listKhuyenMaiByFilter':
+            $controller->listKhuyenMaiByFilter($_GET['limit'], $_GET['filter']);
+            break;
     case 'getKhuyenMai':
         $controller->getKhuyenMaiById($_GET['id']);
         break;
