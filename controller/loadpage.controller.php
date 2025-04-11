@@ -18,6 +18,9 @@ if (isset($_GET['page'])) {
         case "theLoai":
             $viewPath = '../view/pages/theLoai.php';
             break;
+        case "chuDe":
+                $viewPath = '../view/pages/chuDe.php';
+                break;
         case "taiKhoan":
             $viewPath = '../view/pages/taiKhoan.php';
             break;  

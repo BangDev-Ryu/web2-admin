@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/sidebar.css?v=<?php echo filemtime('./css/sidebar.css'); ?>" />
+    <link rel="stylesheet" href="./css/sidebar.css?v=<?php echo time(); ?>" />
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
     
     <script src="./js/sidebar.js?v=<?= time() ?>"></script>
@@ -42,6 +42,13 @@
                     <a href="#" class="nav-link" data-page="theLoai">
                         <i class="fa-solid fa-list icon"></i>
                         <span class="link">Thể loại</span>
+                    </a>
+                </li>
+
+                <li class="item">
+                    <a href="#" class="nav-link" data-page="chuDe">
+                        <i class="fa-solid fa-flag icon"></i>
+                        <span class="link">Chủ đề</span>
                     </a>
                 </li>
 
