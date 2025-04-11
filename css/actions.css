@@ -131,7 +131,29 @@
     padding: 8px 16px;
 }
 
+/* tab cho đơn hàng, nhập hàng */
+.tab-section {
+    display: flex;
+    gap: 16px;    
+    align-items: center;
+    margin-bottom: 10px;
+}
 
+.tab-section .tab-item {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.tab-section .tab-item:hover {
+    background-color: #f1f1f1;
+}
+
+.tab-section .tab-item.active {
+    background-color: #484848;
+    color: #fff;
+}
 
 .filter-khuyenMaisection {
     background: white;
