@@ -2,18 +2,23 @@ $(document).ready(function () {
     let currentPage = 1;
     const limit = 6;
     let searchValue = ""; 
-
+    let filterData = {};
 
     function loadNhaCungCaps(page, searchValue, filterData) {
         let data = { 
             action: "listNhaCungCap", 
             page: page, 
             limit: limit,
-            search: searchValue 
         };
 
-        if (filterData) {
-            data = {...data, ...filterData};
+        if (searchValue && searchValue.trim() !== "") {
+            data.action = "listNhaCungCapBySearch";
+            data.search = searchValue;
+        }
+
+        if (filterData && Object.keys(filterData).length > 0) {
+            data.action = "listNhaCungCapByFilter";
+            data.filter = filterData;
         }
 
         $.ajax({
@@ -22,6 +27,10 @@ $(document).ready(function () {
             data: data,
             dataType: "json",
             success: function (response) {
+                console.log("Dữ liệu sau khi lọc:", response);
+
+
+                console.log("Danh sách nhà cung cấp:", response.nhaCungCaps);
                 renderNhaCungCap(response.nhaCungCaps);
                 renderPagination(response.totalPages, page);
             },
@@ -66,7 +75,7 @@ $(document).ready(function () {
 
     $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadNhaCungCaps(page, searchValue); 
+            loadNhaCungCaps(page, searchValue, filterData); 
         });
     }
 
@@ -98,6 +107,38 @@ $(document).ready(function () {
         }
     }
 
+    function loadTrangThaiFilter() {
+        $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#trangThaiFilter").html("");
+                $("#trangThaiFilter").append(`<option value="0">Tất cả</option>`);
+                response.trangThais.forEach(tt => {
+                    $("#trangThaiFilter").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    } 
+
+    loadTrangThaiFilter();
+
+     // Reset filter
+     $("#resetFilter").click(function() {
+        $("#trangThaiFilter").val(0);
+    });
+
+    // Apply filter
+    $("#applyFilter").click(function() {
+        filterData.trangthai_id = $("#trangThaiFilter").val(); 
+        currentPage = 1; 
+        searchValue = "";
+
+        loadNhaCungCaps(currentPage, searchValue, filterData);
+    });
+
 
     let searchTimeout;
  
@@ -105,27 +146,28 @@ $(document).ready(function () {
        const searchValue = $(this).val().trim();
        clearTimeout(searchTimeout);
        currentPage = 1;
+       filterData= {};
    
        if (searchValue === "") {
-           loadNhaCungCaps(currentPage, searchValue);
+           loadNhaCungCaps(currentPage, searchValue, filterData);
            return;
        }
    
        searchTimeout = setTimeout(() => {
-           loadNhaCungCaps(currentPage, searchValue);
+           loadNhaCungCaps(currentPage, searchValue, filterData);
        }, 300);
    });
 
 
      // Xử lý modal
      const nhaCungCapModal = $("#nhaCungCapModal");
-     //const deleteModal = $("#deleteModal");
-    // let deleteId = null;
+     const deleteModal = $("#deleteModal");
+     let deleteId = null;
  
      // Đóng modal 
      $(".close, .cancel-btn").click(function() {
          nhaCungCapModal.hide();
-         //deleteModal.hide();
+         deleteModal.hide();
      });
  
      // Nút thêm nhà cung cấp
@@ -139,19 +181,19 @@ $(document).ready(function () {
  
      // Load danh sách trạng thái
      function loadTrangThai() {
-         $.ajax({
-             url: "./controller/trangThai.controller.php",
-             type: "GET",
-             data: { action: "listTrangThai", type: "khac" },
-             dataType: "json",
-             success: function(response) {
-                 $("#nhaCungCap-trangThai").html("");
-                 response.trangThais.forEach(tt => {
-                     $("#nhaCungCap-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
-                 });
-             }
-         });
-     }
+        return $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#nhaCungCap-trangThai").html("");
+                response.trangThais.forEach(tt => {
+                    $("#nhaCungCap-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    }
  
      // Nút sửa 
      $(document).on("click", "#editNhaCungCap", function() {
@@ -171,7 +213,6 @@ $(document).ready(function () {
                 $("#nhaCungCap-contact-email").val(response.nhaCungCap.contact_email);
                 $("#nhaCungCap-contact-phone").val(response.nhaCungCap.contact_phone);
                 $("#nhaCungCap-address").val(response.nhaCungCap.address);
-                $("#nhaCungCap-trangThai").val(response.nhaCungCap.trangThai);
                 loadTrangThai();
                 setTimeout(() => {
                     $("#nhaCungCap-trangThai").val(response.nhaCungCap.trangthai_id);
@@ -200,7 +241,7 @@ $(document).ready(function () {
              data: data,
              success: function(response) {
                  nhaCungCapModal.hide();
-                 loadNhaCungCaps(currentPage);
+                 loadNhaCungCaps(currentPage, searchValue);
              },
              error: function(xhr, status, error) {
                  console.error(error);
@@ -208,7 +249,7 @@ $(document).ready(function () {
          });
      });
  
-     // Nút xóa thể loại
+     // Nút xóa 
      $(document).on("click", ".delete-btn", function() {
          deleteId = $(this).data("id");
          deleteModal.show();

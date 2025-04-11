@@ -16,16 +16,36 @@
             <div class="search-box">
                 <input type="text" id="searchKhuyenMai" placeholder="Tìm kiếm khuyến mãi...">
             </div>
-            <button id="filterKhuyenMai" class="btn filter-btn">
-                <i class="fa-solid fa-filter"></i>
-                <span>Lọc</span>
-            </button>
         </div>
         <button id="addKhuyenMai" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
             <span>Thêm khuyến mãi</span>
         </button>
     </div>
+
+    <div class="filter-khuyenMaisection">
+    <div class="filter-khuyenMairow">
+        <div class="filter-khuyenMaigroup">
+            <label>Khoảng giá trị:</label> <br>
+
+            <div class="range-row">
+                <label class="sub-label">Giá trị từ: <span id="minProfitValue">0đ</span></label>
+                <input type="range" id="minProfitRange" min="0" max="10000" step="100" value="0">
+            </div>
+
+            <div class="range-row">
+                <label class="sub-label">Giá trị đến: <span id="maxProfitValue">10,000</span></label>
+                <input type="range" id="maxProfitRange" min="0" max="100000" step="100" value="10000">
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-khuyenMaiactions">
+        <button class="btn" id="resetFilter">Đặt lại</button>
+        <button class="btn save-btn" id="applyFilter">Áp dụng</button>
+    </div>
+</div>
+
 
     <div class="table-content">
         <table>
@@ -63,49 +83,31 @@
                     <input type="text" id="khuyenMai-name" name="khuyenMai-name" required>
                 </div>
                 <div class="form-group">
-                    <label for="code">Mã khuyến mãi:</label>
-                    <input type="text" id="code" name="code" required>
+                    <label for="khuyenMai-code">Mã khuyến mãi:</label>
+                    <input type="text" id="khuyenMai-code" name="khuyenMai-code" required>
                 </div>
                 <div class="form-group">
-                    <label for="profit">Giá trị:</label>
-                    <input type="text" id="profit" name="profit" required>
+                    <label for="khuyenMai-profit">Giá trị:</label>
+                    <input type="text" id="khuyenMai-profit" name="khuyenMai-profit" required>
                 </div>
                 <div class="form-group">
-                    <label for="type">Loại:</label>
-                    <input type="text" id="type" name="type" required>
+                    <label for="khuyenMai-type">Loại:</label>
+                    <input type="text" id="khuyenMai-type" name="khuyenMai-type" required>
                 </div>
 
 
                 <div class="form-group">
                 <label for="startDate">Ngày bắt đầu:</label>
-                <input type="text" id="startDate" name="startDate" placeholder="Nhấp vào để mở lịch chọn ngày" required>
+                <input type="date" id="startDate" name="startDate" required>
             </div>
 
 
             <div class="form-group">
                     <label for="endDate">Ngày kết thúc:</label>
-                    <input type="text" id="endDate" name="endDate" placeholder="Nhấp vào để mở lịch chọn ngày" required>
+                    <input type="date" id="endDate" name="endDate" require>
                 </div>
 
-                
-            
-            <script>    
-                flatpickr("#startDate", {
-                    enableTime: true,
-                    time_24hr: true,
-                    enableSeconds: true,
-                    dateFormat: "Y-m-d H:i:S"
-                });
-
-                flatpickr("#endDate", {
-                    enableTime: true,
-                    time_24hr: true,
-                    enableSeconds: true,
-                    dateFormat: "Y-m-d H:i:S"
-                });
-            </script>
-
-
+       
                 <div class="form-actions">
                     <button type="submit" class="btn save-btn">Lưu</button>
                     <button type="button" class="btn cancel-btn">Hủy</button>
