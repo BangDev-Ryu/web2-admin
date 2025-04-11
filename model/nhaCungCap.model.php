@@ -25,6 +25,12 @@ class NhaCungCapModel {
         return $result->fetch_assoc();
     }
 
+    public function getNameById($id) {
+        $sql = "SELECT name FROM nhacungcap WHERE id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['name'];
+    }
+
     public function addNhaCungCap($data) {
         $sql = "INSERT INTO nhacungcap (name, contact_person, contact_email, contact_phone, address, trangthai_id) VALUES (?, ?, ?, ?, ? , ?)";
         return $this->db->executePrepared($sql, [

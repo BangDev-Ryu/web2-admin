@@ -76,25 +76,30 @@ class NhaCungCapController {
         ]);
     }
 
-public function getNhaCungCapById($id) {
-    $nhaCungCap = $this->nhaCungCapModel->getNhaCungCapById($id);
-    echo json_encode(['nhaCungCap' => $nhaCungCap]);
+    public function getNameById($id) {
+        $name = $this->nhaCungCapModel->getNameById($id);
+        echo json_encode(['name' => $name]);
     }
 
-public function addNhaCungCap($data) {
-    $result = $this->nhaCungCapModel->addNhaCungCap($data);
-    echo json_encode(['success' => $result]);
-}
+    public function getNhaCungCapById($id) {
+        $nhaCungCap = $this->nhaCungCapModel->getNhaCungCapById($id);
+        echo json_encode(['nhaCungCap' => $nhaCungCap]);
+        }
 
-public function updateNhaCungCap($data) {
-    $result = $this->nhaCungCapModel->updateNhaCungCap($data);
-    echo json_encode(['success' => $result]);
-}
+    public function addNhaCungCap($data) {
+        $result = $this->nhaCungCapModel->addNhaCungCap($data);
+        echo json_encode(['success' => $result]);
+    }
 
-public function deleteNhaCungCap($id) {
-    $result = $this->nhaCungCapModel->deleteNhaCungCap($id);
-    echo json_encode(['success' => $result]);
-}
+    public function updateNhaCungCap($data) {
+        $result = $this->nhaCungCapModel->updateNhaCungCap($data);
+        echo json_encode(['success' => $result]);
+    }
+
+    public function deleteNhaCungCap($id) {
+        $result = $this->nhaCungCapModel->deleteNhaCungCap($id);
+        echo json_encode(['success' => $result]);
+    }
 
 }
 

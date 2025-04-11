@@ -3,21 +3,21 @@ $(document).ready(function () {
     let currentStatus = "chuaXuLy"; 
     const limit = 6;
 
-    function loadDonHangs(page, status) {
+    function loadPhieuNhaps(page, status) {
         let data = {
-            action: 'listDonHang',
+            action: 'listPhieuNhap',
             status: status,
             page: page,
             limit: limit
         }
 
         $.ajax({
-            url: "./controller/donHang.controller.php",
+            url: "./controller/phieuNhap.controller.php",
             type: "GET",
             data: data,
             dataType: "json",
             success: function (response) {
-                renderDonHang(response.donHangs);
+                renderPhieuNhap(response.phieuNhaps);
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -60,11 +60,11 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadDonHangs(page, currentStatus); 
+            loadPhieuNhaps(page, currentStatus); 
         });
     }
 
-    loadDonHangs(currentPage, currentStatus);
+    loadPhieuNhaps(currentPage, currentStatus);
 
     ////////////////////////////////////// TAB TRANG THAI //////////////////////////////////////
     $(".tab-item[data-status='chuaXuLy']").addClass("active");
@@ -74,36 +74,31 @@ $(document).ready(function () {
 
         currentStatus = $(this).data("status");
         currentPage = 1; 
-        loadDonHangs(currentPage, currentStatus); 
+        loadPhieuNhaps(currentPage, currentStatus); 
     })
     
 })
 
-function renderDonHang(donHangs) {
-    $("#donHangList").html("");
-    if (donHangs && donHangs.length > 0) {
-        donHangs.forEach(dh => {
+function renderPhieuNhap(phieuNhaps) {
+    $("#phieuNhapList").html("");
+    if (phieuNhaps && phieuNhaps.length > 0) {
+        phieuNhaps.forEach(pn => {
             let row = `
                 <tr> 
-                    <td>${dh.id}</td>
-                    <td>${dh.nguoidung_name}</td>
-                    <td>${dh.address}</td>
-                    <td>${dh.city}</td>
-                    <td>${dh.district}</td>
-                    <td>${dh.ward}</td>
-                    <td>${dh.order_date}</td>
-                    <td>${dh.total_amount}</td>
-                    <td>${dh.payment}</td>
-                    <td>${dh.khuyenmai_name}</td>
+                    <td>${pn.id}</td>
+                    <td>${pn.nhacungcap_nam}</td>
+                    <td>${pn.nguoidung_name}</td>
+                    <td>${pn.date}</td>
+                    <td>${pn.total_amount}</td>
                     
                     <td>
-                        <button id="detailDonHang" class="btn edit-btn" data-id="${dh.id}">Chi tiết</button>
+                        <button id="detailPhieuNhap" class="btn edit-btn" data-id="${pn.id}">Chi tiết</button>
                     </td>
                 </tr>
             `;
-            $("#donHangList").append(row);
+            $("#phieuNhapList").append(row);
         });
     } else {
-        $("#donHangList").append('<tr><td colspan="11">Không tìm thấy kết quả</td></tr>');
+        $("#phieuNhapList").append('<tr><td colspan="6">Không tìm thấy kết quả</td></tr>');
     }
 }

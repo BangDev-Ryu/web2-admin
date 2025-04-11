@@ -8,16 +8,20 @@
     <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/donHang.js?v=<?php echo time(); ?>"></script>
+    <script src="./js/phieuNhap.js?v=<?php echo time(); ?>"></script>
 </head>
 </head>
 <body>
     <div class="table-actions">
         <div class="search-section">
             <div class="search-box">
-                <input type="text" id="searchDonHang" placeholder="Tìm kiếm đơn hàng...">
+                <input type="text" id="searchPhieuNhap" placeholder="Tìm kiếm phiếu nhập...">
             </div>
         </div>
+        <button id="addPhieuNhap" class="btn add-btn">
+            <i class="fa-solid fa-plus"></i>
+            <span>Thêm phiếu nhập</span>
+        </button>
         
     </div>
 
@@ -44,20 +48,15 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Người mua</th>
-                    <th>Số nhà</th>
-                    <th>Thành phố</th>
-                    <th>Quận</th>
-                    <th>Huyện/Phường</th>
-                    <th>Ngày đặt</th>
+                    <th>Nhà cung cấp</th>
+                    <th>Người nhập</th>
+                    <th>Ngày nhập</th>
                     <th>Tổng tiền</th>
-                    <th>Thanh toán</th>
-                    <th>Khuyến mãi</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
 
-            <tbody id="donHangList">
+            <tbody id="phieuNhapList">
 
             </tbody>
         </table>

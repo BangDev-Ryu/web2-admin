@@ -67,9 +67,9 @@
                 </li>
 
                 <li class="item">
-                    <a href="#" class="nav-link" data-page="nhapHang">
+                    <a href="#" class="nav-link" data-page="phieuNhap">
                         <i class="fa-solid fa-truck-fast icon"></i>
-                        <span class="link">Nhập hàng</span>
+                        <span class="link">Phiếu nhập</span>
                     </a>
                 </li>
 
