@@ -13,7 +13,7 @@
     ?>
     <div id="content">
         <?php
-            $validPages = ['trangChu', 'sanPham', 'donHang', 'theLoai', 'chuDe', 'taiKhoan', 'quyen', 'nhapHang', 'nhaCungCap', 'khuyenMai'];
+            $validPages = ['trangChu', 'sanPham', 'donHang', 'theLoai', 'chuDe', 'taiKhoan', 'quyen', 'phieuNhap', 'nhaCungCap', 'khuyenMai'];
 
             // Kiểm tra trang từ URL, nếu không hợp lệ thì về home
             $page = isset($_GET['page']) && in_array($_GET['page'], $validPages) ? $_GET['page'] : 'trangChu';
