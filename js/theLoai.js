@@ -1,31 +1,37 @@
 $(document).ready(function () {
     let currentPage = 1;
-    const limit = 8;
+    const limit = 6;
+    let searchValue = ""; 
+    let filterData = {};
 
-    function loadTheLoais(page) {
+    function loadTheLoais(page, searchValue, filterData) {
+        let data = { 
+            action: "listTheLoai", 
+            page: page, 
+            limit: limit,
+        };
+
+        if (searchValue && searchValue.trim() !== "") {
+            data.action = "listTheLoaiBySearch";
+            data.search = searchValue;
+        }
+
+        if (filterData && Object.keys(filterData).length > 0) {
+            data.action = "listTheLoaiByFilter";
+            data.filter = filterData;
+        }
+
         $.ajax({
             url: "./controller/theLoai.controller.php",
             type: "GET",
-            data: { action: "listTheLoai", page: page, limit: limit },
+            data: data,
             dataType: "json",
             success: function (response) {
-                $("#theLoaiList").html("");
-                response.theLoais.forEach(theLoai => {
-                    let row = `
-                        <tr>
-                            <td>${theLoai.id}</td>
-                            <td>${theLoai.name}</td>
-                            <td>${theLoai.description}</td>
-                            <td>${theLoai.trangthai_name}</td>
-                            <td>
-                                <button id="editTheLoai" class="btn edit-btn" data-id="${theLoai.id}">Sửa</button>
-                                <button id="deleteTheLoai" class="btn delete-btn" data-id="${theLoai.id}">Xóa</button>
-                            </td>
-                        </tr>
-                    `;
-                    $("#theLoaiList").append(row);
-                });
+                console.log("Dữ liệu sau khi lọc:", response);
 
+
+                console.log("Danh sách nhà cung cấp:", response.theLoais);
+                renderTheLoai(response.theLoais);
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -38,7 +44,7 @@ $(document).ready(function () {
 
     function renderPagination(totalPages, currentPage) {
         $("#pagination").html("");
-        
+
         if (currentPage > 1) {
             $("#pagination").append(
                 `<button class="page-btn prev-btn" data-page="${currentPage - 1}"> < </button>`
@@ -66,13 +72,104 @@ $(document).ready(function () {
             );
         }
 
-        $(".page-btn").click(function () {
+
+    $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadTheLoais(page);
+            loadTheLoais(page, searchValue, filterData); 
         });
     }
 
-    loadTheLoais(currentPage);
+    loadTheLoais(currentPage, searchValue, filterData);
+
+    function renderTheLoai(theLoais) {
+        $("#theLoaiList").html("");
+        if (theLoais && theLoais.length > 0) {
+            theLoais.forEach(tl => {
+                let row = `
+                    <tr> 
+                        <td>${tl.id}</td>
+                        <td>${tl.name}</td>
+                        <td>${tl.description}</td>
+                        <td>${tl.trangthai_name}</td>
+                        <td>
+                            <button class="btn edit-btn" data-id="${tl.id}">Sửa</button>
+                            <button class="btn delete-btn" data-id="${tl.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#theLoaiList").append(row);
+            });
+        } else {
+            $("#theLoaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
+
+    function loadTrangThaiFilter() {
+        $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#trangThaiFilter").html("");
+                $("#trangThaiFilter").append(`<option value="0">Tất cả</option>`);
+                response.trangThais.forEach(tt => {
+                    $("#trangThaiFilter").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    } 
+
+    loadTrangThaiFilter();
+
+
+    function loadTrangThai() {
+        return $.ajax({
+            url: "./controller/trangThai.controller.php",
+            type: "GET",
+            data: { action: "listTrangThai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#theLoai-trangThai").html("");
+                response.trangThais.forEach(tt => {
+                    $("#theLoai-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
+                });
+            }
+        });
+    }
+     // Reset filter
+     $("#resetFilter").click(function() {
+        $("#trangThaiFilter").val(0);
+    });
+
+    // Apply filter
+    $("#applyFilter").click(function() {
+        filterData.trangthai_id = $("#trangThaiFilter").val(); 
+        currentPage = 1; 
+        searchValue = "";
+
+        loadTheLoais(currentPage, searchValue, filterData);
+    });
+
+
+    let searchTimeout;
+ 
+    $("#searchTheLoai").on("input", function () {
+       const searchValue = $(this).val().trim();
+       clearTimeout(searchTimeout);
+       currentPage = 1;
+       filterData= {};
+   
+       if (searchValue === "") {
+           loadTheLoais(currentPage, searchValue, filterData);
+           return;
+       }
+   
+       searchTimeout = setTimeout(() => {
+           loadTheLoais(currentPage, searchValue, filterData);
+       }, 300);
+   });
+
 
     // Xử lý modal
     const theLoaiModal = $("#theLoaiModal");
@@ -94,24 +191,9 @@ $(document).ready(function () {
         theLoaiModal.show();
     });
 
-    // Load danh sách trạng thái
-    function loadTrangThai() {
-        $.ajax({
-            url: "./controller/trangThai.controller.php",
-            type: "GET",
-            data: { action: "listTrangThai", type: "khac" },
-            dataType: "json",
-            success: function(response) {
-                $("#theLoai-trangThai").html("");
-                response.trangThais.forEach(tt => {
-                    $("#theLoai-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
-                });
-            }
-        });
-    }
 
     // Nút sửa thể loại
-    $(document).on("click", "#editTheLoai", function() {
+    $(document).on("click", ".edit-btn", function() {
         const id = $(this).data("id");
         $.ajax({
             url: "./controller/theLoai.controller.php",
@@ -120,8 +202,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function(response) {
                 theLoaiModal.show();
-                console.log(response);
-                $("#modalTitle").text("Sửa Thể Loại");
+                $("#modalTitle").text("Sửa thể loại");
                 $("#theLoaiId").val(response.theLoai.id);
                 $("#theLoai-name").val(response.theLoai.name);
                 $("#theLoai-description").val(response.theLoai.description);
@@ -129,7 +210,8 @@ $(document).ready(function () {
                 setTimeout(() => {
                     $("#theLoai-trangThai").val(response.theLoai.trangthai_id);
                 }, 50)
-            }
+            },
+
         });
     });
 
@@ -150,7 +232,7 @@ $(document).ready(function () {
             data: data,
             success: function(response) {
                 theLoaiModal.hide();
-                loadTheLoais(currentPage);
+                loadTheLoais(currentPage, searchValue, filterData);
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -173,64 +255,23 @@ $(document).ready(function () {
                 data: { action: "deleteTheLoai", id: deleteId },
                 success: function(response) {
                     deleteModal.hide();
-                    loadTheLoais(currentPage);
+                    loadTheLoais(currentPage, searchValue, filterData);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
                 }
+                
             });
         }
     });
 
-    // dùng timeout để debounce
-    let searchTimeout;
+    $("#confirmDeleteTheLoai").prop("disabled", true);
+$.ajax({
+    // ...
+    complete: function() {
+        $("#confirmDeleteTheLoai").prop("disabled", false);
+    }
+});
 
-    $("#searchTheLoai").on("input", function() {
-        const searchValue = $("#searchTheLoai").val().trim();
-        clearTimeout(searchTimeout);
-        
-        if (searchValue === "") {
-            loadTheLoais(currentPage);
-            return;
-        }
 
-        searchTimeout = setTimeout(() => {
-            $.ajax({
-                url: "./controller/theLoai.controller.php",
-                type: "GET",
-                data: { 
-                    action: "searchTheLoai",
-                    search: searchValue 
-                },
-                dataType: "json",
-                success: function(response) {
-                    $("#theLoaiList").html("");
-                    if (response.theLoais && response.theLoais.length > 0) {
-                        response.theLoais.forEach(theLoai => {
-                            let row = `
-                                <tr>
-                                    <td>${theLoai.id}</td>
-                                    <td>${theLoai.name}</td>
-                                    <td>${theLoai.description}</td>
-                                    <td>${theLoai.trangthai_name}</td>
-                                    <td>
-                                        <button id="editTheLoai" class="btn edit-btn" data-id="${theLoai.id}">Sửa</button>
-                                        <button id="deleteTheLoai" class="btn delete-btn" data-id="${theLoai.id}">Xóa</button>
-                                    </td>
-                                </tr>
-                            `;
-                            $("#theLoaiList").append(row);
-                        });
-                    } else {
-                        $("#theLoaiList").append('<tr><td colspan="5">Không tìm thấy kết quả</td></tr>');
-                    }
-                    // sẽ chỉnh sau
-                    $("#pagination").html("");
-                },
-                error: function(xhr, status, error) {
-                    console.error("Lỗi tìm kiếm:", error);
-                }
-            });
-        }, 300);
-    });
 });

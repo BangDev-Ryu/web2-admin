@@ -17,24 +17,27 @@
             <div class="search-box">
                 <input type="text" id="searchTheLoai" placeholder="Tìm kiếm thể loại...">
             </div>
-            <button id="filterTheLoai" class="btn filter-btn">
-                <i class="fa-solid fa-filter"></i>
-                <span>Lọc</span>
-            </button>
         </div>
         <button id="addTheLoai" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
             <span>Thêm thể loại</span>
         </button>
     </div>
-    <div class="filter-section">
-        <div class="filter-box">
-            <label for="filter-theLoai-trangThai">Trạng thái:</label>
-            <select id="filter-theLoai-trangThai" name="filter-theLoai-trangThai">
-                <option value="">Tất cả</option>
+    
+    <div class="filter-Mirylsection">
+    <div class="filter-Mirylrow">
+        <div class="filter-Mirylgroup">
+            <label>Trạng thái:</label>
+            <select id="trangThaiFilter">
             </select>
         </div>
     </div>
+
+    <div class="filter-actions">
+        <button class="btn" id="resetFilter">Đặt lại</button>
+        <button class="btn save-btn" id="applyFilter">Áp dụng</button>
+    </div>
+</div>
 
     <div class="table-content">
         <table>

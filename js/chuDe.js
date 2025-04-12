@@ -4,34 +4,32 @@ $(document).ready(function () {
     let searchValue = ""; 
     let filterData = {};
 
-    function loadNhaCungCaps(page, searchValue, filterData) {
+    function loadChuDes(page, searchValue, filterData) {
         let data = { 
-            action: "listNhaCungCap", 
+            action: "listChuDe", 
             page: page, 
             limit: limit,
         };
 
         if (searchValue && searchValue.trim() !== "") {
-            data.action = "listNhaCungCapBySearch";
+            data.action = "listChuDeBySearch";
             data.search = searchValue;
         }
 
         if (filterData && Object.keys(filterData).length > 0) {
-            data.action = "listNhaCungCapByFilter";
+            data.action = "listChuDeByFilter";
             data.filter = filterData;
         }
 
         $.ajax({
-            url: "./controller/nhaCungCap.controller.php",
+            url: "./controller/chuDe.controller.php",
             type: "GET",
             data: data,
             dataType: "json",
             success: function (response) {
                 console.log("Dữ liệu sau khi lọc:", response);
 
-
-                console.log("Danh sách nhà cung cấp:", response.nhaCungCaps);
-                renderNhaCungCap(response.nhaCungCaps);
+                renderChuDe(response.chuDes);
                 renderPagination(response.totalPages, page);
             },
             error: function (xhr, status, error) {
@@ -75,37 +73,50 @@ $(document).ready(function () {
 
     $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadNhaCungCaps(page, searchValue, filterData); 
+            loadChuDes(page, searchValue, filterData); 
         });
     }
 
-    loadNhaCungCaps(currentPage, searchValue, filterData);
+    loadChuDes(currentPage, searchValue, filterData);
 
-    function renderNhaCungCap(nhaCungCaps) {
-        $("#nhaCungCapList").html("");
-        if (nhaCungCaps && nhaCungCaps.length > 0) {
-            nhaCungCaps.forEach(ncc => {
+    function renderChuDe(chuDes) {
+        $("#chuDeList").html("");
+        if (chuDes && chuDes.length > 0) {
+            chuDes.forEach(cd => {
                 let row = `
                     <tr> 
-                        <td>${ncc.id}</td>
-                        <td>${ncc.name}</td>
-                        <td>${ncc.contact_person}</td>
-                        <td>${ncc.contact_email}</td>
-                        <td>${ncc.contact_phone}</td>
-                        <td>${ncc.address}</td>
-                        <td>${ncc.trangthai_name}</td>
+                        <td>${cd.id}</td>
+                        <td>${cd.name}</td>
+                        <td>${cd.theloai_name}</td>
+                        <td>${cd.trangthai_name}</td>
                         <td>
-                            <button class="btn edit-btn" data-id="${ncc.id}">Sửa</button>
-                            <button class="btn delete-btn" data-id="${ncc.id}">Xóa</button>
+                            <button class="btn edit-btn" data-id="${cd.id}">Sửa</button>
+                            <button class="btn delete-btn" data-id="${cd.id}">Xóa</button>
                         </td>
                     </tr>
                 `;
-                $("#nhaCungCapList").append(row);
+                $("#chuDeList").append(row);
             });
         } else {
-            $("#nhaCungCapList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+            $("#chuDeList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
         }
     }
+
+    function loadTheLoaiFilter() {
+        $.ajax({
+            url: "./controller/theLoai.controller.php",
+            type: "GET",
+            data: { action: "listTheLoai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#theLoaiFilter").html("");
+                $("#theLoaiFilter").append(`<option value="0">Tất cả</option>`);
+                response.theLoais.forEach(tl => {
+                    $("#theLoaiFilter").append(`<option value="${tl.id}">${tl.name}</option>`);
+                });
+            }
+        });
+    } 
 
     function loadTrangThaiFilter() {
         $.ajax({
@@ -124,60 +135,81 @@ $(document).ready(function () {
     } 
 
     loadTrangThaiFilter();
+    loadTheLoaiFilter();
 
      // Reset filter
      $("#resetFilter").click(function() {
+        $("#theLoaiFilter").val(0);
         $("#trangThaiFilter").val(0);
     });
 
     // Apply filter
     $("#applyFilter").click(function() {
-        filterData.trangthai_id = $("#trangThaiFilter").val(); 
+        filterData= {
+            theloai_id: $("#theLoaiFilter").val(),
+            trangthai_id : $("#trangThaiFilter").val()
+        };
         currentPage = 1; 
         searchValue = "";
 
-        loadNhaCungCaps(currentPage, searchValue, filterData);
+        loadChuDes(currentPage, searchValue, filterData);
     });
 
 
     let searchTimeout;
  
-    $("#searchNhaCungCap").on("input", function () {
-       const searchValue = $(this).val().trim();
+    $("#searchChuDe").on("input", function () {
+        searchValue = $(this).val().trim();
        clearTimeout(searchTimeout);
        currentPage = 1;
        filterData= {};
    
        if (searchValue === "") {
-           loadNhaCungCaps(currentPage, searchValue, filterData);
+           loadChuDes(currentPage, searchValue, filterData);
            return;
        }
    
        searchTimeout = setTimeout(() => {
-           loadNhaCungCaps(currentPage, searchValue, filterData);
+           loadChuDes(currentPage, searchValue, filterData);
        }, 300);
    });
 
 
      // Xử lý modal
-     const nhaCungCapModal = $("#nhaCungCapModal");
+     const chuDeModal = $("#chuDeModal");
      const deleteModal = $("#deleteModal");
      let deleteId = null;
  
      // Đóng modal 
      $(".close, .cancel-btn").click(function() {
-         nhaCungCapModal.hide();
+         chuDeModal.hide();
          deleteModal.hide();
      });
  
-     // Nút thêm nhà cung cấp
-     $("#addNhaCungCap").click(function() {
+     // Nút thêm chủ đề
+     $("#addChuDe").click(function() {
          $("#modalTitle").text("Thêm nhà cung cấp");
-         $("#nhaCungCapForm")[0].reset();
-         $("#nhaCungCapId").val("");
+         $("#chuDeForm")[0].reset();
+         $("#chuDeId").val("");
+         loadTheLoai();
          loadTrangThai();
-         nhaCungCapModal.show();
+         chuDeModal.show();
      });
+
+     function loadTheLoai() {
+        return $.ajax({
+            url: "./controller/theLoai.controller.php",
+            type: "GET",
+            data: { action: "listTheLoai", type: "khac" },
+            dataType: "json",
+            success: function(response) {
+                $("#chuDe-theLoai").html("");
+                response.theLoais.forEach(tl => {
+                    $("#chuDe-theLoai").append(`<option value="${tl.id}">${tl.name}</option>`);
+                });
+            }
+        });
+    }
  
      // Load danh sách trạng thái
      function loadTrangThai() {
@@ -187,9 +219,9 @@ $(document).ready(function () {
             data: { action: "listTrangThai", type: "khac" },
             dataType: "json",
             success: function(response) {
-                $("#nhaCungCap-trangThai").html("");
+                $("#chuDe-trangThai").html("");
                 response.trangThais.forEach(tt => {
-                    $("#nhaCungCap-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
+                    $("#chuDe-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
                 });
             }
         });
@@ -199,49 +231,44 @@ $(document).ready(function () {
      $(document).on("click", ".edit-btn", function() {
          const id = $(this).data("id");
          $.ajax({
-             url: "./controller/nhaCungCap.controller.php",
+             url: "./controller/chuDe.controller.php",
              type: "GET",
-             data: { action: "getNhaCungCap", id: id },
+             data: { action: "getChuDe", id: id },
              dataType: "json",
              success: function(response) {
-                nhaCungCapModal.show();
+                chuDeModal.show();
                 console.log(response);
-                $("#modalTitle").text("Sửa nhà cung cấp");
-                $("#nhaCungCapId").val(response.nhaCungCap.id);
-                $("#nhaCungCap-name").val(response.nhaCungCap.name);
-                $("#nhaCungCap-contact-person").val(response.nhaCungCap.contact_person);
-                $("#nhaCungCap-contact-email").val(response.nhaCungCap.contact_email);
-                $("#nhaCungCap-contact-phone").val(response.nhaCungCap.contact_phone);
-                $("#nhaCungCap-address").val(response.nhaCungCap.address);
+                $("#modalTitle").text("Sửa chủ đề");
+                $("#chuDeId").val(response.chuDe.id);
+                $("#chuDe-name").val(response.chuDe.name);
+                loadTheLoai();
                 loadTrangThai();
                 setTimeout(() => {
-                    $("#nhaCungCap-trangThai").val(response.nhaCungCap.trangthai_id);
+                    $("#chuDe-theLoai").val(response.chuDe.theloai_id);
+                    $("#chuDe-trangThai").val(response.chuDe.trangthai_id);
                 }, 50)
              }
          });
      });
  
      // Submit form thêm/sửa
-     $("#nhaCungCapForm").submit(function(e) {
+     $("#chuDeForm").submit(function(e) {
          e.preventDefault();
          const data = {
-             id: $("#nhaCungCapId").val(),
-             name: $("#nhaCungCap-name").val(),
-             contact_person: $("#contact-person").val(),
-             contact_email: $("#contact-email").val(),
-             contact_phone: $("#contact-phone").val(),
-             address: $("#address").val(),
-             trangthai_id: $("#nhaCungCap-trangThai").val(),
-             action: $("#nhaCungCapId").val() ? "updateNhaCungCap" : "addNhaCungCap"
+             id: $("#chuDeId").val(),
+             name: $("#chuDe-name").val(),
+             theloai_id: $("#chuDe-theLoai").val(),
+             trangthai_id: $("#chuDe-trangThai").val(),
+             action: $("#chuDeId").val() ? "updateChuDe" : "addChuDe"
          };
  
          $.ajax({
-             url: "./controller/nhaCungCap.controller.php",
+             url: "./controller/chuDe.controller.php",
              type: "POST",
              data: data,
              success: function(response) {
-                 nhaCungCapModal.hide();
-                 loadNhaCungCaps(currentPage, searchValue, filterData);
+                 chuDeModal.hide();
+                 loadChuDes(currentPage, searchValue, filterData);
              },
              error: function(xhr, status, error) {
                  console.error(error);
@@ -259,12 +286,12 @@ $(document).ready(function () {
      $("#confirmDelete").click(function() {
          if (deleteId) {
              $.ajax({
-                 url: "./controller/nhaCungCap.controller.php",
+                 url: "./controller/chuDe.controller.php",
                  type: "POST",
-                 data: { action: "deleteNhaCungCap", id: deleteId },
+                 data: { action: "deleteChuDe", id: deleteId },
                  success: function(response) {
                      deleteModal.hide();
-                     loadNhaCungCaps(currentPage, searchValue, filterData);
+                     loadChuDes(currentPage, searchValue, filterData);
                  },
                  error: function(xhr, status, error) {
                      console.error(error);

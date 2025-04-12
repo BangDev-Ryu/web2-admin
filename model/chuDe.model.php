@@ -12,11 +12,6 @@ class ChuDeModel {
         return $this->db->totalByCondition('chude', '', '1=1', []);
     }
 
-    public function getAllChuDes() {
-        $result = $this->db->selectAll('chude');
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
     public function getNameById($id) {
         $sql = "SELECT name FROM chude WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);
@@ -37,19 +32,19 @@ class ChuDeModel {
     }
 
     public function addChuDe($data) {
-        $sql = "INSERT INTO chude (name, description, trangthai_id) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO chude (name, theloai_id, trangthai_id) VALUES (?, ?, ?)";
         return $this->db->executePrepared($sql, [
             $data['name'],
-            $data['description'],
+            $data['theloai_id'],
             $data['trangthai_id']
         ]);
     }
 
     public function updateChuDe($data) {
-        $sql = "UPDATE chude SET name = ?, description = ?, trangthai_id = ? WHERE id = ?";
+        $sql = "UPDATE chude SET name = ?, theloai_id = ?, trangthai_id = ? WHERE id = ?";
         return $this->db->executePrepared($sql, [
             $data['name'],
-            $data['description'],
+            $data['theloai_id'],
             $data['trangthai_id'],
             $data['id']
         ]);
@@ -60,14 +55,100 @@ class ChuDeModel {
         return $this->db->executePrepared($sql, [$id]);
     }
 
-    public function searchChuDe($search) {
-        $sql = "SELECT cd.*, tt.name as trangthai_name 
-                FROM chude cd
-                LEFT JOIN trangthai tt ON cd.trangthai_id = tt.id
-                WHERE cd.id LIKE ? OR LOWER(cd.name) LIKE ?";
+    public function searchNhaCungCap($search, $limit, $offset) {
+        $sql = "SELECT * FROM nhacungcap 
+                WHERE id LIKE ? 
+                OR LOWER(name) LIKE ? 
+                OR LOWER(contact_person) LIKE ? 
+                OR LOWER(contact_email) LIKE ? 
+                OR LOWER(contact_phone) LIKE ? 
+                OR LOWER(address) LIKE ?
+                LIMIT ? OFFSET ?";
+    
         $searchParam = "%$search%";
-        $result = $this->db->executePrepared($sql, [$searchParam, $searchParam]);
+        $params = array_fill(0, 6, $searchParam); 
+        $params[] = $limit;
+        $params[] = $offset;
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_all(MYSQLI_ASSOC);
+
+    } public function searchChuDe($search, $limit, $offset) {
+        $sql = "SELECT * FROM chude 
+                WHERE id LIKE ? 
+                OR LOWER(name) LIKE ? 
+                LIMIT ? OFFSET ?";
+    
+        $searchParam = "%$search%";
+        $params = array_fill(0, 2, $searchParam); 
+        $params[] = $limit;
+        $params[] = $offset;
+    
+        $result = $this->db->executePrepared($sql, $params);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function getTotalSearchChuDe($search) {
+        $sql = "SELECT COUNT(*) as total FROM chude 
+                WHERE id LIKE ? OR LOWER(name) LIKE ?";
+        $searchParam = "%$search%";
+        $params = array_fill(0, 2, $searchParam); 
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
+
+
+    public function filterChuDe($filter, $limit, $offset) {
+        $sql = "SELECT * FROM chude";
+        $conditions = [];
+        $params = [];
+    
+        if (!empty($filter['trangthai_id'])) {
+            $conditions[] = "trangthai_id = ?";
+            $params[] = $filter['trangthai_id'];
+        }
+    
+        if (!empty($filter['theloai_id'])) { 
+            $conditions[] = "theloai_id = ?";
+            $params[] = $filter['theloai_id'];
+        }
+    
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+    
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+
+    public function getTotalFilterChuDe($filter) {
+        $sql = "SELECT COUNT(*) as total FROM chude";
+        $conditions = [];
+        $params = [];
+    
+        if (!empty($filter['trangthai_id'])) {
+            $conditions[] = "trangthai_id = ?";
+            $params[] = $filter['trangthai_id'];
+        }
+    
+        if (!empty($filter['theloai_id'])) {
+            $conditions[] = "theloai_id = ?";
+            $params[] = $filter['theloai_id'];
+        }
+    
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
+    
 }
 ?>

@@ -55,21 +55,6 @@ class NhaCungCapModel {
         return $this->db->executePrepared($sql, [$id]);
     }
 
-    public function getTotalSearchNhaCungCap($search) {
-        $sql = "SELECT COUNT(*) as total FROM nhacungcap 
-                WHERE id LIKE ? OR LOWER(name) LIKE ?
-                OR LOWER(contact_person) LIKE ? 
-                OR LOWER(contact_email) LIKE ? 
-                OR LOWER(contact_phone) LIKE ? 
-                OR LOWER(address) LIKE ?";
-    
-        $searchParam = "%$search%";
-        $params = array_fill(0, 6, $searchParam); 
-    
-        $result = $this->db->executePrepared($sql, $params);
-        return $result->fetch_assoc()['total'];
-    }
-    
     public function searchNhaCungCap($search, $limit, $offset) {
         $sql = "SELECT * FROM nhacungcap 
                 WHERE id LIKE ? 
@@ -89,6 +74,23 @@ class NhaCungCapModel {
         return $result->fetch_all(MYSQLI_ASSOC);
 
     }
+
+    public function getTotalSearchNhaCungCap($search) {
+        $sql = "SELECT COUNT(*) as total FROM nhacungcap 
+                WHERE id LIKE ? OR LOWER(name) LIKE ?
+                OR LOWER(contact_person) LIKE ? 
+                OR LOWER(contact_email) LIKE ? 
+                OR LOWER(contact_phone) LIKE ? 
+                OR LOWER(address) LIKE ?";
+    
+        $searchParam = "%$search%";
+        $params = array_fill(0, 6, $searchParam); 
+    
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
+    
+   
 
     public function filterNhaCungCap($filter, $limit, $offset) {
         $sql = "SELECT * FROM nhacungcap";
@@ -110,7 +112,7 @@ class NhaCungCapModel {
     
     public function getTotalFilterNhaCungCap($filter) {
         $sql = "SELECT COUNT(*) as total FROM nhacungcap";
-        $params = []; // ✅ Khởi tạo mảng rỗng tránh lỗi
+        $params = [];
     
         if (!empty($filter['trangthai_id'])) {
             $sql .= " WHERE trangthai_id = ?";
