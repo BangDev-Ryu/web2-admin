@@ -67,6 +67,7 @@ $(document).ready(function () {
     loadDonHangs(currentPage, currentStatus);
 
     ////////////////////////////////////// TAB TRANG THAI //////////////////////////////////////
+    
     $(".tab-item[data-status='chuaXuLy']").addClass("active");
     $(".tab-item").click(function() {
         $('.tab-item').removeClass('active');
@@ -76,7 +77,71 @@ $(document).ready(function () {
         currentPage = 1; 
         loadDonHangs(currentPage, currentStatus); 
     })
+
+    ////////////////////////////////////// MODAL CHI TIET //////////////////////////////////////
     
+    // Xử lý modal
+    const donHangModal = $("#donHangModal");
+    
+    // Đóng modal 
+    $(".close, #closeModal").click(function() {
+        donHangModal.hide();
+    });
+
+    // Gắn event handler một lần duy nhất khi document ready
+    $(document).on("click", ".detail-btn", function(e) {
+        const donHangId = $(this).data("id");
+        $.ajax({
+            url: "./controller/donHang.controller.php",
+            type: "GET",
+            data: {
+                action: 'listCTDonHang',
+                id: donHangId
+            },
+            dataType: "json",
+            success: function(response) {
+                $("#updateDonHang").data("id", donHangId);
+                
+                if (currentStatus === "daGiao" || currentStatus === "daHuy") {
+                    $("#updateDonHang").hide();
+                } else {
+                    $("#updateDonHang").show();
+                }
+                
+                donHangModal.show();
+                renderChiTietDonHang(response.ctDonHangs);
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    });
+
+    // Tương tự với nút duyệt đơn hàng
+    $(document).on("click", "#updateDonHang", function() {
+        const donHangId = $(this).data("id");  // Lấy id từ chính button duyệt
+
+        $.ajax({
+            url: "./controller/donHang.controller.php",
+            type: "POST",
+            data: {
+                action: 'updateStatusDonHang',
+                id: donHangId,
+                status: currentStatus
+            },
+            success: function(response) {
+                donHangModal.hide();
+                setTimeout(() => {
+                    loadDonHangs(currentPage, currentStatus); 
+                }, 100);
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+                console.error("Trạng thái:", status);
+                console.error("Phản hồi từ server:", xhr.responseText);
+            }
+        });
+    });
 })
 
 function renderDonHang(donHangs) {
@@ -97,7 +162,7 @@ function renderDonHang(donHangs) {
                     <td>${dh.khuyenmai_name}</td>
                     
                     <td>
-                        <button id="detailDonHang" class="btn edit-btn" data-id="${dh.id}">Chi tiết</button>
+                        <button class="btn edit-btn detail-btn" data-id="${dh.id}">Chi tiết</button>
                     </td>
                 </tr>
             `;
@@ -106,4 +171,23 @@ function renderDonHang(donHangs) {
     } else {
         $("#donHangList").append('<tr><td colspan="11">Không tìm thấy kết quả</td></tr>');
     }
+}
+
+function renderChiTietDonHang(ctDonHangs) {
+    $("#ctDonHangList").html("");
+    if (ctDonHangs && ctDonHangs.length > 0) {
+        ctDonHangs.forEach(ct => {
+            let row = `
+                <tr> 
+                    <td>${ct.sanpham_name}</td>
+                    <td>${ct.quantity}</td>
+                    <td>${ct.price}</td>
+                </tr>
+            `;
+            $("#ctDonHangList").append(row);
+        });
+    } else {
+        $("#ctDonHangList").append('<tr><td colspan="11">Không tìm thấy kết quả</td></tr>');
+    }
+    
 }

@@ -28,6 +28,25 @@ class DonHangModel {
         $result = $this->db->executePrepared($sql, [$id]);
         return $result->fetch_assoc();
     }
+    
+    public function getCTDonHangById($id) {
+        $sql = "SELECT * FROM chitietphieuban WHERE phieuban_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 
+    public function updateStatusDonHang($id, $status) {
+        $sql = "UPDATE phieuban SET trangthai_id = ? WHERE id = ?";
+        return $this->db->executePrepared($sql, [$status, $id]);
+    }
+
+    public function getDonHangStatus($id) {
+        $sql = "SELECT trangthai_id FROM phieuban WHERE id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        if ($row = $result->fetch_assoc()) {
+            return $row['trangthai_id'];
+        }
+        return null;
+    }
 }
 ?>
