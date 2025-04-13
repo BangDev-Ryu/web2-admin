@@ -11,19 +11,8 @@ class TheLoaiController {
         $this->trangThaiController = new TrangThaiController();
     }
 
-    public function listAllTheLoai() {
-        $theLoais = $this->theLoaiModel->getAllTheLoais();
 
-        return $theLoais;
-    }
-
-    public function getNameById($id) {
-        $name = $this->theLoaiModel->getNameById($id);
-        return $name;
-    }
-
-    public function listTheLoai() {
-        $limit = 8;
+    public function listTheLoai($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
@@ -32,8 +21,8 @@ class TheLoaiController {
         $totalPages = ceil($totalTheLoais / $limit);
         
         foreach ($theLoais as &$theLoai) {
-            $name = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
-            $theLoai['trangthai_name'] = $name;
+            $trangThaiName = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
+            $theLoai['trangthai_name'] = $trangThaiName;
         }
 
         echo json_encode([
@@ -43,11 +32,63 @@ class TheLoaiController {
         ]);
     }
 
-    public function getTheLoai($id) {
+    public function listTheLoaiBySearch($limit, $search) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $search = isset($_GET['search']) ? $search : '';
+
+        $search = strtolower($search);
+        $theLoais = $this->theLoaiModel->searchTheLoai($search, $limit, $offset);
+        $totalTheLoais = $this->theLoaiModel->getTotalSearchTheLoai($search);
+        $totalPages = ceil($totalTheLoais / $limit);
+        
+        foreach ($theLoais as &$theLoai) {
+            $trangThaiName = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
+            $theLoai['trangthai_name'] = $trangThaiName;
+        }
+
+        echo json_encode([
+            "theLoais" => $theLoais,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+        
+
+        public function listTheLoaiByFilter($limit, $filter) {
+            $page = isset($_GET['page']) ? $_GET['page'] : 1;
+            $offset = ($page - 1) * $limit;
+    
+            $filter = isset($_GET['filter']) ? $filter : [];
+            $theLoais = $this->theLoaiModel->filterTheLoai($filter, $limit, $offset);
+    
+            $totalTheLoais = $this->theLoaiModel->getTotalFilterTheLoai($filter);
+            $totalPages = ceil($totalTheLoais / $limit);
+            
+            foreach ($theLoais as &$theLoai) {
+                $trangThaiName = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
+                $theLoai['trangthai_name'] = $trangThaiName;
+            }
+    
+            echo json_encode([
+                "theLoais" => $theLoais,
+                "totalPages" => $totalPages,
+                "currentPage" => $page
+            ]);
+        }
+
+
+    public function getNameById($id) {
+        $name = $this->theLoaiModel->getNameById($id);
+        return $name;
+    }
+
+    public function getTheLoaiById($id) {
         $theLoai = $this->theLoaiModel->getTheLoaiById($id);
         echo json_encode(['theLoai' => $theLoai]);
     }
-
+    
     public function addTheLoai($data) {
         $result = $this->theLoaiModel->addTheLoai($data);
         echo json_encode(['success' => $result]);
@@ -62,31 +103,34 @@ class TheLoaiController {
         $result = $this->theLoaiModel->deleteTheLoai($id);
         echo json_encode(['success' => $result]);
     }
-
-    public function searchTheLoai($search) {
-        $search = strtolower($search);
-        $theLoais = $this->theLoaiModel->searchTheLoai($search);
-        foreach ($theLoais as &$theLoai) {
-            $name = $this->trangThaiController->getNameById($theLoai['trangthai_id']);
-            $theLoai['trangthai_name'] = $name;
-        }
-        echo json_encode(['theLoais' => $theLoais]);
-    }
 }
 
 // Xử lý các request
 if (isset($_GET['action'])) {
     $controller = new TheLoaiController();
+    $limit = isset($_GET['limit']) && intval($_GET['limit']) > 0 ? intval($_GET['limit']) : 10; // gán mặc định nếu thiếu
+
     switch ($_GET['action']) {
         case 'listTheLoai':
-            $controller->listTheLoai();
+            $controller->listTheLoai($limit);
             break;
+
+        case 'listTheLoaiBySearch':
+            $search = isset($_GET['search']) ? $_GET['search'] : '';
+            $controller->listTheLoaiBySearch($limit, $search);
+            break;
+
+        case 'listTheLoaiByFilter':
+            $filter = isset($_GET['filter']) ? $_GET['filter'] : [];
+            $controller->listTheLoaiByFilter($limit, $filter);
+            break;
+
         case 'getTheLoai':
-            $controller->getTheLoai($_GET['id']);
-            break;
-        case 'searchTheLoai':
-            $controller->searchTheLoai($_GET['search']);
-            break;
+                    $id = isset($_GET['id']) ? $_GET['id'] : null;
+            if ($id !== null) {
+                $controller->getTheLoaiById($id); 
+            }
+    break;
     }
 }
 
