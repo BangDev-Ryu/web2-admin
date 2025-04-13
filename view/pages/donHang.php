@@ -21,6 +21,8 @@
         
     </div>
 
+    
+
     <div class="tab-section">
         <div class="tab-item" data-status="chuaXuLy">
             Chưa xử lý
@@ -65,6 +67,35 @@
 
     <div id="pagination">
 
+    </div>
+
+    <div class="modal" id="donHangModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Chi tiết đơn hàng</h2>
+
+            <div class="table-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="ctDonHangList">
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn" id="updateDonHang">Duyệt đơn hàng</button>
+                <button class="btn" id="closeModal">Đóng</button>
+            </div>
+    </div>
+        </div>
     </div>
 </body>
 </html>

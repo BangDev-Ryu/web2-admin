@@ -78,3 +78,42 @@
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+/* CSS cho modal của đơn hàng */
+#donHangModal .modal-content {
+    margin: 10% auto;
+}
+
+#donHangModal .modal-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #444;
+}
+
+#donHangModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+
+#donHangModal .modal-actions .btn#updateDonHang {
+    background-color: #28a745; /* Màu xanh cho nút duyệt */
+    color: white;
+}
+
+#donHangModal .modal-actions .btn#updateDonHang:hover {
+    background-color: #218838;
+}
+
+#donHangModal .modal-actions .btn#closeModal {
+    background-color: #dc3545; /* Màu đỏ cho nút đóng */
+    color: white;
+}
+
+#donHangModal .modal-actions .btn#closeModal:hover {
+    background-color: #c82333;
+}

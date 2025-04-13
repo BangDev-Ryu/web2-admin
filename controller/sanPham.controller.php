@@ -92,6 +92,11 @@ class SanPhamController {
         echo json_encode(['sanPham' => $sanPham]);
     }
 
+    public function getNameById($id) {
+        $sanPham = $this->sanPhamModel->getSanPhamById($id);
+        return $sanPham['name'];
+    }
+
     public function addSanPham($data) {
         $result = $this->sanPhamModel->addSanPham($data);
         echo json_encode(['success' => $result]);

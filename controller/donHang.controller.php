@@ -1,20 +1,23 @@
 <?php
 require_once '../model/donHang.model.php';
+require_once '../model/sanPham.model.php';
 require_once "./nguoiDung.controller.php";
+require_once "./sanPham.controller.php";
 
 class DonHangController {
     private $donHangModel;
     private $nguoiDungController;
+    private $sanPhamController;
+    private $sanPhamModel;
 
     public function __construct() {
         $this->donHangModel = new DonHangModel();
         $this->nguoiDungController = new NguoiDungController();
+        $this->sanPhamController = new SanPhamController();
+        $this->sanPhamModel = new SanPhamModel();
     }
 
-    public function listDonHang($status, $limit) {
-        $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $offset = ($page - 1) * $limit;
-        
+    public function convertStatus($status) {
         switch ($status) {
             case 'chuaXuLy':
                 $status = 6;
@@ -32,6 +35,14 @@ class DonHangController {
                 $status = 10;
                 break;
         }
+        return $status;
+    }
+
+    public function listDonHang($status, $limit) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+        
+        $status = $this->convertStatus($status);
 
         $donHangs = $this->donHangModel->getDonHangs($status, $limit, $offset);
         $totalDonHang = $this->donHangModel->getTotalDonHangs($status);
@@ -53,6 +64,38 @@ class DonHangController {
         ]);
     }
 
+    public function listCTDonHang($id) {
+        $ctDonHangs = $this->donHangModel->getCTDonHangById($id);
+        foreach ($ctDonHangs as &$ct) {
+            $sanPhamName = $this->sanPhamController->getNameById($ct['sanpham_id']);
+            $ct['sanpham_name'] = $sanPhamName;
+        }
+        
+        echo json_encode(["ctDonHangs" => $ctDonHangs]);
+    }
+
+    public function updateStatusDonHang($id) {
+        $currentStatus = $this->donHangModel->getDonHangStatus($id);
+        if ($currentStatus == 6) { // nếu đơn hàng chưa xử lý
+            $ctDonHangs = $this->donHangModel->getCTDonHangById($id);
+            foreach ($ctDonHangs as $ct) {
+                $sanPham = $this->sanPhamModel->getSanPhamById($ct['sanpham_id']);
+                $newStock = $sanPham['stock_quantity'] - $ct['quantity'];
+                if ($newStock < 0) {
+                    echo json_encode([
+                        "success" => false, 
+                        "message" => "Sản phẩm " . $sanPham['name'] . " không đủ số lượng"
+                    ]);
+                    return;
+                }
+                $this->sanPhamModel->updateQuanity($ct['sanpham_id'], $newStock);
+            }
+        }
+
+        $status = $currentStatus + 1;
+        $result = $this->donHangModel->updateStatusDonHang($id, $status);
+        echo json_encode(["success" => $result]);
+    }
 }
 
 if (isset($_GET['action'])) {
@@ -60,6 +103,18 @@ if (isset($_GET['action'])) {
     switch ($_GET['action']) {
         case 'listDonHang':
             $controller->listDonHang($_GET['status'], $_GET['limit']);
+            break;
+        case 'listCTDonHang':
+            $controller->listCTDonHang($_GET['id']);
+            break;
+    }
+}
+
+if (isset($_POST['action'])) {
+    $controller = new DonHangController();
+    switch ($_POST['action']) {
+        case 'updateStatusDonHang':
+            $controller->updateStatusDonHang($_POST['id']);
             break;
     }
 }
