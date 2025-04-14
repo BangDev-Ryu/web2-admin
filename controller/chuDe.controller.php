@@ -15,6 +15,11 @@ class ChuDeController {
         $this->trangThaiController = new TrangThaiController();
     }
 
+    public function listAllChuDe() {
+        $chuDes = $this->chuDeModel->getAllChuDes();
+        echo json_encode(['chuDes' => $chuDes]);
+    }
+
     public function listChuDe($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
@@ -119,14 +124,17 @@ if (isset($_GET['action'])) {
         case 'listChuDe':
             $controller->listChuDe($_GET['limit']);
             break;
-            case 'listChuDeBySearch':
-                $controller->listChuDeBySearch($_GET['limit'], $_GET['search']);
-                break;
-            case 'listChuDeByFilter':
-                $controller->listChuDeByFilter($_GET['limit'], $_GET['filter']);
-                break;  
+        case 'listChuDeBySearch':
+            $controller->listChuDeBySearch($_GET['limit'], $_GET['search']);
+            break;
+        case 'listChuDeByFilter':
+            $controller->listChuDeByFilter($_GET['limit'], $_GET['filter']);
+            break;  
         case 'getChuDe':
             $controller->getChuDeById($_GET['id']);
+            break;
+        case 'listAllChuDe':
+            $controller->listAllChuDe();
             break;
         }
     }

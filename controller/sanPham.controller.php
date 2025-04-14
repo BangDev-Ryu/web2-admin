@@ -14,6 +14,19 @@ class SanPhamController {
         $this->chuDeController = new ChuDeController();
     }
 
+    public function listAllSanPham() {
+        $products = $this->sanPhamModel->getAllSanPhams();
+        // foreach ($products as &$product) {
+        //     $trangThaiName = $this->trangThaiController->getNameById($product['trangthai_id']);
+        //     $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
+        //     $product['chude_name'] = $chuDeName;
+        //     $product['trangthai_name'] = $trangThaiName;
+        // }
+        echo json_encode([
+            "products" => $products,
+        ]);
+    }
+
     // load danh sách sản phẩm
     public function listSanPham($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -123,6 +136,10 @@ if (isset($_GET['action'])) {
         case 'getSanPham':
             $controller->getSanPhamById($_GET['id']);
             break;
+        case 'listAllSanPham':
+            $controller->listAllSanPham();
+            break;
+
     }
 }
 
