@@ -94,7 +94,6 @@
                 <button class="btn" id="updateDonHang">Duyệt đơn hàng</button>
                 <button class="btn" id="closeModal">Đóng</button>
             </div>
-    </div>
         </div>
     </div>
 </body>

@@ -8,6 +8,12 @@ class SanPhamModel {
         $this->db = new connectDB();
     }
 
+    public function getAllSanPhams() {
+        $sql = "SELECT * FROM sanpham";
+        $result = $this->db->executePrepared($sql, []);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getTotalSanPhams() {
         return $this->db->totalByCondition('sanpham', '', '1=1', []);
     }

@@ -12,6 +12,11 @@ class ChuDeModel {
         return $this->db->totalByCondition('chude', '', '1=1', []);
     }
 
+    public function getAllChuDes() {
+        $result = $this->db->selectAll('chude');
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getNameById($id) {
         $sql = "SELECT name FROM chude WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);

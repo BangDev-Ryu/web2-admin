@@ -8,6 +8,12 @@ class NhaCungCapModel {
         $this->db = new connectDB();
     }
 
+    public function getAllNhaCungCaps() {
+        $sql = "SELECT * FROM nhacungcap";
+        $result = $this->db->executePrepared($sql, []);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getTotalNhaCungCaps() {
         return $this->db->totalByCondition('nhacungcap', '', '1=1', []);
     }
