@@ -22,7 +22,7 @@ class TrangThaiController {
     public function getTrangThaiByType($type) {
         switch ($type) {
             case "donHang":
-                $result = $this->trangThaiModel->getTrangThaiByType(7, 5);
+                $result = $this->trangThaiModel->getTrangThaiByType(5, 5);
                 break;
             case "sanPham":
                 $result = $this->trangThaiModel->getTrangThaiByType(2, 3);

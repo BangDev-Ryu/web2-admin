@@ -8,6 +8,12 @@ class SanPhamModel {
         $this->db = new connectDB();
     }
 
+    public function getAllSanPhams() {
+        $sql = "SELECT * FROM sanpham";
+        $result = $this->db->executePrepared($sql, []);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getTotalSanPhams() {
         return $this->db->totalByCondition('sanpham', '', '1=1', []);
     }
@@ -103,6 +109,12 @@ class SanPhamModel {
         ]);
     }
 
+    public function updateQuanity($id, $quantity) {
+        $sql = "UPDATE sanpham SET stock_quantity = ? WHERE id = ?";
+        return $this->db->executePrepared($sql, [$quantity, $id]);
+    }
+
+    // search
     public function getTotalSearchSanPham($search) {
         $sql = "SELECT COUNT(*) as total FROM sanpham 
                 WHERE id LIKE ? OR LOWER(name) LIKE ?";
@@ -120,6 +132,7 @@ class SanPhamModel {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    // filter
     public function filterSanPham($filter, $limit, $offset) {
         $sql = "SELECT * FROM sanpham 
             WHERE selling_price BETWEEN ? AND ?";

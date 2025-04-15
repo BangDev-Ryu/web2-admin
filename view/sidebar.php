@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/sidebar.css?v=<?php echo filemtime('./css/sidebar.css'); ?>" />
+    <link rel="stylesheet" href="./css/sidebar.css?v=<?php echo time(); ?>" />
     <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
     
     <script src="./js/sidebar.js?v=<?= time() ?>"></script>
@@ -46,6 +46,13 @@
                 </li>
 
                 <li class="item">
+                    <a href="#" class="nav-link" data-page="chuDe">
+                        <i class="fa-solid fa-flag icon"></i>
+                        <span class="link">Chủ đề</span>
+                    </a>
+                </li>
+
+                <li class="item">
                     <a href="#" class="nav-link" data-page="taiKhoan">
                         <i class="fa-solid fa-user icon"></i>
                         <span class="link">Tài khoản</span>
@@ -60,9 +67,9 @@
                 </li>
 
                 <li class="item">
-                    <a href="#" class="nav-link" data-page="nhapHang">
+                    <a href="#" class="nav-link" data-page="phieuNhap">
                         <i class="fa-solid fa-truck-fast icon"></i>
-                        <span class="link">Nhập hàng</span>
+                        <span class="link">Phiếu nhập</span>
                     </a>
                 </li>
 

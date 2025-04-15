@@ -78,3 +78,492 @@
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+/* CSS cho modal của đơn hàng */
+#donHangModal .modal-content {
+    margin: 10% auto;
+}
+
+#donHangModal .modal-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #444;
+}
+
+#donHangModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+
+
+
+#donHangModal .modal-actions .btn#updateDonHang {
+    background-color: #28a745; /* Màu xanh cho nút duyệt */
+    color: white;
+}
+
+#donHangModal .modal-actions .btn#updateDonHang:hover {
+    background-color: #218838;
+}
+
+#donHangModal .modal-actions .btn#closeModal {
+    background-color: #dc3545; /* Màu đỏ cho nút đóng */
+    color: white;
+}
+
+#donHangModal .modal-actions .btn#closeModal:hover {
+    background-color: #c82333;
+}
+
+
+/* Phiếu nhập modal */
+#phieuNhapModal .modal-content {
+    width: 90%; /* Tăng kích thước modal */
+    max-width: 1600px; /* Tăng max-width */
+    min-height: 80vh; /* Thêm min-height */
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+}
+
+#phieuNhapModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+#createPhieuNhap {
+    background-color: #218838; /* Màu xanh cho nút tạo phiếu nhập */
+    color: white;
+}
+
+.phieuNhap-container {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    height: calc(80vh - 150px);
+}
+
+.phieuNhap-left {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.phieuNhap-right {
+    flex: 0.8;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Khu vực bảng sản phẩm */
+.sanPham-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#sanPhamTable {
+    width: 100%;
+    border-collapse: collapse;
+    /* margin-bottom: 1rem; */
+}
+
+#sanPhamTable thead {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 1;
+}
+
+#sanPhamTable tbody {
+    display: block;
+    max-height: 400px; /* Điều chỉnh chiều cao tùy ý */
+    overflow-y: auto;
+}
+
+#sanPhamTable thead tr,
+#sanPhamTable tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#sanPhamTable th,
+#sanPhamTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Định dạng chiều rộng các cột */
+#sanPhamTable th:nth-child(1),
+#sanPhamTable td:nth-child(1) {
+    width: 10%;
+}
+
+#sanPhamTable th:nth-child(2),
+#sanPhamTable td:nth-child(2) {
+    width: 40%;
+}
+
+#sanPhamTable th:nth-child(3),
+#sanPhamTable td:nth-child(3) {
+    width: 25%;
+}
+
+#sanPhamTable th:nth-child(4),
+#sanPhamTable td:nth-child(4) {
+    width: 25%;
+}
+
+/* Hover effect */
+#sanPhamTable tbody tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+#sanPhamTable tbody tr.selected {
+    background-color: #e3f2fd;
+}
+
+.sanPham-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.sanPham-content table {
+    margin-top: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Container cho bảng có scroll */
+#sanPhamTable {
+    flex: 1;
+    overflow: hidden;
+}
+
+#sanPhamTable thead {
+    background: #f8f9fa;
+}
+
+#sanPhamTable tbody {
+    display: block;
+    max-height: calc(60vh - 200px);
+    overflow-y: auto;
+}
+
+#sanPhamTable thead tr,
+#sanPhamTable tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#sanPhamTable th,
+#sanPhamTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Định dạng cột trong bảng */
+#sanPhamTable th:nth-child(1),
+#sanPhamTable td:nth-child(1) {
+    width: 10%;
+}
+
+#sanPhamTable th:nth-child(2),
+#sanPhamTable td:nth-child(2) {
+    width: 40%;
+}
+
+#sanPhamTable th:nth-child(3),
+#sanPhamTable td:nth-child(3) {
+    width: 25%;
+}
+
+#sanPhamTable th:nth-child(4),
+#sanPhamTable td:nth-child(4) {
+    width: 25%;
+}
+
+/* Style cho dòng được hover */
+#sanPhamTable tbody tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+/* Controls sản phẩm */
+.sanPham-actions {
+    margin-top: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.product-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profit-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#sanPhamQuantity {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+#sanPhamProfit {
+    flex: 1;
+}
+
+#profitValue {
+    min-width: 45px;
+}
+
+#sanPhamQuantity {
+    width: 100px;
+}
+
+/* Điều chỉnh style cho bảng */
+.ctPhieuNhap-data table,
+.sanPham-content table {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.total-amount {
+    margin-top: 15px;
+    padding: 15px;
+    background: #e9ecef;
+    border-radius: 8px;
+    text-align: right;
+    font-size: 1.1em;
+}
+
+.phieuNhap-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.phieuNhap-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.phieuNhap-right {
+    flex: 1;
+}
+
+.phieuNhap-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.ctPhieuNhap-data {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    padding-bottom: 50px; /* Tạo khoảng trống cho tổng tiền */
+}
+
+.total-amount {
+    align-self: flex-end;
+    margin-top: 10px;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 1.1em;
+}
+
+.sanPham-actions {
+    /* margin-top: 15px; */
+    padding: 4px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profit-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#sanPhamProfit {
+    /* flex: 1; */
+    padding: 0;
+}
+
+#profitValue {
+    min-width: 50px;
+}
+
+table {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+#addSanPham {
+    align-self: flex-start;
+}
+
+.sanPham-search {
+    margin-bottom: 15px;
+}
+
+.sanPham-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Căn chỉnh các controls sản phẩm */
+.product-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 8px;
+}
+
+.product-controls .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#sanPhamQuantity {
+    width: 120px;
+    padding: 8px;
+    text-align: center;
+}
+
+#addSanPham {
+    align-self: flex-end;
+    margin-top: 24px; /* Để căn theo label của các controls khác */
+}
+
+.delete-ctpn-btn {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-ctpn-btn:hover {
+    background-color: #c82333;
+}
+
+/* Styling cho bảng chi tiết phiếu nhập */
+#ctPhieuNhapTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#ctPhieuNhapTable thead {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 1;
+}
+
+#ctPhieuNhapTable tbody {
+    display: block;
+    max-height: calc(40vh - 100px);
+    overflow-y: auto;
+}
+
+#ctPhieuNhapTable thead tr,
+#ctPhieuNhapTable tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Định dạng cột trong bảng chi tiết */
+#ctPhieuNhapTable th:nth-child(1),
+#ctPhieuNhapTable td:nth-child(1) {
+    width: 10%;
+}
+
+#ctPhieuNhapTable th:nth-child(2),
+#ctPhieuNhapTable td:nth-child(2) {
+    width: 25%;
+}
+
+#ctPhieuNhapTable th:nth-child(3),
+#ctPhieuNhapTable td:nth-child(3) {
+    width: 15%;
+}
+
+#ctPhieuNhapTable th:nth-child(4),
+#ctPhieuNhapTable td:nth-child(4) {
+    width: 15%;
+}
+
+#ctPhieuNhapTable th:nth-child(5),
+#ctPhieuNhapTable td:nth-child(5) {
+    width: 10%;
+}
+
+#ctPhieuNhapTable th:nth-child(6),
+#ctPhieuNhapTable td:nth-child(6) {
+    width: 15%;
+}
+
+#ctPhieuNhapTable th:nth-child(7),
+#ctPhieuNhapTable td:nth-child(7) {
+    width: 10%;
+}

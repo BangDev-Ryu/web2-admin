@@ -11,6 +11,12 @@ class NhaCungCapController {
         $this->trangThaiController = new TrangThaiController();
     }
 
+    public function listAllNhaCungCap() {
+        $nhaCungCaps = $this->nhaCungCapModel->getAllNhaCungCaps();
+        
+        echo json_encode(['nhaCungCaps' => $nhaCungCaps]);
+    }
+
     public function listNhaCungCap($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
@@ -76,25 +82,30 @@ class NhaCungCapController {
         ]);
     }
 
-public function getNhaCungCapById($id) {
-    $nhaCungCap = $this->nhaCungCapModel->getNhaCungCapById($id);
-    echo json_encode(['nhaCungCap' => $nhaCungCap]);
+    public function getNameById($id) {
+        $name = $this->nhaCungCapModel->getNameById($id);
+        echo json_encode(['name' => $name]);
     }
 
-public function addNhaCungCap($data) {
-    $result = $this->nhaCungCapModel->addNhaCungCap($data);
-    echo json_encode(['success' => $result]);
-}
+    public function getNhaCungCapById($id) {
+        $nhaCungCap = $this->nhaCungCapModel->getNhaCungCapById($id);
+        echo json_encode(['nhaCungCap' => $nhaCungCap]);
+        }
 
-public function updateNhaCungCap($data) {
-    $result = $this->nhaCungCapModel->updateNhaCungCap($data);
-    echo json_encode(['success' => $result]);
-}
+    public function addNhaCungCap($data) {
+        $result = $this->nhaCungCapModel->addNhaCungCap($data);
+        echo json_encode(['success' => $result]);
+    }
 
-public function deleteNhaCungCap($id) {
-    $result = $this->nhaCungCapModel->deleteNhaCungCap($id);
-    echo json_encode(['success' => $result]);
-}
+    public function updateNhaCungCap($data) {
+        $result = $this->nhaCungCapModel->updateNhaCungCap($data);
+        echo json_encode(['success' => $result]);
+    }
+
+    public function deleteNhaCungCap($id) {
+        $result = $this->nhaCungCapModel->deleteNhaCungCap($id);
+        echo json_encode(['success' => $result]);
+    }
 
 }
 
@@ -105,14 +116,17 @@ switch ($_GET['action']) {
     case 'listNhaCungCap':
         $controller->listNhaCungCap($_GET['limit']);
         break;
-        case 'listNhaCungCapBySearch':
-            $controller->listNhaCungCapBySearch($_GET['limit'], $_GET['search']);
-            break;
-        case 'listNhaCungCapByFilter':
-            $controller->listNhaCungCapByFilter($_GET['limit'], $_GET['filter']);
-            break;  
+    case 'listNhaCungCapBySearch':
+        $controller->listNhaCungCapBySearch($_GET['limit'], $_GET['search']);
+        break;
+    case 'listNhaCungCapByFilter':
+        $controller->listNhaCungCapByFilter($_GET['limit'], $_GET['filter']);
+        break;  
     case 'getNhaCungCap':
         $controller->getNhaCungCapById($_GET['id']);
+        break;
+    case 'listAllNhaCungCap':
+        $controller->listAllNhaCungCap();
         break;
     }
 }

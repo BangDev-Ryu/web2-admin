@@ -6,31 +6,37 @@
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/theLoai.js?v=<?php echo time(); ?>"></script>
+
+    <script src="./js/chuDe.js?v=<?= time() ?>"></script>
 </head>
 <body>
-    <div class="table-actions">
+<div class="table-actions">
         <div class="search-section">
             <div class="search-box">
-                <input type="text" id="searchTheLoai" placeholder="Tìm kiếm thể loại...">
+                <input type="text" id="searchChuDe" placeholder="Tìm kiếm chủ đề...">
             </div>
         </div>
-        <button id="addTheLoai" class="btn add-btn">
+        <button id="addChuDe" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
-            <span>Thêm thể loại</span>
+            <span>Thêm chủ đề</span>
         </button>
     </div>
-    
-    <div class="filter-Mirylsection">
-    <div class="filter-Mirylrow">
-        <div class="filter-Mirylgroup">
-            <label>Trạng thái:</label>
-            <select id="trangThaiFilter">
-            </select>
-        </div>
+
+    <div class="filter-chuDesection">
+    <div class="filter-chuDerow">
+    <div class="filter-group">
+                <label>Thể loại:</label>
+                <select id="theLoaiFilter">
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Trạng thái:</label>
+                <select id="trangThaiFilter">
+                </select>
+            </div>
     </div>
 
     <div class="filter-actions">
@@ -44,37 +50,40 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tên thể loại</th>
-                    <th>Mô tả</th>
+                    <th>Tên chủ đề</th>
+                    <th>Thể loại</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
-            <tbody id="theLoaiList">
+            <tbody id="chuDeList">
             </tbody>
         </table>
     </div>
 
-    <div id="pagination"></div>
+    <div id="pagination">
 
-    <!-- Modal Thêm/Sửa Thể Loại -->
-    <div class="modal" id="theLoaiModal">
+    </div>
+
+    <div class="modal" id="chuDeModal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 id="modalTitle">Thêm Thể Loại</h2>
-            <form id="theLoaiForm">
-                <input type="hidden" id="theLoaiId">
+            <h2 id="modalTitle">Thêm chủ đề</h2>
+            <form id="chuDeForm">
+                <input type="hidden" id="chuDeId">
                 <div class="form-group">
-                    <label for="theLoai-name">Tên thể loại:</label>
-                    <input type="text" id="theLoai-name" name="theLoai-name" required>
+                    <label for="chuDe-name">Tên chủ đề:</label>
+                    <input type="text" id="chuDe-name" name="chuDe-name" required>
                 </div>
                 <div class="form-group">
-                    <label for="theLoai-description">Mô tả:</label>
-                    <textarea id="theLoai-description" name="theLoai-description"></textarea>
+                    <label for="chuDe-theLoai">Thể loại:</label>
+                    <select id="chuDe-theLoai" name="chuDe-theLoai" required>
+
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="theLoai-trangThai">Trạng thái:</label>
-                    <select id="theLoai-trangThai" name="theLoai-trangThai" required>
+                    <label for="chuDe-trangThai">Trạng thái:</label>
+                    <select id="chuDe-trangThai" name="chuDe-trangThai" required>
 
                     </select>
                 </div>
@@ -90,9 +99,9 @@
     <div class="modal" id="deleteModal">
         <div class="modal-content">
             <h2>Xác nhận xóa</h2>
-            <p>Bạn có chắc chắn muốn xóa thể loại này?</p>
+            <p>Bạn có chắc chắn muốn xóa chủ đề này?</p>
             <div class="form-actions">
-                <button id="confirmDeleteTheLoai" class="btn confirm-delete-btn">Xóa</button>
+                <button id="confirmDelete" class="btn confirm-delete-btn">Xóa</button>
                 <button class="btn cancel-btn">Hủy</button>
             </div>
         </div>

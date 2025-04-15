@@ -22,13 +22,13 @@
             </button>
         </div>
 
-        <div class="filter-nhaCungCapsection">
-        <div class="filter-nhaCungCaprow">
-            <div class="filter-nhaCungCapgroup">
-                <label>Trạng thái:</label>
-                <select id="trangThaiFilter">
-                </select>
-            </div>
+
+    <div class="filter-Mirylsection">
+    <div class="filter-Mirylrow">
+        <div class="filter-Mirylgroup">
+            <label>Trạng thái:</label>
+            <select id="trangThaiFilter">
+            </select>
         </div>
 
         <div class="filter-actions">

@@ -79,7 +79,7 @@
     color: white;
 }
 
-/* Filter Section Styles */
+/* ilter section */
 .filter-section {
     background: white;
     padding: 15px;
@@ -131,7 +131,31 @@
     padding: 8px 16px;
 }
 
+/* tab cho đơn hàng, nhập hàng */
+.tab-section {
+    display: flex;
+    gap: 16px;    
+    align-items: center;
+    margin-bottom: 10px;
+}
 
+.tab-section .tab-item {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.tab-section .tab-item:hover {
+    background-color: #f1f1f1;
+}
+
+.tab-section .tab-item.active {
+    background-color: #484848;
+    color: #fff;
+}
+
+/*  */
 
 .filter-khuyenMaisection {
     background: white;
@@ -167,33 +191,60 @@
 }
 
 
-
-
-.filter-nhaCungCapsection {
+.filter-chuDesection {
     background: white;
-    padding: 20px;
-    margin-bottom: 25px; 
-    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 30%; 
 }
 
-
-.filter-nhaCungCaprow {
+.filter-chuDerow {
     display: flex;
     gap: 20px;
     margin-bottom: 15px;
     align-items: center;
 }
 
-.filter-nhaCungCapgroup label {
+.filter-chuDegroup {
+    flex: 1;
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+
+
+.filter-Mirylsection {
+    background: white;
+    padding: 20px;
+    margin-bottom: 25px; 
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 25%; 
+}
+
+
+.filter-Mirylrow {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.filter-Mirylgroup label {
     display: middle;
     margin-bottom: 20px;
     font-weight: 500;
     color: #333;
 }
 
-.filter-nhaCungCapgroup select {
+.filter-Mirylgroup select {
     flex: 1;
     padding: 8px 25px;
     border: 1px solid #ccc;
@@ -207,12 +258,12 @@
     background-size: 10px;
 }
 
-.filter-nhaCungCapgroup select:focus {
+.filter-Mirylgroup select:focus {
     border-color: #66afe9;
     box-shadow: 0 0 0 2px rgba(102, 175, 233, 0.3);
 }
 
-.filter-nhaCungCapgroup select:hover {
+.filter-Mirylgroup select:hover {
     border-color: #888;
     cursor: pointer;
 }
