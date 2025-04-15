@@ -108,12 +108,59 @@ class TaiKhoanController {
         echo json_encode(['taiKhoan' => $taiKhoan]);
     }
 
+    public function validateTaiKhoan($data, $isUpdate = false) {
+        $errors = [];
+        
+        // Validate username format
+        if (!preg_match('/^[a-zA-Z0-9]+$/', $data['username'])) {
+            $errors[] = "Tên đăng nhập chỉ được chứa chữ cái và số, không dấu, không khoảng trắng và ký tự đặc biệt";
+        }
+
+        // Validate password
+        if (!$isUpdate || !empty($data['password'])) {
+            if (strlen($data['password']) < 6) {
+                $errors[] = "Mật khẩu phải có ít nhất 6 ký tự";
+            }
+        }
+
+        // Validate email
+        if ($this->taiKhoanModel->checkEmailExists($data['email'], $isUpdate ? $data['id'] : null)) {
+            $errors[] = "Email đã tồn tại trong hệ thống";
+        }
+
+        // Validate username
+        if ($this->taiKhoanModel->checkUsernameExists($data['username'], $isUpdate ? $data['id'] : null)) {
+            $errors[] = "Tên đăng nhập đã tồn tại trong hệ thống";
+        }
+
+        // Validate date of birth
+        if (!empty($data['date_of_birth'])) {
+            if (!$this->taiKhoanModel->validateDateOfBirth($data['date_of_birth'])) {
+                $errors[] = "Ngày sinh không hợp lệ";
+            }
+        }
+
+        return $errors;
+    }
+
     public function addTaiKhoan($data) {
+        $errors = $this->validateTaiKhoan($data);
+        if (!empty($errors)) {
+            echo json_encode(['success' => false, 'errors' => $errors]);
+            return;
+        }
+
         $result = $this->taiKhoanModel->addTaiKhoan($data);
         echo json_encode(['success' => $result]);
     }
     
     public function updateTaiKhoan($data) {
+        $errors = $this->validateTaiKhoan($data, true);
+        if (!empty($errors)) {
+            echo json_encode(['success' => false, 'errors' => $errors]);
+            return;
+        }
+
         $result = $this->taiKhoanModel->updateTaiKhoan($data);
         echo json_encode(['success' => $result]);
     }

@@ -6,12 +6,12 @@ $(document).ready(function () {
     let filterData = {};
 
     function loadTaiKhoans(page, searchValue, filterData) {
-            let data = {
+        let data = {
             action: "listTaiKhoan", 
             page: page, 
             limit: limit,
-            };
-        
+        };
+
         if (searchValue && searchValue.trim() !== "") {
             data.action = "listTaiKhoanBySearch";
             data.search = searchValue;
@@ -21,15 +21,14 @@ $(document).ready(function () {
             data.action = "listTaiKhoanByFilter";
             data.filter = filterData;
         }
-        
-        
+
         $.ajax({
             url: "./controller/taiKhoan.controller.php",
             type: "GET",
             data: data,
             dataType: "json",
             success: function (response) {
-                console.log(response.taiKhoans);
+                console.log("Search Results:", response); // Thêm log để debug
                 renderTaiKhoan(response.taiKhoans);
                 renderPagination(response.totalPages, page);
             },
@@ -83,23 +82,19 @@ $(document).ready(function () {
 
     $("#searchTaiKhoan").on("input", function () {
         searchValue = $(this).val().trim();
-
         clearTimeout(searchTimeout);
-        
         currentPage = 1;
         filterData = {};
 
-        if(searchValue === "") {
-            loadTaiKhoans(currentPage, searchValue, filterData);
-            return;
-        }
-        
+        // Reset các filter khi tìm kiếm
+        $("#loaiTKFilter").val(2);
+        $("#trangThaiFilter").val(0);
+        $("#chucVuFilter").val(0);
+
         searchTimeout = setTimeout(function () {
             loadTaiKhoans(currentPage, searchValue, filterData);
         }, 300);
     });
-
-
 
     function loadTrangThaiFilter() {
         $.ajax({
@@ -137,10 +132,9 @@ $(document).ready(function () {
     loadChucVuFilter(); 
 
     $("#resetFilter").click(function() {
-        $("#loaiTKFilter").val(0); // TỚI ĐÂY
+        $("#loaiTKFilter").val(0);
         $("#trangThaiFilter").val(0);
         $("#chucVuFilter").val(0);
-
     });
     
     $("#applyFilter").click(function() {
@@ -155,8 +149,7 @@ $(document).ready(function () {
         loadTaiKhoans(currentPage, searchValue, filterData);
     });
 
-
-    const  taiKhoanModal = $("#taiKhoanModal");
+    const taiKhoanModal = $("#taiKhoanModal");
 
     // Đóng modal 
     $(".close, .cancel-btn").click(function() {
@@ -179,20 +172,25 @@ $(document).ready(function () {
     }
 
     function loadChucVu() {
-        $.ajax({
-            url: "./controller/chucVu.controller.php",
-            type: "GET",
-            data: { action: "listChucVu", type: "taiKhoan" },
-            dataType: "json",
-            success: function(response) {
-                $("#chucvu_id").html("");
-                response.chucVus.forEach(cv => {
-                    $("#chucvu_id").append(`<option value="${cv.id}">${cv.role_name}</option>`);
-                });
-            }
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "./controller/chucVu.controller.php",
+                type: "GET",
+                data: { action: "listChucVu", type: "taiKhoan" },
+                dataType: "json",
+                success: function(response) {
+                    $("#chucvu_id").html("");
+                    response.chucVus.forEach(cv => {
+                        $("#chucvu_id").append(`<option value="${cv.id}">${cv.role_name}</option>`);
+                    });
+                    resolve();
+                },
+                error: function(error) {
+                    reject(error);
+                }
+            });
         });
     }
-    
     
     // Nút thêm tài khoản
     $("#addTaiKhoan").click(function () {
@@ -202,6 +200,8 @@ $(document).ready(function () {
         $("#imagePreview").attr("src", "");
         loadTrangThai();
         loadChucVu();
+        $("#email").attr("disabled", false);
+        $("#username").attr("disabled", false);  
         taiKhoanModal.show();
     });
 
@@ -217,19 +217,22 @@ $(document).ready(function () {
             success: function (response) {
                 taiKhoanModal.show();
                 $("#modalTitle").text("Sửa Tài Khoản");
-                $("#taiKhoanId").val(response.taiKhoan.id);
-                $("#fullname").val(response.taiKhoan.fullname);
-                $("#username").val(response.taiKhoan.username); 
-                $("#password").val("");
-                $("#chucvu_id").val(response.taiKhoan.chucvu_id);
-                $("#email").val(response.taiKhoan.email)
-                $("#phone").val(response.taiKhoan.phone);
-                $("#date_of_birth").val(response.taiKhoan.date_of_birth);    
-                $("#trangthai_id").val(response.taiKhoan.trangthai_id);
-                $("#type_account").val(response.taiKhoan.type_account);
-                $("#imagePreview").attr("src", response.taiKhoan.picture);
+                
+                // Load chức vụ và trạng thái trước
+                loadChucVu().then(() => {
+                    $("#taiKhoanId").val(response.taiKhoan.id);
+                    $("#fullname").val(response.taiKhoan.fullname);
+                    $("#username").val(response.taiKhoan.username); 
+                    $("#password").val("");
+                    $("#chucvu_id").val(response.taiKhoan.chucvu_id);
+                    $("#email").val(response.taiKhoan.email)
+                    $("#phone").val(response.taiKhoan.phone);
+                    $("#date_of_birth").val(response.taiKhoan.date_of_birth);    
+                    $("#trangthai_id").val(response.taiKhoan.trangthai_id);
+                    $("#type_account").val(response.taiKhoan.type_account);
+                    $("#imagePreview").attr("src", response.taiKhoan.picture);
+                });
 
-                loadChucVu();
                 loadTrangThai();
                 $("#email").attr("disabled", true);
                 $("#username").attr("disabled", true);  
@@ -248,15 +251,56 @@ $(document).ready(function () {
         }
     });
 
+    $("#date_of_birth").change(function() {
+        const selectedDate = new Date($(this).val());
+        const today = new Date();
+        
+        if(selectedDate > today) {
+            alert("Ngày sinh không hợp lệ.");
+            $(this).val("");
+        }
+    });
+
+    $("#username").on("input", function() {
+        let value = $(this).val();
+        // Loại bỏ dấu và ký tự đặc biệt
+        value = value.normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-zA-Z0-9]/g, '');
+        $(this).val(value);
+    });
+
     // Submit form thêm/sửa tài khoản
     $("#taiKhoanForm").submit(function (e) {
         e.preventDefault();
+        
+        // Validate username
+        const username = $("#username").val();
+        if (username.includes(' ') || /[^a-zA-Z0-9]/.test(username)) {
+            alert("Tên đăng nhập chỉ được chứa chữ cái và số, không dấu, không khoảng trắng và ký tự đặc biệt");
+            return;
+        }
+
+        const dateOfBirth = new Date($("#date_of_birth").val());
+        const today = new Date();
+        
+        if(dateOfBirth > today) {
+            alert("Ngày sinh không hợp lệ.");
+            return;
+        }
+        
         let formData = new FormData();
         formData.append("action", $("#taiKhoanId").val() ? "updateTaiKhoan" : "addTaiKhoan");
         formData.append("id", $("#taiKhoanId").val());
         formData.append("fullname", $("#fullname").val());
         formData.append("username", $("#username").val());
-        formData.append("password", $("#password").val());
+        
+        // Chỉ gửi password nếu đang thêm mới hoặc có nhập password mới
+        const password = $("#password").val();
+        if (!$("#taiKhoanId").val() || password.trim() !== "") {
+            formData.append("password", password);
+        }
+
         formData.append("email", $("#email").val());
         formData.append("phone", $("#phone").val());
         formData.append("taiKhoan_id", $("#taiKhoanId").val());
@@ -267,15 +311,14 @@ $(document).ready(function () {
 
         const imageFile = $("#picture")[0].files[0];
         if (imageFile) {
-            // data.img = imageFile;
-            // data.image_url = "";
             formData.append("img", imageFile);
             formData.append("picture", "");
         } 
         else if ($("#imagePreview").attr("src")) {
-            // Nếu không có file mới, giữ lại ảnh cũ
-            // data.image_url = $("#imagePreview").attr("src");
             formData.append("picture", $("#imagePreview").attr("src"));
+        }
+        else {
+            formData.append("picture", "./assets/img/user-img/user_default.png");
         }
         console.log(formData);
 
@@ -286,11 +329,19 @@ $(document).ready(function () {
             processData: false, 
             contentType: false, 
             success: function (response) {
+                let result = JSON.parse(response);
+                if (!result.success && result.errors) {
+                    // Hiển thị lỗi
+                    alert(result.errors.join('\n'));
+                    return;
+                }
+                
                 taiKhoanModal.hide();
                 loadTaiKhoans(currentPage, searchValue);
             },
             error: function(xhr, status, error) {
                 console.error(error);
+                alert("Có lỗi xảy ra khi xử lý yêu cầu");
             }
         });
     });
@@ -336,7 +387,7 @@ function renderTaiKhoan(taiKhoans) {
                     <td>${taiKhoan.chucvu}</td>
                     <td>${taiKhoan.role_name}</td>
                     <td>${taiKhoan.trangthai_name}</td>
-                    <td>${taiKhoan.created_at}</td>x
+                    <td>${taiKhoan.created_at}</td>
                     <td>
                         <button id="editTaiKhoan" class="btn edit-btn" data-id="${taiKhoan.id}">Sửa</button>
                         <button id="deleteTaiKhoan" class="btn delete-btn" data-id="${taiKhoan.id}">Xóa</button>
@@ -345,7 +396,7 @@ function renderTaiKhoan(taiKhoans) {
             `;
             $("#taiKhoanList").append(row);
         });
-} else {
-    $("#taiKhoanList").append("<tr><td colspan='12'>Không có dữ liệu</td></tr>");
+    } else {
+        $("#taiKhoanList").append("<tr><td colspan='12'>Không có dữ liệu</td></tr>");
     }   
 }
