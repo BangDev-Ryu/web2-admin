@@ -11,25 +11,26 @@
     </head>
     <body>
     <div class="table-actions">
-            <div class="search-section">
-                <div class="search-box">
-                    <input type="text" id="searchNhaCungCap" placeholder="Tìm kiếm nhà cung cấp...">
-                </div>
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchNhaCungCap" placeholder="Tìm kiếm nhà cung cấp...">
             </div>
-            <button id="addNhaCungCap" class="btn add-btn">
-                <i class="fa-solid fa-plus"></i>
-                <span>Thêm nhà cung cấp</span>
-            </button>
         </div>
+        <button id="addNhaCungCap" class="btn add-btn">
+            <i class="fa-solid fa-plus"></i>
+            <span>Thêm nhà cung cấp</span>
+        </button>
+    </div>
 
 
     <div class="filter-Mirylsection">
-    <div class="filter-Mirylrow">
-        <div class="filter-Mirylgroup">
-            <label>Trạng thái:</label>
-            <select id="trangThaiFilter">
-            </select>
-        </div>
+        <div class="filter-Mirylrow">
+            <div class="filter-Mirylgroup">
+                <label>Trạng thái:</label>
+                <select id="trangThaiFilter">
+                </select>
+            </div>
+        </div>    
 
         <div class="filter-actions">
             <button class="btn" id="resetFilter">Đặt lại</button>
