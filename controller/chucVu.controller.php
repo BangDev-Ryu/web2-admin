@@ -19,21 +19,31 @@ class ChucVuController {
         return $role_name;
     }
 
-    public function getChucVuByType($type) {
-        switch ($type) {
-            case "taiKhoan":
-                $result = $this->chucVuModel->getChucVuByType(3, 0);
-                break;
-        }
-        
-        echo json_encode(["chucVus" => $result]);
+    public function listChucVus($limit) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $chucVus = $this->chucVuModel->getChucVus($limit, $offset);
+        $totalChucVus = $this->chucVuModel->getTotalChucVus();
+        $totalPages = ceil($totalChucVus / $limit);
+
+        echo json_encode([
+            "chucVus" => $chucVus,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
     }
-
-
 }
 
-if (isset($_GET['action']) && $_GET['action'] === "listChucVu") {
+if (isset($_GET['action'])) {
     $controller = new ChucVuController();
-    $controller->getChucVuByType($_GET['type']);
+    switch ($_GET['action']) {
+        case 'listChucVu':
+            $controller->listChucVus($_GET['limit']);
+            break;
+        // case 'listChucVuBySearch':
+        //     $controller->listChucVuBySearch($_GET['limit'], $_GET['search']);
+        //     break;
+    }
 }
 ?>

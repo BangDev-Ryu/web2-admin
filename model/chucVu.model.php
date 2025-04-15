@@ -17,6 +17,13 @@ class ChucVuModel {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getChucVus($limit, $offset) {
+        $sql = "SELECT * FROM chucvu
+                LIMIT ? OFFSET ?";
+        $result = $this->db->executePrepared($sql, [$limit, $offset]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getNameById($id) {
         $sql = "SELECT role_name FROM chucvu WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);
@@ -29,11 +36,6 @@ class ChucVuModel {
         return $result->fetch_assoc();
     }
 
-    public function getChucVuByType($limit, $offset) {
-        $sql = "SELECT * FROM chucvu
-                LIMIT ? OFFSET ?";
-        $result = $this->db->executePrepared($sql, [$limit, $offset]);
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
+
 }
 ?>

@@ -60,9 +60,9 @@
                 </li>
 
                 <li class="item">
-                    <a href="#" class="nav-link" data-page="quyen">
+                    <a href="#" class="nav-link" data-page="chucVu">
                         <i class="fa-solid fa-wrench icon"></i>
-                        <span class="link">Quyền</span>
+                        <span class="link">Chức vụ</span>
                     </a>
                 </li>
 
