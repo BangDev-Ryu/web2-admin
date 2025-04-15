@@ -162,14 +162,6 @@ if (isset($_POST['action'])) {
         case 'deleteTaiKhoan':
             $controller->deleteTaiKhoan($_POST['id']);
             break;
-        case "checkUniqueUsernameEmail":
-            $username = $_POST["username"];
-            $email = $_POST["email"];
-            $id = $_POST["id"] ?? null; // ID để loại trừ tài khoản đang sửa
-            $result = $taiKhoanModel->checkUniqueUsernameEmail($username, $email, $id);
-            echo json_encode($result);
-            break;
-        
     }
 }
 ?>

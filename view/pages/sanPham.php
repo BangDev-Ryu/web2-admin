@@ -43,6 +43,7 @@
                 <label>Loại tài khoản</label>
                 <select id="loaiTKFilter">
                 </select>
+            </div>    
         </div>
 
         <div class="filter-actions">

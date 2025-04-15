@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Account Login</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login-style.css">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
         <label for="password">PASSWORD</label>
         <div class="password-wrapper">
             <input type="password" name="password" id="password" required>
-            <span class="toggle-password" onclick="togglePassword()">(.)(.)</span>
+            <span class="toggle-password" onclick="togglePassword()">o</span>
         </div>
 
         <button type="submit" class="login-btn">Login</button>
