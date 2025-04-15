@@ -28,9 +28,11 @@
 
         <div class="filter-row">
             <div class="filter-group">
-                <label>Chức vụ:</label>
-                <select id="chucVuFilter">
-                </select>
+                <label>Khoảng giá:</label>
+                <label class="sub-label">Giá từ: <span id="minPriceValue">0đ</span></label>
+                <input type="range" id="minPriceRange" min="0" max="10000000" step="100000" value="0">
+                <label class="sub-label">Giá đến: <span id="maxPriceValue">10,000,000đ</span></label>
+                <input type="range" id="maxPriceRange" min="0" max="10000000" step="100000" value="10000000">
             </div>
 
             <div class="filter-group">
@@ -40,10 +42,20 @@
             </div>
 
             <div class="filter-group">
-                <label>Loại tài khoản</label>
-                <select id="loaiTKFilter">
+                <label>Chủ đề:</label>
+                <select id="chuDeFilter">
                 </select>
-            </div>    
+            </div>
+            
+            <div class="filter-group">
+                 <label>Từ ngày:</label>
+                 <input type="date" id="startDate">
+             </div>
+ 
+             <div class="filter-group">
+                 <label>Đến ngày:</label>
+                 <input type="date" id="endDate">
+             </div>
         </div>
 
         <div class="filter-actions">

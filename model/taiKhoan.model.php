@@ -1,4 +1,4 @@
-    <?php
+<?php
     require_once '../model/connect.php';
     require_once '../model/nguoiDung.model.php';
 
@@ -74,7 +74,10 @@
                 move_uploaded_file($data["img"]["tmp_name"], $targetFile); // 
                 $picture = "./assets/img/user-img/user_" . $newId . "." . $ext; // đường dẫn hoàn chỉnh
                 $data['picture'] = $picture; 
-            } 
+            } else {
+                // Sử dụng ảnh mặc định nếu không có ảnh được tải lên
+                $data['picture'] = "./assets/img/user-img/user_default.png";
+            }
             $hashed_password = password_hash($data["password"], PASSWORD_BCRYPT);
             $sql = "INSERT INTO taikhoan (username, password, trangthai_id, type_account, created_at) 
                     VALUES (?, ?, ?, ?, NOW())";
@@ -88,29 +91,53 @@
     }
             return false;
 }
-        public function updateTaiKhoan($data) {
-            if (isset($data['img'])) {
-                $ext = pathinfo($data['img']['name'], PATHINFO_EXTENSION); // lấy đuôi file
-                $targetDir = __DIR__ . "/../assets/img/user-img/"; // tạo đường dẫn
-                $targetFile = $targetDir . "user_" . $data['id'] . "." . $ext; // đường dẫn hoàn chỉnh
-    
-                move_uploaded_file($data["img"]["tmp_name"], $targetFile); 
-                $picture = "./assets/img/user-img/user_" . $data['id'] . "." . $ext; // đường dẫn hoàn chỉnh
-                $data['picture'] = $picture; 
-            } 
+    public function updateTaiKhoan($data) {
+        if (isset($data['img'])) {
+            $ext = pathinfo($data['img']['name'], PATHINFO_EXTENSION);
+            $targetDir = __DIR__ . "/../assets/img/user-img/";
+            $targetFile = $targetDir . "user_" . $data['id'] . "." . $ext;
+
+            move_uploaded_file($data["img"]["tmp_name"], $targetFile);
+            $picture = "./assets/img/user-img/user_" . $data['id'] . "." . $ext;
+            $data['picture'] = $picture;
+        }
+
+        // Tạo câu SQL cơ bản không có password
+        $sql = "UPDATE taikhoan SET username = ?, trangthai_id = ?, type_account = ? WHERE id = ?";
+        $params = [$data['username'], $data['trangthai_id'], $data['type_account'], $data['id']];
+
+        // Nếu có password mới thì thêm vào câu SQL
+        if (isset($data["password"]) && $data["password"] !== "") {
             $hashed_password = password_hash($data["password"], PASSWORD_BCRYPT);
             $sql = "UPDATE taikhoan 
-                    SET username = ?, password = ?, trangthai_id = ?, type_account = ? 
+                    SET username = ?, trangthai_id = ?, type_account = ?, password = ?
                     WHERE id = ?";
-            $resultUpdateAccount = $this->db->executePrepared($sql, [$data['username'], $hashed_password, $data['trangthai_id'], $data['type_account'], $data['id']]);
-            if ($resultUpdateAccount) {
-                $sql = "UPDATE nguoidung 
-                        SET fullname = ?, email = ?, phone = ?, date_of_birth = ?, chucvu_id = ?, picture = ? 
-                        WHERE taikhoan_id = ?";
-                return $this->db->executePrepared($sql, [$data['fullname'], $data['email'], $data['phone'], $data['date_of_birth'], $data['chucvu_id'], $data['picture'], $data['id']]);
-            }
-            return false;
+            $params = [
+                $data['username'], 
+                $data['trangthai_id'], 
+                $data['type_account'],
+                $hashed_password,
+                $data['id']
+            ];
         }
+        
+        $resultUpdateAccount = $this->db->executePrepared($sql, $params);
+        if ($resultUpdateAccount) {
+            $sql = "UPDATE nguoidung 
+                    SET fullname = ?, email = ?, phone = ?, date_of_birth = ?, chucvu_id = ?, picture = ? 
+                    WHERE taikhoan_id = ?";
+            return $this->db->executePrepared($sql, [
+                $data['fullname'], 
+                $data['email'], 
+                $data['phone'], 
+                $data['date_of_birth'], 
+                $data['chucvu_id'], 
+                $data['picture'], 
+                $data['id']
+            ]);
+        }
+        return false;
+    }
 
         public function deleteTaiKhoan($id) {
             $sql = "DELETE FROM taikhoan WHERE id = ?";
@@ -125,47 +152,34 @@
 
 
         public function getTotalSearchTaiKhoan($search) {
-            $sql = "SELECT COUNT(*) as total FROM taikhoan 
-                    WHERE id LIKE ? OR LOWER(username) LIKE ?";
-            $searchParam = "%$search%";
-            $result = $this->db->executePrepared($sql, [$searchParam, $searchParam]);
+            $sql = "SELECT COUNT(*) as total 
+                    FROM taikhoan 
+                    LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
+                    WHERE taikhoan.id LIKE ? 
+                       OR LOWER(taikhoan.username) LIKE ? 
+                       OR LOWER(nguoidung.fullname) LIKE ? 
+                       OR LOWER(nguoidung.email) LIKE ?";
+            
+            $searchParam = '%' . strtolower($search) . '%';
+            $params = array_fill(0, 4, $searchParam);
+            
+            $result = $this->db->executePrepared($sql, $params);
             return $result->fetch_assoc()['total'];
         }
 
-
-        // public function getTotalSearchTaiKhoan($search) {
-        //     $sql = "SELECT COUNT(*) as total FROM taikhoan 
-        //             LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
-        //             WHERE taikhoan.id LIKE ? 
-        //                OR LOWER(nguoidung.fullname) LIKE ? 
-        //                OR LOWER(taikhoan.username) LIKE ? 
-        //                OR LOWER(nguoidung.email) LIKE ?";
-            
-        //     $searchParam = '%' . strtolower($search) . '%';
-        
-        //     $params = [
-        //         $searchParam,
-        //         $searchParam,
-        //         $searchParam, 
-        //         $searchParam
-        //     ];
-        
-        //     $result = $this->db->executePrepared($sql, $params);
-        //     return $result->fetch_assoc()['total'];
-        // }
-
-
-        // public function searchTaiKhoan($search, $limit, $offset) {
-        //     $sql = "SELECT * FROM taikhoan 
-        //             WHERE id LIKE ? OR LOWER(username) LIKE ?
-        //             LIMIT ? OFFSET ?";
-        //     $searchParam = "%$search%";
-        //     $result = $this->db->executePrepared($sql, [$searchParam, $searchParam, $limit, $offset]);
-        //     return $result->fetch_all(MYSQLI_ASSOC);
-        // }
-
         public function searchTaiKhoan($search, $limit, $offset) {
-            $sql = "SELECT taikhoan.*, nguoidung.* 
+            $sql = "SELECT 
+                    taikhoan.id,
+                    taikhoan.username,
+                    taikhoan.type_account,
+                    taikhoan.created_at,
+                    taikhoan.trangthai_id,
+                    nguoidung.fullname,
+                    nguoidung.email,
+                    nguoidung.phone,
+                    nguoidung.date_of_birth,
+                    nguoidung.chucvu_id,
+                    nguoidung.picture
                     FROM taikhoan 
                     LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
                     WHERE taikhoan.id LIKE ? 
@@ -175,15 +189,9 @@
                     LIMIT ? OFFSET ?";
         
             $searchParam = '%' . strtolower($search) . '%';
-        
-            $params = [
-                $searchParam,
-                $searchParam,
-                $searchParam,
-                $searchParam,
-                $limit,
-                $offset
-            ];
+            $params = array_fill(0, 4, $searchParam);
+            $params[] = $limit;
+            $params[] = $offset;
         
             $result = $this->db->executePrepared($sql, $params);
             return $result->fetch_all(MYSQLI_ASSOC);
@@ -245,6 +253,39 @@
         
             $result = $this->db->executePrepared($sql, $params);
             return $result->fetch_assoc()['total'];
+        }
+
+        public function checkEmailExists($email, $excludeId = null) {
+            $sql = "SELECT COUNT(*) as count FROM nguoidung WHERE email = ?";
+            $params = [$email];
+            
+            if ($excludeId) {
+                $sql .= " AND taikhoan_id != ?";
+                $params[] = $excludeId;
+            }
+            
+            $result = $this->db->executePrepared($sql, $params);
+            return $result->fetch_assoc()['count'] > 0;
+        }
+
+        public function checkUsernameExists($username, $excludeId = null) {
+            $sql = "SELECT COUNT(*) as count FROM taikhoan WHERE username = ?";
+            $params = [$username];
+            
+            if ($excludeId) {
+                $sql .= " AND id != ?";
+                $params[] = $excludeId;
+            }
+            
+            $result = $this->db->executePrepared($sql, $params);
+            return $result->fetch_assoc()['count'] > 0;
+        }
+
+        public function validateDateOfBirth($date) {
+            $birthDate = new DateTime($date);
+            $today = new DateTime();
+            
+            return $birthDate <= $today;
         }
     }
     ?>
