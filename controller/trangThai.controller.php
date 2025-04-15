@@ -27,6 +27,9 @@ class TrangThaiController {
             case "sanPham":
                 $result = $this->trangThaiModel->getTrangThaiByType(2, 3);
                 break;
+            case "taiKhoan":
+                $result = $this->trangThaiModel->getTrangThaiByType(3, 0);
+                break;
             case "khac":
                 $result = $this->trangThaiModel->getTrangThaiByType(3, 0);
                 break;

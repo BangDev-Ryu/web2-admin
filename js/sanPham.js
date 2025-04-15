@@ -283,12 +283,12 @@ $(document).ready(function () {
     });
 
     // Preview ảnh khi chọn file
-    $("#sanPham-image").change(function(e) {
+    $("#picture").change(function(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                $("#imagePreview").attr("src", e.target.result);
+                $("#picture").attr("src", e.target.result);
             };
             reader.readAsDataURL(file);
         }

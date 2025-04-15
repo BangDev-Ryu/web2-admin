@@ -23,6 +23,12 @@ class ChucVuModel {
         return $result->fetch_assoc()['role_name'];
     }
 
+    public function getChucVuById($id) {
+        $sql = "SELECT * FROM chucvu WHERE id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc();
+    }
+
     public function getChucVuByType($limit, $offset) {
         $sql = "SELECT * FROM chucvu
                 LIMIT ? OFFSET ?";
