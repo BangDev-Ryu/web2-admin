@@ -208,18 +208,19 @@ $(document).ready(function () {
     // Nút sửa tài khoản
     $(document).on("click", ".edit-btn", function () {
         const id = $(this).data("id");
+
         $.ajax({
             url: "./controller/taiKhoan.controller.php",
             type: "GET",
-            data: { action: "getTaiKhoan", id: id },
+            data: { action: "getTaiKhoanById", id: id },
             dataType: "json",
             success: function (response) {
                 taiKhoanModal.show();
                 $("#modalTitle").text("Sửa Tài Khoản");
                 $("#taiKhoanId").val(response.taiKhoan.id);
                 $("#fullname").val(response.taiKhoan.fullname);
-                $("#username").val(response.taiKhoan.username);
-                $("#password").val(""); // Không hiển thị mật khẩu
+                $("#username").val(response.taiKhoan.username); 
+                $("#password").val("");
                 $("#chucvu_id").val(response.taiKhoan.chucvu_id);
                 $("#email").val(response.taiKhoan.email)
                 $("#phone").val(response.taiKhoan.phone);
@@ -230,6 +231,8 @@ $(document).ready(function () {
 
                 loadChucVu();
                 loadTrangThai();
+                $("#email").attr("disabled", true);
+                $("#username").attr("disabled", true);  
             },
         });
     });
@@ -272,7 +275,7 @@ $(document).ready(function () {
         else if ($("#imagePreview").attr("src")) {
             // Nếu không có file mới, giữ lại ảnh cũ
             // data.image_url = $("#imagePreview").attr("src");
-            formData.append("pictuce", data.picture);
+            formData.append("picture", $("#imagePreview").attr("src"));
         }
         console.log(formData);
 

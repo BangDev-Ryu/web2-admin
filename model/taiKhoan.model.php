@@ -18,9 +18,24 @@
         }
 
         public function getTaiKhoanById($id) {
-            $sql = "SELECT * FROM taikhoan WHERE id = ?";
+            $sql = "SELECT 
+                        taikhoan.id ,
+                        taikhoan.username,
+                        taikhoan.password,
+                        taikhoan.type_account,
+                        taikhoan.created_at,
+                        taikhoan.trangthai_id,
+                        nguoidung.fullname,
+                        nguoidung.email,
+                        nguoidung.phone,
+                        nguoidung.date_of_birth,
+                        nguoidung.chucvu_id,
+                        nguoidung.picture 
+                    FROM taikhoan
+                    LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
+                    WHERE taikhoan.id = ?";
             $result = $this->db->executePrepared($sql, [$id]);
-            return $result->fetch_assoc();
+            return $result->fetch_assoc(); 
         }
 
         public function getUserNameById($id) {
@@ -92,7 +107,7 @@
                 $sql = "UPDATE nguoidung 
                         SET fullname = ?, email = ?, phone = ?, date_of_birth = ?, chucvu_id = ?, picture = ? 
                         WHERE taikhoan_id = ?";
-                return $this->db->executePrepared($sql, [$data['fullname'], $data['email'], $data['phone'], $data['date_of_birth'], $data['chucvu_id'], $data['picture'], $data['taikhoan_id']]);
+                return $this->db->executePrepared($sql, [$data['fullname'], $data['email'], $data['phone'], $data['date_of_birth'], $data['chucvu_id'], $data['picture'], $data['id']]);
             }
             return false;
         }
@@ -231,6 +246,5 @@
             $result = $this->db->executePrepared($sql, $params);
             return $result->fetch_assoc()['total'];
         }
-
     }
     ?>

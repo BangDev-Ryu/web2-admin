@@ -11,21 +11,12 @@ class NhaCungCapController {
         $this->trangThaiController = new TrangThaiController();
     }
 
-    public function listNhaCungCap($limit, $search) {
+    public function listNhaCungCap($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
-        $search = isset($_GET['search']) ? $search : '';
-
-        if (empty($search)) {
-            $nhaCungCaps = $this->nhaCungCapModel->getNhaCungCaps($limit, $offset);
-            $totalNhaCungCaps = $this->nhaCungCapModel->getTotalNhaCungCaps();
-        }
-        else {
-            $search = strtolower($search);
-            $nhaCungCaps = $this->nhaCungCapModel->searchNhaCungCap($search, $limit, $offset);
-            $totalNhaCungCaps = $this->nhaCungCapModel->getTotalSearchNhaCungCap($search);
-        }
+        $nhaCungCaps = $this->nhaCungCapModel->getNhaCungCaps($limit, $offset);
+        $totalNhaCungCaps = $this->nhaCungCapModel->getTotalNhaCungCaps();
         $totalPages = ceil($totalNhaCungCaps / $limit);
         
         foreach ($nhaCungCaps as &$nhaCungCap) {
@@ -49,6 +40,28 @@ class NhaCungCapController {
         $search = strtolower($search);
         $nhaCungCaps = $this->nhaCungCapModel->searchNhaCungCap($search, $limit, $offset);
         $totalNhaCungCaps = $this->nhaCungCapModel->getTotalSearchNhaCungCap($search);
+        $totalPages = ceil($totalNhaCungCaps / $limit);
+        
+        foreach ($nhaCungCaps as &$nhaCungCap) {
+            $trangThaiName = $this->trangThaiController->getNameById($nhaCungCap['trangthai_id']);
+            $nhaCungCap['trangthai_name'] = $trangThaiName;
+        }
+
+        echo json_encode([
+            "nhaCungCaps" => $nhaCungCaps,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+
+    public function listNhaCungCapByFilter($limit, $filter) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $filter = isset($_GET['filter']) ? $filter : [];
+        $nhaCungCaps = $this->nhaCungCapModel->filterNhaCungCap($filter, $limit, $offset);
+
+        $totalNhaCungCaps = $this->nhaCungCapModel->getTotalFilterNhaCungCap($filter);
         $totalPages = ceil($totalNhaCungCaps / $limit);
         
         foreach ($nhaCungCaps as &$nhaCungCap) {
@@ -90,8 +103,14 @@ if (isset($_GET['action'])) {
 $controller = new NhaCungCapController();
 switch ($_GET['action']) {
     case 'listNhaCungCap':
-        $controller->listNhaCungCap($_GET['limit'], $_GET['search']);
+        $controller->listNhaCungCap($_GET['limit']);
         break;
+        case 'listNhaCungCapBySearch':
+            $controller->listNhaCungCapBySearch($_GET['limit'], $_GET['search']);
+            break;
+        case 'listNhaCungCapByFilter':
+            $controller->listNhaCungCapByFilter($_GET['limit'], $_GET['filter']);
+            break;  
     case 'getNhaCungCap':
         $controller->getNhaCungCapById($_GET['id']);
         break;

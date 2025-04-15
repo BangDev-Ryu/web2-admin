@@ -100,7 +100,7 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Mật khẩu:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password">
                 </div>
                 <div class="form-group">
                     <label for="email">Email:</label>

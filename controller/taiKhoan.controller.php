@@ -103,7 +103,7 @@ class TaiKhoanController {
         ]);
     }
 
-    public function getTaiKhoan($id) {
+    public function getTaiKhoanById($id) {
         $taiKhoan = $this->taiKhoanModel->getTaiKhoanById($id);
         echo json_encode(['taiKhoan' => $taiKhoan]);
     }
@@ -137,14 +137,15 @@ if (isset($_GET['action'])) {
         case 'listTaiKhoanByFilter':
             $controller->listTaiKhoanByFilter($_GET['limit'], $_GET['filter']);
             break;
-        case 'getTaiKhoan':
-            $controller->getTaiKhoan($_GET['id']);
+        case 'getTaiKhoanById':
+            $controller->getTaiKhoanById($_GET['id']);
             break;
     }
 }
 
 if (isset($_POST['action'])) {
     $controller = new TaiKhoanController();
+    $taiKhoanModel = new TaiKhoanModel();
     switch ($_POST['action']) {
         case 'addTaiKhoan':
             if(isset($_FILES['img'])) {
@@ -161,6 +162,14 @@ if (isset($_POST['action'])) {
         case 'deleteTaiKhoan':
             $controller->deleteTaiKhoan($_POST['id']);
             break;
+        case "checkUniqueUsernameEmail":
+            $username = $_POST["username"];
+            $email = $_POST["email"];
+            $id = $_POST["id"] ?? null; // ID để loại trừ tài khoản đang sửa
+            $result = $taiKhoanModel->checkUniqueUsernameEmail($username, $email, $id);
+            echo json_encode($result);
+            break;
+        
     }
 }
 ?>

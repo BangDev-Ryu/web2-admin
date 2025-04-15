@@ -92,6 +92,37 @@ class KhuyenMaiModel {
         $result = $this->db->executePrepared($sql, $params);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-    
+
+    public function filterKhuyenMai($filter, $limit, $offset) {
+        $sql = "SELECT * FROM khuyenmai 
+            WHERE profit BETWEEN ? AND ?";
+
+        $params = [
+            $filter['min_Profit'],
+            $filter['max_Profit']
+        ];
+
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTotalFilterKhuyenMai($filter) {
+        $sql = "SELECT COUNT(*) as total FROM khuyenmai 
+                WHERE profit BETWEEN ? AND ?";
+
+    $params = [
+        $filter['min_Profit'],
+        $filter['max_Profit']
+    ];
+
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
 }
+    
+
 ?>
