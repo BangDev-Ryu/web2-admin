@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/home.css?v=<?php echo time(); ?>">
     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./js/trangChu.js?v=<?php echo time(); ?>"></script>
 </head>
@@ -46,7 +49,7 @@
 
         <div class="stats-table">
             <h3>Chi tiết thống kê</h3>
-            <div class="table-container">
+            <div class="table-content">
                 <table>
                     <thead>
                         <tr>
@@ -59,6 +62,55 @@
                     <tbody id="customerList">
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="donHangNguoiDungModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Danh sách đơn hàng</h2>
+            <div class="table-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Thanh toán</th>
+                            <th>Khuyến mãi</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="donHangNguoiDungList">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="closeDonHangModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="CTDonHangModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Chi tiết đơn hàng</h2>
+            <div class="table-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody id="CTDonHangList">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="closeCTDonHangModal">Đóng</button>
             </div>
         </div>
     </div>

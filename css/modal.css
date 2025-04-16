@@ -100,7 +100,6 @@
 }
 
 
-
 #donHangModal .modal-actions .btn#updateDonHang {
     background-color: #28a745; /* Màu xanh cho nút duyệt */
     color: white;
@@ -116,5 +115,61 @@
 }
 
 #donHangModal .modal-actions .btn#closeModal:hover {
+    background-color: #c82333;
+}
+
+#donHangNguoiDungModal .modal-content {
+    margin: 10% auto;
+}
+
+#donHangNguoiDungModal .modal-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #444;
+}
+
+#donHangNguoiDungModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+#donHangNguoiDungModal .modal-actions .btn#closeDonHangModal {
+    background-color: #dc3545; 
+    color: white;
+}
+
+#donHangNguoiDungModal .modal-actions .btn#closeDonHangModal:hover {
+    background-color: #c82333;
+}
+
+#CTDonHangModal .modal-content {
+    margin: 10% auto;
+}
+
+#CTDonHangModal .modal-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #444;
+}
+
+#CTDonHangModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+#CTDonHangModal .modal-actions .btn#closeCTDonHangModal {
+    background-color: #dc3545; 
+    color: white;
+}
+
+#CTDonHangModal .modal-actions .btn#closeCTDonHangModal:hover {
     background-color: #c82333;
 }
