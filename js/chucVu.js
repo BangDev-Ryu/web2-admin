@@ -107,56 +107,93 @@ $(document).ready(function () {
             `;
             $("#quyenList").append(row);
         }
+        $(`input[data-id="2"]`).attr("disabled", true);
+        $(`input[data-id="3"]`).attr("disabled", true);
+        $(`input[data-id="4"]`).attr("disabled", true);
+
+        $(`input[data-id="11"]`).attr("disabled", true);
+        $(`input[data-id="12"]`).attr("disabled", true);
+
+        $(`input[data-id="31"]`).attr("disabled", true);
+        $(`input[data-id="32"]`).attr("disabled", true);
+
     }
 
     $("#addChucVu").click(function() {
         $("#modalTitle").text("Thêm chức vụ");
-        renderQuyen();
         chucVuModal.show();
+        renderQuyen();
+        $(`input[type="checkbox"]`).prop('checked', false);
+        $("#chucVu-name").val("");
+        $("#chucVu-description").val("");
     });
 
-    $("editChucVu").click(function() {
+    $(document).on("click", "#editChucVu", function() {
         const id = $(this).data("id");
-        $("#modalTitle").text("Sửa chức vụ");
-        renderQuyen();
-        chucVuModal.show();
-    })
+        
+        // Clear dữ liệu cũ
+        $("#quyenList").empty();
+        
+        $.ajax({
+            url: "./controller/chucVu.controller.php",
+            type: "GET",
+            data: { 
+                action: "getChucVu",
+                id: id 
+            },
+            dataType: "json",
+            success: function(response) {
+                $("#modalTitle").text("Sửa chức vụ");
+                $("#chucVuId").val(response.chucVu.id);
+                $("#chucVu-name").val(response.chucVu.role_name);
+                $("#chucVu-description").val(response.chucVu.role_description);
+                
+                // Render quyền và check các quyền đã có
+                renderQuyen();
+                response.quyens.forEach(q => {
+                    $(`input[data-id="${q.quyen_id}"]`).prop('checked', true);
+                });
+                
+                chucVuModal.show();
+            }
+        });
+    });
 
     $("#chucVuForm").submit(function(event) {
-        event.preventDefault(); 
+        event.preventDefault();
 
-        // const formData = $(this).serializeArray();
-        const data = {};
-        // formData.forEach(item => {
-        //     data[item.name] = item.value;
-        // });
-        data.role_name = $("#chucVu-name").val();
-        data.role_description = $("#chucVu-description").val();
+        const data = {
+            id: $("#chucVuId").val(),
+            role_name: $("#chucVu-name").val(),
+            role_description: $("#chucVu-description").val()
+        };
 
-        // Lấy tất cả các checkbox đã được check và map thành mảng data-id
+        // Lấy danh sách quyền đã check
         const checkedPermissions = $("#quyenList input[type='checkbox']:checked").map(function() {
             return $(this).data('id');
         }).get();
 
-        // Thêm danh sách quyền vào object data
         data.quyens = checkedPermissions;
 
-        console.log("Form data:", data);
-        console.log(checkedPermissions);
+        const action = data.id ? "updateChucVu" : "addChucVu";
 
         $.ajax({
-            url: "./controller/chucVu.controller.php",
+            url: "./controller/chucVu.controller.php", 
             type: "POST",
-            data: { action: "addChucVu", ...data },
+            data: { action: action, ...data },
+            dataType: "json",
             success: function(response) {
-                alert("Thêm chức vụ thành công!");
-                chucVuModal.hide();
-                loadChucVus(currentPage, searchValue); 
+                if(response.success) {
+                    alert(action === "addChucVu" ? "Thêm chức vụ thành công!" : "Cập nhật chức vụ thành công!");
+                    chucVuModal.hide();
+                    loadChucVus(currentPage, searchValue);
+                } else {
+                    alert(response.message || "Có lỗi xảy ra!");
+                }
             },
             error: function(xhr, status, error) {
                 console.error("Lỗi AJAX:", error);
-                console.error("Trạng thái:", status);
-                console.error("Phản hồi từ server:", xhr.responseText);
+                alert("Có lỗi xảy ra!");
             }
         });
     })

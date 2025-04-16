@@ -116,7 +116,7 @@ $(document).ready(function () {
         $.ajax({
             url: "./controller/chucVu.controller.php",
             type: "GET",
-            data: { action: "listChucVu", type: "taiKhoan" },
+            data: { action: "listAllChucVu" },
             dataType: "json",
             success: function(response) {
                 $("#chucVuFilter").html("");
@@ -176,7 +176,7 @@ $(document).ready(function () {
             $.ajax({
                 url: "./controller/chucVu.controller.php",
                 type: "GET",
-                data: { action: "listChucVu", type: "taiKhoan" },
+                data: { action: "listAllChucVu" },
                 dataType: "json",
                 success: function(response) {
                     $("#chucvu_id").html("");

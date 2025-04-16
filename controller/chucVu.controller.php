@@ -19,6 +19,13 @@ class ChucVuController {
         return $role_name;
     }
 
+    public function listAllChucVus() {
+        $chucVus = $this->chucVuModel->getAllChucVus();
+        echo json_encode([
+            "chucVus" => $chucVus
+        ]);
+    }
+
     public function listChucVus($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
@@ -35,28 +42,23 @@ class ChucVuController {
     }
 
     public function addChucVu($data) {
-        // $role_name = $data['role_name'];
-        // $description = $data['description'];
-        // $quyens = isset($data['quyens']) ? $data['quyens'] : [];
-
-        // if (empty($role_name) || empty($description)) {
-        //     echo json_encode([
-        //         "status" => "error",
-        //         "message" => "Vui lòng nhập đầy đủ thông tin."
-        //     ]);
-        //     return;
-        // }
-
-        // if (count($quyens) == 0) {
-        //     echo json_encode([
-        //         "status" => "error",
-        //         "message" => "Vui lòng chọn ít nhất một quyền."
-        //     ]);
-        //     return;
-        // }
-
         $result = $this->chucVuModel->addChucVu($data);
 
+        echo json_encode(['success' => $result]);
+    }
+
+    public function getChucVuById($id) {
+        $chucVu = $this->chucVuModel->getChucVuById($id);
+        $quyens = $this->chucVuModel->getQuyensByChucVu($id);
+        
+        echo json_encode([
+            "chucVu" => $chucVu,
+            "quyens" => $quyens
+        ]);
+    }
+
+    public function updateChucVu($data) {
+        $result = $this->chucVuModel->updateChucVu($data);
         echo json_encode(['success' => $result]);
     }
 }
@@ -64,12 +66,15 @@ class ChucVuController {
 if (isset($_GET['action'])) {
     $controller = new ChucVuController();
     switch ($_GET['action']) {
+        case 'listAllChucVu':
+            $controller->listAllChucVus();
+            break;
         case 'listChucVu':
             $controller->listChucVus($_GET['limit']);
             break;
-        // case 'listChucVuBySearch':
-        //     $controller->listChucVuBySearch($_GET['limit'], $_GET['search']);
-        //     break;
+        case 'getChucVu':
+            $controller->getChucVuById($_GET['id']);
+            break;
     }
 }
 
@@ -79,7 +84,9 @@ if (isset($_POST['action'])) {
         case 'addChucVu':
             $controller->addChucVu($_POST);
             break;
-        
+        case 'updateChucVu':
+            $controller->updateChucVu($_POST);
+            break;
     }
 }
 ?>

@@ -54,5 +54,33 @@ class ChucVuModel {
             }
         }
     }
+
+    public function getQuyensByChucVu($id) {
+        $sql = "SELECT quyen_id FROM chitietphanquyen WHERE chucvu_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function updateChucVu($data) {
+        $sql = "UPDATE chucvu SET role_name = ?, role_description = ? WHERE id = ?";
+        $resultChucVu = $this->db->executePrepared($sql, [
+            $data['role_name'],
+            $data['role_description'],
+            $data['id']
+        ]);
+
+        if ($resultChucVu) {
+            $sql = "DELETE FROM chitietphanquyen WHERE chucvu_id = ?";
+            $this->db->executePrepared($sql, [$data['id']]);
+
+            // Thêm các quyền mới
+            foreach ($data['quyens'] as $quyenId) {
+                $sql = "INSERT INTO chitietphanquyen (chucvu_id, quyen_id) VALUES (?, ?)";
+                $this->db->executePrepared($sql, [$data['id'], $quyenId]);
+            }
+            return true;
+        }
+        
+    }
 }
 ?>
