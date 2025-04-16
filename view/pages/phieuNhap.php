@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="./css/phieuNhap.css?v=<?php echo time(); ?>">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="./js/phieuNhap.js?v=<?php echo time(); ?>"></script>
