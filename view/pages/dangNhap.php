@@ -1,39 +1,59 @@
+<?php
+session_start();
+
+// Nếu đã đăng nhập thì chuyển về trang chủ
+if(isset($_SESSION['usernameAdmin'])) {
+    header('Location: ../../index.php');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Account Login</title>
-    <link rel="stylesheet" href="login-style.css">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="../../css/login.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-
-<div class="login-container">
-    <form action="login.php" method="post">
-        <h2>LOGIN</h2>
-
-        <label for="username">USERNAME</label>
-        <input type="text" name="username" id="username" required>
-
-        <label for="password">PASSWORD</label>
-        <div class="password-wrapper">
-            <input type="password" name="password" id="password" required>
-            <span class="toggle-password" onclick="togglePassword()">o</span>
+    <div class="login-container">
+        <div class="login-header">
+            <!-- <i class="fas fa-user-shield"></i> -->
+            <h2>ADMIN LOGIN</h2>
         </div>
 
-        <button type="submit" class="login-btn">Login</button>
-    </form>
-</div>
+        <form id="loginForm">
+            <div id="error-message" class="error-message"></div>
 
-<script>
-function togglePassword() {
-    var input = document.getElementById("password");
-    if (input.type === "password") {
-        input.type = "text";
-    } else {
-        input.type = "password";
-    }
-}
-</script>
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="username" id="username" required>
+                    </div>
+                </div>
 
+                <div class="input-field">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="password" required>
+                        <span class="toggle-password">
+                            <!-- <i class="fas fa-eye"></i>  -->
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Login
+            </button>
+        </form>
+    </div>
+
+    <script src="../../js/dangNhap.js"></script>
 </body>
 </html>

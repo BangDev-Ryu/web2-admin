@@ -18,6 +18,24 @@ $(document).ready(function() {
         loadPage(page);
     });
 
+    $('#logoutBtn').click(function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: './controller/dangNhap.controller.php',
+            type: 'POST',
+            data: {
+                action: 'logout'
+            },
+            success: function() {
+                window.location.href = './view/pages/dangNhap.php';
+            },
+            error: function() {
+                alert('Có lỗi xảy ra khi đăng xuất');
+            }
+        });
+    });
+
     function loadPage(page) {
         $.ajax({
             url: "./controller/loadpage.controller.php", 

@@ -90,13 +90,12 @@
 
             <div class="bottom-content">
                 <li class="item">
-                    <a href="" class="nav-link">
+                    <a href="#" class="nav-link" id="logoutBtn">
                         <i class="fa-solid fa-right-from-bracket icon"></i>
                         <span class="link">Đăng xuất</span>
                     </a>
                 </li>
             </div>
-            
         </div>
     </div>
 </body>
