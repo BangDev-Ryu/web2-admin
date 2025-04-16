@@ -33,6 +33,32 @@ class ChucVuController {
             "currentPage" => $page
         ]);
     }
+
+    public function addChucVu($data) {
+        // $role_name = $data['role_name'];
+        // $description = $data['description'];
+        // $quyens = isset($data['quyens']) ? $data['quyens'] : [];
+
+        // if (empty($role_name) || empty($description)) {
+        //     echo json_encode([
+        //         "status" => "error",
+        //         "message" => "Vui lòng nhập đầy đủ thông tin."
+        //     ]);
+        //     return;
+        // }
+
+        // if (count($quyens) == 0) {
+        //     echo json_encode([
+        //         "status" => "error",
+        //         "message" => "Vui lòng chọn ít nhất một quyền."
+        //     ]);
+        //     return;
+        // }
+
+        $result = $this->chucVuModel->addChucVu($data);
+
+        echo json_encode(['success' => $result]);
+    }
 }
 
 if (isset($_GET['action'])) {
@@ -44,6 +70,16 @@ if (isset($_GET['action'])) {
         // case 'listChucVuBySearch':
         //     $controller->listChucVuBySearch($_GET['limit'], $_GET['search']);
         //     break;
+    }
+}
+
+if (isset($_POST['action'])) {
+    $controller = new ChucVuController();
+    switch ($_POST['action']) {
+        case 'addChucVu':
+            $controller->addChucVu($_POST);
+            break;
+        
     }
 }
 ?>

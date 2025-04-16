@@ -125,11 +125,13 @@ $(document).ready(function () {
     $("#chucVuForm").submit(function(event) {
         event.preventDefault(); 
 
-        const formData = $(this).serializeArray();
+        // const formData = $(this).serializeArray();
         const data = {};
-        formData.forEach(item => {
-            data[item.name] = item.value;
-        });
+        // formData.forEach(item => {
+        //     data[item.name] = item.value;
+        // });
+        data.role_name = $("#chucVu-name").val();
+        data.role_description = $("#chucVu-description").val();
 
         // Lấy tất cả các checkbox đã được check và map thành mảng data-id
         const checkedPermissions = $("#quyenList input[type='checkbox']:checked").map(function() {
@@ -142,21 +144,21 @@ $(document).ready(function () {
         console.log("Form data:", data);
         console.log(checkedPermissions);
 
-        // $.ajax({
-        //     url: "./controller/chucVu.controller.php",
-        //     type: "POST",
-        //     data: { action: "addChucVu", ...data },
-        //     success: function(response) {
-        //         alert("Thêm chức vụ thành công!");
-        //         chucVuModal.hide();
-        //         loadChucVus(currentPage, searchValue); // Tải lại danh sách chức vụ
-        //     },
-        //     error: function(xhr, status, error) {
-        //         console.error("Lỗi AJAX:", error);
-        //         console.error("Trạng thái:", status);
-        //         console.error("Phản hồi từ server:", xhr.responseText);
-        //     }
-        // });
+        $.ajax({
+            url: "./controller/chucVu.controller.php",
+            type: "POST",
+            data: { action: "addChucVu", ...data },
+            success: function(response) {
+                alert("Thêm chức vụ thành công!");
+                chucVuModal.hide();
+                loadChucVus(currentPage, searchValue); 
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+                console.error("Trạng thái:", status);
+                console.error("Phản hồi từ server:", xhr.responseText);
+            }
+        });
     })
 })
 
