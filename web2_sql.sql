@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 15, 2025 lúc 09:01 AM
+-- Thời gian đã tạo: Th4 16, 2025 lúc 05:00 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -45,6 +45,35 @@ CREATE TABLE `chitietphieuban` (
   `quantity` int(11) NOT NULL DEFAULT 1,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Đang đổ dữ liệu cho bảng `chitietphieuban`
+--
+
+INSERT INTO `chitietphieuban` (`phieuban_id`, `sanpham_id`, `quantity`, `price`) VALUES
+(1, 1, 6, 33000.00),
+(1, 2, 1, 27500.00),
+(1, 3, 1, 32450.00),
+(2, 6, 5, 32890.00),
+(2, 7, 4, 34100.00),
+(2, 8, 5, 23100.00),
+(3, 1, 2, 33000.00),
+(3, 2, 2, 27500.00),
+(3, 3, 2, 32450.00),
+(3, 4, 1, 25850.00),
+(3, 5, 1, 28050.00),
+(3, 6, 1, 32890.00),
+(3, 7, 1, 34100.00),
+(3, 8, 1, 23100.00),
+(4, 1, 11, 33000.00),
+(5, 2, 3, 27500.00),
+(5, 3, 3, 32450.00),
+(5, 4, 3, 25850.00),
+(6, 1, 3, 33000.00),
+(6, 7, 3, 34100.00),
+(6, 49, 1, 25300.00),
+(6, 50, 1, 25300.00),
+(7, 1, 1, 33000.00);
 
 -- --------------------------------------------------------
 
@@ -135,6 +164,19 @@ CREATE TABLE `diachi` (
   `nguoidung_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+--
+-- Đang đổ dữ liệu cho bảng `diachi`
+--
+
+INSERT INTO `diachi` (`id`, `address`, `city`, `district`, `ward`, `nguoidung_id`) VALUES
+(1, '123 Đường Ba Đình', 'Hà Nội', 'Quận Thanh Xuân', 'Khương Đình', 2),
+(2, '123 Đường Nguyễn Trãi', 'Hồ Chí Minh', 'Quận 5', 'Phường 7', 2),
+(3, '123 Phạm Thế Hiển', 'Hồ Chí Minh', 'Quận 8', 'Phường 6', 4),
+(4, '123 Lê Hồng Phong', 'Hồ Chí Minh', 'Quận 5', 'Phường 3', 5),
+(5, '123 An Dương Vương', 'Hồ Chí Minh', 'Quận 5', 'Phường 2', 6),
+(6, '123 Nguyễn Tri Phương', 'Hồ Chí Minh', 'Quận 5', 'Phường 3', 7),
+(7, '123 Tạ Quang Bửu', 'Hồ Chí Minh', 'Quận 8', 'Phường 4', 8);
+
 -- --------------------------------------------------------
 
 --
@@ -197,7 +239,12 @@ CREATE TABLE `nguoidung` (
 INSERT INTO `nguoidung` (`id`, `fullname`, `email`, `phone`, `taikhoan_id`, `chucvu_id`, `picture`, `date_of_birth`) VALUES
 (1, 'Đặng Huy', 'huyhoang119763@gmail.com', '0585822398', 1, 1, './assets/img/user-img/user_default.png', '2004-06-11'),
 (2, 'Nguyễn Thanh Điền', 'nguyenthanhdien@gmail.com', '0585822396', 2, 1, './assets/img/user-img/user_default.png', '2004-09-11'),
-(3, 'Đặng Huy', 'huyhoang119762@gmail.com', '0585822397', 3, 1, './assets/img/user-img/user_default.png', '2004-03-11');
+(3, 'Đặng Huy', 'huyhoang119762@gmail.com', '0585822397', 3, 1, './assets/img/user-img/user_default.png', '2004-03-11'),
+(4, 'Quách Gia Bảo', 'giabao@gmail.com', '', 4, 1, './assets/img/user-img/user_default.png', '0000-00-00'),
+(5, 'Võ Kim Bằng', 'bangbang@gmail.com', '', 5, 1, './assets/img/user-img/user_default.png', '0000-00-00'),
+(6, 'Hà Ngọc Thiên Bảo', 'miryl@gmail.com', '', 6, 1, './assets/img/user-img/user_default.png', '0000-00-00'),
+(7, 'Đặng Huy', 'huyhoang119764@gmail.com', '', 7, 1, './assets/img/user-img/user_default.png', '0000-00-00'),
+(8, 'Nguyễn Văn A', 'test@gmail.com', '', 8, 1, './assets/img/user-img/user_default.png', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -242,6 +289,19 @@ CREATE TABLE `phieuban` (
   `payment` varchar(30) DEFAULT NULL,
   `khuyenmai_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Đang đổ dữ liệu cho bảng `phieuban`
+--
+
+INSERT INTO `phieuban` (`id`, `nguoidung_id`, `address`, `city`, `district`, `ward`, `order_date`, `total_amount`, `trangthai_id`, `payment`, `khuyenmai_id`) VALUES
+(1, 2, '123 Đường Ba Đình', 'Hà Nội', 'Quận Thanh Xuân', 'Khương Đình', '2025-04-16 10:52:42', 257950.00, 9, 'Thanh toán khi nhận hàng', NULL),
+(2, 2, '123 Đường Nguyễn Trãi', 'Hồ Chí Minh', 'Quận 5', 'Phường 7', '2025-04-16 10:54:16', 416350.00, 9, 'Thanh toán khi nhận hàng', NULL),
+(3, 4, '123 Phạm Thế Hiển', 'Hồ Chí Minh', 'Quận 8', 'Phường 6', '2025-04-16 11:06:52', 329890.00, 9, 'Thanh toán khi nhận hàng', NULL),
+(4, 5, '123 Lê Hồng Phong', 'Hồ Chí Minh', 'Quận 5', 'Phường 3', '2025-04-16 11:18:13', 363000.00, 9, 'Thanh toán khi nhận hàng', NULL),
+(5, 6, '123 An Dương Vương', 'Hồ Chí Minh', 'Quận 5', 'Phường 2', '2025-04-16 11:19:44', 257400.00, 9, 'Thanh toán khi nhận hàng', NULL),
+(6, 7, '123 Nguyễn Tri Phương', 'Hồ Chí Minh', 'Quận 5', 'Phường 3', '2025-04-16 11:22:09', 251900.00, 9, 'Thanh toán khi nhận hàng', NULL),
+(7, 8, '123 Tạ Quang Bửu', 'Hồ Chí Minh', 'Quận 8', 'Phường 4', '2025-04-16 11:23:28', 33000.00, 9, 'Thanh toán khi nhận hàng', NULL);
 
 -- --------------------------------------------------------
 
@@ -355,14 +415,14 @@ CREATE TABLE `sanpham` (
 --
 
 INSERT INTO `sanpham` (`id`, `name`, `description`, `selling_price`, `stock_quantity`, `chude_id`, `trangthai_id`, `warranty_days`, `image_url`, `updated_at`) VALUES
-(1, 'Naruto - 01', 'Minifigure nhân vật Naruto.', 33000.00, 99, 1, 4, 0, './assets/img/lego-minifigure/mini-01.png', '2025-02-13 23:42:49'),
-(2, 'Naruto - 02', 'Minifigure Naruto trong trạng thái chiến đấu.', 27500.00, 99, 1, 4, 0, './assets/img/lego-minifigure/mini-02.png', '2025-02-13 23:42:49'),
-(3, 'Minato - 03', 'Minifigure Minato, cha của Naruto.', 32450.00, 99, 1, 4, 0, './assets/img/lego-minifigure/mini-03.png', '2025-02-13 23:42:49'),
-(4, 'Sasuke - 04', 'Minifigure Sasuke, bạn thân của Naruto.', 25850.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-04.png', '2025-02-13 23:42:49'),
-(5, 'Boruto - 05', 'Minifigure Boruto, con trai của Naruto.', 28050.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-05.png', '2025-02-13 23:42:49'),
-(6, 'Itachi - 06', 'Minifigure Itachi, anh trai của Sasuke.', 32890.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-06.png', '2025-02-13 23:42:49'),
-(7, 'Obito - 07', 'Minifigure Obito, một nhân vật quan trọng.', 34100.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-07.png', '2025-02-13 23:42:49'),
-(8, 'Kakashi - 08', 'Minifigure Kakashi, thầy của Naruto.', 23100.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-08.png', '2025-02-13 23:42:49'),
+(1, 'Naruto - 01', 'Minifigure nhân vật Naruto.', 33000.00, 76, 1, 4, 0, './assets/img/lego-minifigure/mini-01.png', '2025-02-13 23:42:49'),
+(2, 'Naruto - 02', 'Minifigure Naruto trong trạng thái chiến đấu.', 27500.00, 93, 1, 4, 0, './assets/img/lego-minifigure/mini-02.png', '2025-02-13 23:42:49'),
+(3, 'Minato - 03', 'Minifigure Minato, cha của Naruto.', 32450.00, 93, 1, 4, 0, './assets/img/lego-minifigure/mini-03.png', '2025-02-13 23:42:49'),
+(4, 'Sasuke - 04', 'Minifigure Sasuke, bạn thân của Naruto.', 25850.00, 96, 1, 4, 0, './assets/img/lego-minifigure/mini-04.png', '2025-02-13 23:42:49'),
+(5, 'Boruto - 05', 'Minifigure Boruto, con trai của Naruto.', 28050.00, 99, 1, 4, 0, './assets/img/lego-minifigure/mini-05.png', '2025-02-13 23:42:49'),
+(6, 'Itachi - 06', 'Minifigure Itachi, anh trai của Sasuke.', 32890.00, 94, 1, 4, 0, './assets/img/lego-minifigure/mini-06.png', '2025-02-13 23:42:49'),
+(7, 'Obito - 07', 'Minifigure Obito, một nhân vật quan trọng.', 34100.00, 88, 1, 4, 0, './assets/img/lego-minifigure/mini-07.png', '2025-02-13 23:42:49'),
+(8, 'Kakashi - 08', 'Minifigure Kakashi, thầy của Naruto.', 23100.00, 89, 1, 4, 0, './assets/img/lego-minifigure/mini-08.png', '2025-02-13 23:42:49'),
 (9, 'Sasori - 09', 'Minifigure Sasori, một nhân vật phản diện.', 19800.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-09.png', '2025-02-13 23:42:49'),
 (10, 'Sasuke - 10', 'Minifigure Sasuke trong dạng mạnh mẽ.', 17600.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-10.png', '2025-02-13 23:42:49'),
 (11, 'Naruto - 11', 'Minifigure Naruto trong bộ đồ ninja.', 16500.00, 100, 1, 4, 0, './assets/img/lego-minifigure/mini-11.png', '2025-02-13 23:42:49'),
@@ -403,8 +463,8 @@ INSERT INTO `sanpham` (`id`, `name`, `description`, `selling_price`, `stock_quan
 (46, 'Broly - 19', 'Minifigure Broly với phong cách độc đáo.', 25300.00, 100, 6, 4, 0, './assets/img/lego-minifigure/mini-19.png', '2025-02-13 23:42:49'),
 (47, 'Songoku - 20', 'Minifigure Songoku với phong cách độc đáo.', 25300.00, 100, 6, 4, 0, './assets/img/lego-minifigure/mini-20.png', '2025-02-13 23:42:49'),
 (48, 'Thanos - 21', 'Minifigure Thanos trong phim Marvel.', 25300.00, 100, 7, 4, 0, './assets/img/lego-minifigure/mini-21.png', '2025-02-13 23:42:49'),
-(49, 'Iron Man - 22', 'Minifigure Iron Man trong phim Marvel.', 25300.00, 100, 7, 4, 0, './assets/img/lego-minifigure/mini-22.png', '2025-02-13 23:42:49'),
-(50, 'Zoro - 23', 'Minifigure Zoro trong phim One Piece.', 25300.00, 20, 2, 4, 0, './assets/img/lego-minifigure/mini-23.png', '2025-02-13 23:42:49');
+(49, 'Iron Man - 22', 'Minifigure Iron Man trong phim Marvel.', 25300.00, 99, 7, 4, 0, './assets/img/lego-minifigure/mini-22.png', '2025-02-13 23:42:49'),
+(50, 'Zoro - 23', 'Minifigure Zoro trong phim One Piece.', 25300.00, 19, 2, 4, 0, './assets/img/lego-minifigure/mini-23.png', '2025-02-13 23:42:49');
 
 -- --------------------------------------------------------
 
@@ -428,7 +488,12 @@ CREATE TABLE `taikhoan` (
 INSERT INTO `taikhoan` (`id`, `username`, `password`, `trangthai_id`, `type_account`, `created_at`) VALUES
 (1, 'huyhoang119763', '$2y$10$PgvU1Fr9JYvfLUFM7MaGfe9MTmsfR6NO9iN0mt.IP6GJp38Wnmyeq', 1, 1, '2025-02-04 03:13:53'),
 (2, 'thanhdien123', '$2y$10$Wrq27ZqBJgcI7c0402mrqOfaxPb0S4XH6q3rH.3z12lZYjqz7JzY6', 1, 1, '2025-02-04 03:13:53'),
-(3, 'huyhoang119762', '$2y$10$b.nugxy1ewyn/Q3BSqnqiuOuQozMEsx4EcCYDLkei52QTAc17bdfe', 1, 1, '2025-02-15 06:27:53');
+(3, 'huyhoang119762', '$2y$10$b.nugxy1ewyn/Q3BSqnqiuOuQozMEsx4EcCYDLkei52QTAc17bdfe', 1, 1, '2025-02-15 06:27:53'),
+(4, 'giabao2341', '$2y$10$8BLhA4ScyOi02DElrDTtDuBY6tVnwnihD2MXfNR6OhIm.5LVGw9CO', 1, 1, '2025-04-16 11:05:34'),
+(5, 'banbanban', '$2y$10$lxEZkC6Ngb1a/cFRwa7IyeFc0N87ctVmav.FPDk404TXdrkolN/Ii', 1, 1, '2025-04-16 11:17:26'),
+(6, 'thienbao123', '$2y$10$QemnXSfeY9kcpr83qh9pd.a7d8hWRIXvHt5mvpQY/EYj2A3kQa1pC', 1, 1, '2025-04-16 11:18:34'),
+(7, 'danghuy123', '$2y$10$qDxr2s/tVJhua7XZiaWC3OlO3P1QIAU0scijH6D60JiU2DV/6rMbu', 1, 1, '2025-04-16 11:21:22'),
+(8, 'test1234', '$2y$10$fC.rJIwgUjgYIi6jvd6LD.YbNp8DpCQzyoZ8xJG2dhfqmq3cZW9SK', 1, 1, '2025-04-16 11:22:39');
 
 -- --------------------------------------------------------
 
@@ -655,7 +720,7 @@ ALTER TABLE `chude`
 -- AUTO_INCREMENT cho bảng `diachi`
 --
 ALTER TABLE `diachi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `khuyenmai`
@@ -667,7 +732,7 @@ ALTER TABLE `khuyenmai`
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `nhacungcap`
@@ -679,7 +744,7 @@ ALTER TABLE `nhacungcap`
 -- AUTO_INCREMENT cho bảng `phieuban`
 --
 ALTER TABLE `phieuban`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `phieubaohanh`
@@ -709,7 +774,7 @@ ALTER TABLE `sanpham`
 -- AUTO_INCREMENT cho bảng `taikhoan`
 --
 ALTER TABLE `taikhoan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `theloai`

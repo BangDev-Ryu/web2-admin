@@ -274,10 +274,9 @@ $(document).ready(function () {
     $("#taiKhoanForm").submit(function (e) {
         e.preventDefault();
         
-        // Validate username
         const username = $("#username").val();
         if (username.includes(' ') || /[^a-zA-Z0-9]/.test(username)) {
-            alert("Tên đăng nhập chỉ được chứa chữ cái và số, không dấu, không khoảng trắng và ký tự đặc biệt");
+            alert("Tên đăng nhập không hợp lệ.");
             return;
         }
 

@@ -9,12 +9,14 @@ class DonHangController {
     private $nguoiDungController;
     private $sanPhamController;
     private $sanPhamModel;
+    private $nguoiDungModel;
 
     public function __construct() {
         $this->donHangModel = new DonHangModel();
         $this->nguoiDungController = new NguoiDungController();
         $this->sanPhamController = new SanPhamController();
         $this->sanPhamModel = new SanPhamModel();
+        $this->nguoiDungModel = new NguoiDungModel();
     }
 
     public function convertStatus($status) {
@@ -96,6 +98,21 @@ class DonHangController {
         $result = $this->donHangModel->updateStatusDonHang($id, $status);
         echo json_encode(["success" => $result]);
     }
+
+    public function getTop5NguoiDungs($startDate, $endDate) {
+        $customers = $this->donHangModel->getTop5NguoiDungs($startDate, $endDate);
+        
+        foreach ($customers as &$customer) {
+            $customer['name'] = $this->nguoiDungModel->getFullNameById($customer['id']);
+        }
+
+        echo json_encode(['customers' => $customers]);
+    }
+
+    public function getDonHangNguoiDung($nguoiDungId, $startDate, $endDate) {
+        $orders = $this->donHangModel->getDonHangNguoiDung($nguoiDungId, $startDate, $endDate);
+        echo json_encode(['orders' => $orders]);
+    }
 }
 
 if (isset($_GET['action'])) {
@@ -106,6 +123,12 @@ if (isset($_GET['action'])) {
             break;
         case 'listCTDonHang':
             $controller->listCTDonHang($_GET['id']);
+            break;
+        case 'getTop5NguoiDungs':
+            $controller->getTop5NguoiDungs($_GET['startDate'], $_GET['endDate']);
+            break;
+        case 'getDonHangNguoiDung':
+            $controller->getDonHangNguoiDung($_GET['nguoiDungId'], $_GET['startDate'], $_GET['endDate']);
             break;
     }
 }

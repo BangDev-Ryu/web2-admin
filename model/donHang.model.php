@@ -48,5 +48,31 @@ class DonHangModel {
         }
         return null;
     }
+
+    public function getTop5NguoiDungs($startDate, $endDate) {
+        $sql = "SELECT p.nguoidung_id as id, SUM(p.total_amount) as total_spending 
+                FROM phieuban p
+                WHERE DATE(p.order_date) BETWEEN ? AND ?
+                AND p.trangthai_id = 9
+                GROUP BY p.nguoidung_id
+                ORDER BY total_spending DESC
+                LIMIT 5";
+                
+        $result = $this->db->executePrepared($sql, [$startDate, $endDate]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getDonHangNguoiDung($nguoiDungId, $startDate, $endDate) {
+        $sql = "SELECT p.*, COALESCE(k.name, 'Không có') as khuyenmai_name 
+                FROM phieuban p 
+                LEFT JOIN khuyenmai k ON p.khuyenmai_id = k.id
+                WHERE p.nguoidung_id = ? 
+                AND DATE(p.order_date) BETWEEN ? AND ?
+                AND p.trangthai_id = 9
+                ORDER BY p.order_date DESC";
+        
+        $result = $this->db->executePrepared($sql, [$nguoiDungId, $startDate, $endDate]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>
