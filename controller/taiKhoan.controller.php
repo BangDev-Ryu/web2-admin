@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once "../model/taiKhoan.model.php";
 require_once "./trangThai.controller.php";
 require_once "./chucVu.controller.php";
@@ -187,6 +191,14 @@ if (isset($_GET['action'])) {
         case 'getTaiKhoanById':
             $controller->getTaiKhoanById($_GET['id']);
             break;
+        case 'getCurrentUser':
+            $userId = $_SESSION['userId'];
+            // $userInfo = $taiKhoanModel->getTaiKhoanById($userId);
+            echo json_encode([
+                'id' => $_SESSION['userId'],
+                'fullname' => $_SESSION['usernameAdmin']
+            ]);
+            break;
     }
 }
 
@@ -209,6 +221,7 @@ if (isset($_POST['action'])) {
         case 'deleteTaiKhoan':
             $controller->deleteTaiKhoan($_POST['id']);
             break;
+        
     }
 }
 ?>

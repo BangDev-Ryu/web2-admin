@@ -18,6 +18,7 @@ $(document).ready(function () {
             data: data,
             dataType: "json",
             success: function (response) {
+                console.log(response);
                 renderPhieuNhap(response.phieuNhaps);
                 renderPagination(response.totalPages, page);
             },
@@ -91,6 +92,7 @@ $(document).ready(function () {
         loadSanPhams();
         loadNhaCungCap();
         setCurrentDate();
+        loadCurrentUser();
     })
 
     // Xử lý thanh range lợi nhuận
@@ -142,6 +144,22 @@ $(document).ready(function () {
             day: '2-digit',
         });
         $("#ngayTao").text(dateStr);
+    }
+
+    function loadCurrentUser() {
+        $.ajax({
+            url: "./controller/taiKhoan.controller.php",
+            type: "GET",
+            data: { action: "getCurrentUser" },
+            dataType: "json",
+            success: function(response) {
+                $("#nguoiTao").text(response.fullname);
+                $("#nguoiTao").data("id", response.id);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
     }
 
     let searchTimeout;
@@ -251,19 +269,71 @@ $(document).ready(function () {
             const quantity = parseInt($(this).find("td:nth-child(3)").text());
             total += price * quantity;
         });
+        
         $("#tongTien").text(formatCurrency(total));
     }
+
+    ///////////////////////////////////////////////// TAO PHIEU /////////////////////////////////////////////////
+
+    $("#createPhieuNhap").click(function() {
+        const nhaCungCap = $("#nhaCungCap").val();
+        const ngayTao = $("#ngayTao").text();
+        const nguoiTao = $("#nguoiTao").data("id");
+        const sanPhamList = [];
+        const tongTien = parseInt($("#tongTien").text().replace(/[^\d]/g, ''));
+
+        $("#ctPhieuNhapList tr").each(function() {
+            const id = $(this).data("id");
+            const quantity = parseInt($(this).find("td:nth-child(3)").text());
+            const profit = parseInt($(this).find("td:nth-child(5)").text().replace("%", ""));
+            sanPhamList.push({ id, quantity, profit });
+        });
+
+
+        if (!nhaCungCap || !nguoiTao || sanPhamList.length === 0) {
+            alert("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+
+        let data = {
+            action: "addPhieuNhap",
+            nhaCungCap: nhaCungCap,
+            ngayTao: ngayTao,
+            nguoiTao: nguoiTao,
+            sanPhamList: sanPhamList,
+            tongTien: tongTien
+        };
+
+        console.log(data);
+
+        $.ajax({
+            url: "./controller/phieuNhap.controller.php",
+            type: "POST",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                alert(response.message);
+                phieuNhapModal.hide();
+                loadPhieuNhaps(currentPage, currentStatus); 
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
 })
 
 function renderPhieuNhap(phieuNhaps) {
+    console.log("Rendering phieuNhaps:", phieuNhaps);
     $("#phieuNhapList").html("");
     if (phieuNhaps && phieuNhaps.length > 0) {
         phieuNhaps.forEach(pn => {
+            console.log("Processing phieuNhap:", pn);
             let row = `
                 <tr> 
                     <td>${pn.id}</td>
-                    <td>${pn.nhacungcap_nam}</td>
-                    <td>${pn.nguoidung_name}</td>
+                    <td>${pn.nhacungcap_name}</td>
+                    <td>${pn.nguoitao_name}</td>
                     <td>${pn.date}</td>
                     <td>${pn.total_amount}</td>
                     
@@ -275,13 +345,13 @@ function renderPhieuNhap(phieuNhaps) {
             $("#phieuNhapList").append(row);
         });
     } else {
+        console.log("No phieuNhaps to render");
         $("#phieuNhapList").append('<tr><td colspan="6">Không tìm thấy kết quả</td></tr>');
     }
 }
 
 function renderSanPhamTable(products) {
     $("#sanPhamList").html("");
-    console.log("Products:", products); // Kiểm tra dữ liệu
     if (products && products.length > 0) {
         products.forEach(sp => {
             let row = `
@@ -293,10 +363,8 @@ function renderSanPhamTable(products) {
                 </tr>
             `;
             $("#sanPhamList").append(row);
-            console.log("Row added:", row); // Kiểm tra từng dòng được thêm vào
         });
     }
-    console.log("Table content:", $("#sanPhamList").html()); // Kiểm tra nội dung cuối cùng
 }
 
 function formatCurrency(value) {

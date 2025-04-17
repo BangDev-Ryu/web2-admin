@@ -84,7 +84,7 @@
                         
                         <div class="form-group">
                             <label>Người tạo:</label>
-                            <span id="nguoiTao" >Người tạo</span>
+                            <span id="nguoiTao"></span>
                         </div>
 
                         <div class="form-group">
