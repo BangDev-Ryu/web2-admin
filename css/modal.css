@@ -80,10 +80,12 @@
 }
 
 /* CSS cho modal của đơn hàng */
+#ctPhieuNhapModal .modal-content,
 #donHangModal .modal-content {
     margin: 10% auto;
 }
 
+#ctPhieuNhapModal .modal-content h2,
 #donHangModal .modal-content h2 {
     font-size: 24px;
     font-weight: bold;
@@ -92,6 +94,7 @@
     color: #444;
 }
 
+#ctPhieuNhapModal .modal-actions,
 #donHangModal .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -99,21 +102,24 @@
     margin-top: 20px;
 }
 
-
+#ctPhieuNhapModal .modal-actions .btn#updatePhieuNhap,
 #donHangModal .modal-actions .btn#updateDonHang {
     background-color: #28a745; /* Màu xanh cho nút duyệt */
     color: white;
 }
 
+#ctPhieuNhapModal .modal-actions .btn#updatePhieuNhap:hover,
 #donHangModal .modal-actions .btn#updateDonHang:hover {
     background-color: #218838;
 }
 
+#ctPhieuNhapModal .modal-actions .btn#closeModal,
 #donHangModal .modal-actions .btn#closeModal {
     background-color: #dc3545; /* Màu đỏ cho nút đóng */
     color: white;
 }
 
+#ctPhieuNhapModal .modal-actions .btn#closeModal:hover,
 #donHangModal .modal-actions .btn#closeModal:hover {
     background-color: #c82333;
 }

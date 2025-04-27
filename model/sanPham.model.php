@@ -114,6 +114,11 @@ class SanPhamModel {
         return $this->db->executePrepared($sql, [$quantity, $id]);
     }
 
+    public function updateSellingPrice($id, $price) {
+        $sql = "UPDATE sanpham SET selling_price = ? WHERE id = ?";
+        return $this->db->executePrepared($sql, [$price, $id]);
+    }
+
     // search
     public function getTotalSearchSanPham($search) {
         $sql = "SELECT COUNT(*) as total FROM sanpham 

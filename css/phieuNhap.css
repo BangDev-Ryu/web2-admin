@@ -210,7 +210,12 @@
     width: 100%;
 }
 
-#sanPhamQuantity {
+#sanPhamProfit {
+    padding: 0;
+}
+
+#sanPhamQuantity,
+#sanPhamGiaNhap {
     width: 120px;
     padding: 8px;
     text-align: center;
@@ -219,8 +224,7 @@
 }
 
 #addSanPham {
-    align-self: flex-end;
-    margin-top: 24px;
+    align-self: center;
 }
 
 /* Delete button */

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/phieuNhap.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/table.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/actions.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./css/modal.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="./css/phieuNhap.css?v=<?php echo time(); ?>">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="./js/phieuNhap.js?v=<?php echo time(); ?>"></script>
@@ -100,8 +100,9 @@
                                     <th>ID</th>
                                     <th>Tên sản phẩm</th>
                                     <th>Số lượng</th>
-                                    <th>Đơn giá</th>
+                                    <th>Giá nhập</th>
                                     <th>Lợi nhuận</th>
+                                    <th>Giá bán</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
@@ -119,7 +120,6 @@
                 <!-- Cột phải -->
                 <div class="phieuNhap-right">
                     <div class="sanPham-content">
-                        <!-- <h3>Danh sách sản phẩm</h3> -->
                         <div class="sanPham-search">
                             <input type="text" id="searchSanPhamTable" placeholder="Tìm kiếm sản phẩm theo id hoặc tên">
                         </div>
@@ -128,7 +128,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Tên sản phẩm</th>
-                                    <th>Đơn giá</th>
+                                    <th>Giá bán</th>
                                     <th>Số lượng tồn</th>
                                 </tr>
                             </thead>
@@ -139,10 +139,15 @@
                         <div class="sanPham-actions">
                             <div class="product-controls">
                                 <div class="form-group">
+                                    <label for="sanPhamGiaNhap">Giá nhập:</label>
+                                    <input type="number" id="sanPhamGiaNhap" min="1" value="1">
+                                </div>
+
+                                <div class="form-group">
                                     <label for="sanPhamProfit">Lợi nhuận:</label>
+                                    <span id="profitValue">0%</span>
                                     <div class="profit-control">
                                         <input type="range" id="sanPhamProfit" min="0" max="100" value="0" step="1">
-                                        <span id="profitValue">0%</span>
                                     </div>
                                 </div>
 
@@ -163,6 +168,36 @@
 
             <div class="modal-actions">
                 <button class="btn" id="createPhieuNhap">Tạo phiếu nhập</button>
+                <button class="btn" id="closeModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="ctPhieuNhapModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Chi tiết phiếu nhập</h2>
+
+            <div class="table-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá nhập</th>
+                            <th>Lợi nhuận</th>
+                            <th>Giá bán</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="ctPhieuNhapReadList">
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn" id="updatePhieuNhap">Duyệt đơn hàng</button>
                 <button class="btn" id="closeModal">Đóng</button>
             </div>
         </div>
