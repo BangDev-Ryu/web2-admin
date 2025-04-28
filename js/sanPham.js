@@ -253,7 +253,7 @@ $(document).ready(function () {
     });
 
     // Nút sửa sản phẩm
-    $(document).on("click", "#editProduct", function() {
+    $(document).on("click", ".editProduct", function() {
         const id = $(this).data("id");
         $.ajax({
             url: "./controller/sanPham.controller.php",
@@ -354,34 +354,73 @@ $(document).ready(function () {
             }
         });
     });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenSanPham() {
+        $("#addProduct").hide();
+        $(".editProduct").hide();
+        $(".deleteProduct").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 6:
+                                $("#addProduct").show();
+                                break;
+                            case 7:
+                                $(".editProduct").show();
+                                break;
+                            case 8:
+                                $(".deleteProduct").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenSanPham();
+
+    function renderSanPham(products) {
+        $("#productList").html("");
+        if (products && products.length > 0) {
+            products.forEach(product => {
+                let row = `
+                    <tr data-id="${product.id}"> 
+                        <td>${product.id}</td>
+                        <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
+                        <td>${product.name}</td>
+                        <td>${product.selling_price}</td>
+                        <td>${product.stock_quantity}</td>
+                        <td>${product.chude_name}</td>
+                        <td>${product.trangthai_name}</td>
+                        <td>${product.updated_at}</td>
+                        <td>
+                            <button class="btn edit-btn editProduct" data-id="${product.id}">Sửa</button>
+                            <button class="btn delete-btn deleteProduct" data-id="${product.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#productList").append(row);
+            });
+            
+            checkQuyenSanPham();
+        } else {
+            $("#productList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
 });
 
-function renderSanPham(products) {
-    $("#productList").html("");
-    if (products && products.length > 0) {
-        products.forEach(product => {
-            let row = `
-                <tr> 
-                    <td>${product.id}</td>
-                    <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
-                    <td>${product.name}</td>
-                    <td>${product.selling_price}</td>
-                    <td>${product.stock_quantity}</td>
-                    <td>${product.chude_name}</td>
-                    <td>${product.trangthai_name}</td>
-                    <td>${product.updated_at}</td>
-                    <td>
-                        <button id="editProduct" class="btn edit-btn" data-id="${product.id}">Sửa</button>
-                        <button id="deleteProduct" class="btn delete-btn" data-id="${product.id}">Xóa</button>
-                    </td>
-                </tr>
-            `;
-            $("#productList").append(row);
-        });
-    } else {
-        $("#productList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
-    }
-}
 
 // function getRandomColor() {
 //     var letters = '0123456789ABCDEF';

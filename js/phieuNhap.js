@@ -188,10 +188,12 @@ $(document).ready(function () {
     $(document).on("click", "#sanPhamTable tbody tr", function() {
         $("#sanPhamTable tbody tr").removeClass("selected");
         $(this).addClass("selected");
+        const giaBan = parseInt($(this).find("td:nth-child(3)").text().replace(/[^\d]/g, ''));
+        $("#sanPhamGiaNhap").val(giaBan);
         selectedProduct = {
             id: $(this).data("id"),
             name: $(this).find("td:nth-child(2)").text(),
-            price: parseInt($(this).find("td:nth-child(3)").text().replace(/[^\d]/g, '')),
+            price: parseInt(giaBan),
             stock: parseInt($(this).find("td:nth-child(4)").text())
         };
     });
@@ -204,6 +206,7 @@ $(document).ready(function () {
         }
 
         const quantity = parseInt($("#sanPhamQuantity").val());
+        const giaNhap = parseInt($("#sanPhamGiaNhap").val());
         const profit = parseInt($("#sanPhamProfit").val());
         
         if (quantity <= 0) {
@@ -216,17 +219,21 @@ $(document).ready(function () {
             return;
         }
 
+        // Tính giá bán mới dựa trên giá nhập và lợi nhuận
+        const giaBan = giaNhap + (giaNhap * profit / 100);
+
         // Kiểm tra sản phẩm đã tồn tại
         const existingRow = $(`#ctPhieuNhapList tr[data-id="${selectedProduct.id}"]`);
         
-        if (existingRow.length > 0) {
-            // Nếu sản phẩm đã tồn tại
+        if (existingRow.length > 0) { // Nếu sản phẩm đã tồn tại
             const currentQuantity = parseInt(existingRow.find("td:nth-child(3)").text());
             const newQuantity = currentQuantity + quantity;
             
-            // Cập nhật số lượng và lợi nhuận
+            // Cập nhật số lượng, giá nhập, lợi nhuận và giá bán
             existingRow.find("td:nth-child(3)").text(newQuantity);
+            existingRow.find("td:nth-child(4)").text(formatCurrency(giaNhap));
             existingRow.find("td:nth-child(5)").text(profit + "%");
+            existingRow.find("td:nth-child(6)").text(formatCurrency(giaBan));
         } else {
             // Nếu là sản phẩm mới
             const newRow = `
@@ -234,8 +241,9 @@ $(document).ready(function () {
                     <td>${selectedProduct.id}</td>
                     <td>${selectedProduct.name}</td>
                     <td>${quantity}</td>
-                    <td>${formatCurrency(selectedProduct.price)}</td>
+                    <td>${formatCurrency(giaNhap)}</td>
                     <td>${profit}%</td>
+                    <td>${formatCurrency(giaBan)}</td>
                     <td>
                         <button class="btn delete-ctpn-btn">
                             Xóa
@@ -252,6 +260,7 @@ $(document).ready(function () {
         selectedProduct = null;
         $("#sanPhamTable tbody tr").removeClass("selected");
         $("#sanPhamQuantity").val(1);
+        $("#sanPhamGiaNhap").val(1);
         $("#sanPhamProfit").val(0);
         $("#profitValue").text("0%");
     });
@@ -265,14 +274,77 @@ $(document).ready(function () {
     function updateTongTien() {
         let total = 0;
         $("#ctPhieuNhapList tr").each(function() {
-            const price = parseInt($(this).find("td:nth-child(4)").text().replace(/[^\d]/g, ''));
+            const giaNhap = parseInt($(this).find("td:nth-child(4)").text().replace(/[^\d]/g, ''));
             const quantity = parseInt($(this).find("td:nth-child(3)").text());
-            total += price * quantity;
+            total += giaNhap * quantity;
         });
         
         $("#tongTien").text(formatCurrency(total));
     }
 
+    ///////////////////////////////////////////////// CHI TIET PHIEU /////////////////////////////////////////////////
+    const ctPhieuNhapModal = $("#ctPhieuNhapModal");
+    
+    // Đóng modal 
+    $(".close, #closeModal").click(function() {
+        ctPhieuNhapModal.hide();
+    });
+
+    $(document).on("click", ".pn-detail-btn", function(e) {
+        const phieuNhapId = $(this).data("id");
+        $.ajax({
+            url: "./controller/phieuNhap.controller.php",
+            type: "GET",
+            data: { 
+                action: "listCTPhieuNhap", 
+                id: phieuNhapId 
+            },
+            dataType: "json",
+            success: function(response) {
+                $("#updatePhieuNhap").data("id", phieuNhapId);
+
+                if (currentStatus === "daGiao" || currentStatus === "daHuy") {
+                    $("#updatePhieuNhap").hide();
+                } else {
+                    $("#updatePhieuNhap").show();
+                }
+
+                ctPhieuNhapModal.show();
+                renderChiTietPhieuNhap(response.ctPhieuNhaps);
+                
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                alert("Có lỗi xảy ra khi tải chi tiết phiếu nhập");
+            }
+        });
+    });
+
+    // duyệt phiếu nhập
+    $(document).on("click", "#updatePhieuNhap", function() {
+        const phieuNhapId = $(this).data("id");  
+
+        $.ajax({
+            url: "./controller/phieuNhap.controller.php",
+            type: "POST",
+            data: {
+                action: 'updateStatusPhieuNhap',
+                id: phieuNhapId,
+                status: currentStatus
+            },
+            success: function(response) {
+                ctPhieuNhapModal.hide();
+                setTimeout(() => {
+                    loadPhieuNhaps(currentPage, currentStatus); 
+                }, 100);
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    });
+    
+    
     ///////////////////////////////////////////////// TAO PHIEU /////////////////////////////////////////////////
 
     $("#createPhieuNhap").click(function() {
@@ -285,46 +357,85 @@ $(document).ready(function () {
         $("#ctPhieuNhapList tr").each(function() {
             const id = $(this).data("id");
             const quantity = parseInt($(this).find("td:nth-child(3)").text());
+            const giaNhap = parseInt($(this).find("td:nth-child(4)").text().replace(/[^\d]/g, ''));
             const profit = parseInt($(this).find("td:nth-child(5)").text().replace("%", ""));
-            sanPhamList.push({ id, quantity, profit });
+            
+            sanPhamList.push({
+                id: id,
+                quantity: quantity,
+                price: giaNhap,
+                profit: profit
+            });
         });
-
 
         if (!nhaCungCap || !nguoiTao || sanPhamList.length === 0) {
             alert("Vui lòng điền đầy đủ thông tin!");
             return;
         }
 
-        let data = {
-            action: "addPhieuNhap",
-            nhaCungCap: nhaCungCap,
-            ngayTao: ngayTao,
-            nguoiTao: nguoiTao,
-            sanPhamList: sanPhamList,
-            tongTien: tongTien
-        };
-
-        console.log(data);
-
         $.ajax({
             url: "./controller/phieuNhap.controller.php",
             type: "POST",
-            data: data,
+            data: {
+                action: "addPhieuNhap",
+                nhaCungCap: nhaCungCap, 
+                nguoiTao: nguoiTao,
+                ngayTao: ngayTao,
+                sanPhamList: sanPhamList,
+                tongTien: tongTien
+            },
             dataType: "json",
             success: function(response) {
-                alert(response.message);
-                phieuNhapModal.hide();
-                loadPhieuNhaps(currentPage, currentStatus); 
+                if(response.success) {
+                    alert(response.message);
+                    phieuNhapModal.hide();
+                    loadPhieuNhaps(currentPage, currentStatus);
+                } else {
+                    alert("Có lỗi xảy ra: " + response.message);
+                }
             },
             error: function(xhr, status, error) {
                 console.error(error);
+                alert("Có lỗi xảy ra khi tạo phiếu nhập");
             }
         });
     });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenPhieuNhap() {
+        $("#addPhieuNhap").hide();
+        $("#updatePhieuNhap").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 30:
+                                $("#addPhieuNhap").show();
+                                break;
+                            case 31:
+                                $("#updatePhieuNhap").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenPhieuNhap();
+
 })
 
 function renderPhieuNhap(phieuNhaps) {
-    console.log("Rendering phieuNhaps:", phieuNhaps);
     $("#phieuNhapList").html("");
     if (phieuNhaps && phieuNhaps.length > 0) {
         phieuNhaps.forEach(pn => {
@@ -338,14 +449,13 @@ function renderPhieuNhap(phieuNhaps) {
                     <td>${pn.total_amount}</td>
                     
                     <td>
-                        <button id="detailPhieuNhap" class="btn edit-btn" data-id="${pn.id}">Chi tiết</button>
+                        <button class="btn edit-btn pn-detail-btn" data-id="${pn.id}">Chi tiết</button>
                     </td>
                 </tr>
             `;
             $("#phieuNhapList").append(row);
         });
     } else {
-        console.log("No phieuNhaps to render");
         $("#phieuNhapList").append('<tr><td colspan="6">Không tìm thấy kết quả</td></tr>');
     }
 }
@@ -364,6 +474,28 @@ function renderSanPhamTable(products) {
             `;
             $("#sanPhamList").append(row);
         });
+    }
+}
+
+function renderChiTietPhieuNhap(ctPhieuNhaps) {
+    $("#ctPhieuNhapReadList").html("");
+    if (ctPhieuNhaps && ctPhieuNhaps.length > 0) {
+        ctPhieuNhaps.forEach(ct => {
+            const giaBan = parseInt(ct.price) + (parseInt(ct.price) * ct.profit / 100);
+            const giaNhap = parseInt(ct.price);
+            let row = `
+                <tr data-id="${ct.sanpham_id}"> 
+                    <td>${ct.sanpham_name}</td>
+                    <td>${ct.quantity}</td>
+                    <td>${formatCurrency(giaNhap)}</td>
+                    <td>${ct.profit}%</td>
+                    <td>${formatCurrency(giaBan)}</td>
+                </tr>
+            `;
+            $("#ctPhieuNhapReadList").append(row);
+        });
+    } else {
+        $("#ctPhieuNhapReadList").append('<tr><td colspan="5">Không tìm thấy kết quả</td></tr>');
     }
 }
 

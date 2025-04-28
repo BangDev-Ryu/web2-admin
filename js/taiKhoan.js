@@ -206,7 +206,7 @@ $(document).ready(function () {
     });
 
     // Nút sửa tài khoản
-    $(document).on("click", ".edit-btn", function () {
+    $(document).on("click", ".editTaiKhoan", function () {
         const id = $(this).data("id");
 
         $.ajax({
@@ -346,7 +346,7 @@ $(document).ready(function () {
     });
 
     // Nút xóa tài khoản
-    $(document).on("click", ".delete-btn", function() {
+    $(document).on("click", ".deleteTaiKhoan", function() {
         deleteId = $(this).data("id");
         deleteModal.show();
     });
@@ -368,34 +368,72 @@ $(document).ready(function () {
             });
         }
     });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenTaiKhoan() {
+        $("#addTaiKhoan").hide();
+        $(".editTaiKhoan").hide();
+        $(".deleteTaiKhoan").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 22:
+                                $("#addTaiKhoan").show();
+                                break;
+                            case 23:
+                                $(".editTaiKhoan").show();
+                                break;
+                            case 24:
+                                $(".deleteTaiKhoan").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenTaiKhoan();
+
+    function renderTaiKhoan(taiKhoans) {
+        $("#taiKhoanList").html("");
+        if (taiKhoans && taiKhoans.length > 0) {
+            taiKhoans.forEach(taiKhoan => {
+                let row = `
+                    <tr>
+                        <td>${taiKhoan.id}</td>
+                        <td><img src="${taiKhoan.picture}" alt="User Image" width="60"></td>
+                        <td>${taiKhoan.fullname}</td>
+                        <td>${taiKhoan.username}</td>
+                        <td>${taiKhoan.email}</td>
+                        <td>${taiKhoan.phone}</td>
+                        <td>${taiKhoan.date_of_birth}</td>
+                        <td>${taiKhoan.chucvu}</td>
+                        <td>${taiKhoan.role_name}</td>
+                        <td>${taiKhoan.trangthai_name}</td>
+                        <td>${taiKhoan.created_at}</td>
+                        <td>
+                            <button class="btn edit-btn editTaiKhoan" data-id="${taiKhoan.id}">Sửa</button>
+                            <button class="btn delete-btn deleteTaiKhoan" data-id="${taiKhoan.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#taiKhoanList").append(row);
+            });
+            checkQuyenTaiKhoan();
+        } else {
+            $("#taiKhoanList").append("<tr><td colspan='12'>Không có dữ liệu</td></tr>");
+        }   
+    }
 });
 
-function renderTaiKhoan(taiKhoans) {
-    $("#taiKhoanList").html("");
-    if (taiKhoans && taiKhoans.length > 0) {
-        taiKhoans.forEach(taiKhoan => {
-            let row = `
-                <tr>
-                    <td>${taiKhoan.id}</td>
-                    <td><img src="${taiKhoan.picture}" alt="User Image" width="60"></td>
-                    <td>${taiKhoan.fullname}</td>
-                    <td>${taiKhoan.username}</td>
-                    <td>${taiKhoan.email}</td>
-                    <td>${taiKhoan.phone}</td>
-                    <td>${taiKhoan.date_of_birth}</td>
-                    <td>${taiKhoan.chucvu}</td>
-                    <td>${taiKhoan.role_name}</td>
-                    <td>${taiKhoan.trangthai_name}</td>
-                    <td>${taiKhoan.created_at}</td>
-                    <td>
-                        <button id="editTaiKhoan" class="btn edit-btn" data-id="${taiKhoan.id}">Sửa</button>
-                        <button id="deleteTaiKhoan" class="btn delete-btn" data-id="${taiKhoan.id}">Xóa</button>
-                    </td>
-                </tr>
-            `;
-            $("#taiKhoanList").append(row);
-        });
-    } else {
-        $("#taiKhoanList").append("<tr><td colspan='12'>Không có dữ liệu</td></tr>");
-    }   
-}

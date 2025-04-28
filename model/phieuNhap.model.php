@@ -29,6 +29,17 @@ class PhieuNhapModel {
         return $result->fetch_assoc();
     }
 
+    public function getCTPhieuNhapById($id) {
+        $sql = "SELECT * FROM chitietphieunhap WHERE phieunhap_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function updateStatusPhieuNhap($id, $status) {
+        $sql = "UPDATE phieunhap SET trangthai_id = ? WHERE id = ?";
+        return $this->db->executePrepared($sql, [$status, $id]);
+    }
+
     public function addPhieuNhap($data) {
         $sql = "INSERT INTO phieunhap (nhacungcap_id, nguoidung_id, date, trangthai_id, total_amount) 
                 VALUES (?, ?, ?, ?, ?)";

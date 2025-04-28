@@ -3,12 +3,18 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once('../model/taiKhoan.model.php');
+include_once('../model/nguoiDung.model.php');
+include_once('../model/chucVu.model.php');
 
 class DangNhapController {
     private $taiKhoanModel;
+    private $nguoiDungModel;
+    private $chucVuModel;
 
     public function __construct() {
         $this->taiKhoanModel = new TaiKhoanModel();
+        $this->nguoiDungModel = new NguoiDungModel();
+        $this->chucVuModel = new ChucVuModel();
     }
     
     public function login($username, $password) {
@@ -18,7 +24,10 @@ class DangNhapController {
             // Lưu thông tin user vào session
             $_SESSION['usernameAdmin'] = $username;
             $_SESSION['userId'] = $result['id'];
-            $_SESSION['roleId'] = $result['role_id'];
+            $chucVuId = $this->nguoiDungModel->getChucVuById($result['id']);
+            $quyens = $this->chucVuModel->getQuyensByChucVu($chucVuId);
+            
+            $_SESSION['quyens'] = $quyens;
             
             return [
                 'success' => true,

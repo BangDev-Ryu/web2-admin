@@ -48,9 +48,9 @@ class ChucVuModel {
 
         if ($resultChucVu) {
             $chucVuId = $this->getLastId();
-            for ($index = 0; $index < count($data['quyens']); $index++) {
+            foreach ($data['quyens'] as $quyenId) {
                 $sql = "INSERT INTO chitietphanquyen (chucvu_id, quyen_id) VALUES (?, ?)";
-                $this->db->executePrepared($sql, [$chucVuId, $data['quyens'][$index]]);
+                $this->db->executePrepared($sql, [$chucVuId, $quyenId]);
             }
         }
     }

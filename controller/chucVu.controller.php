@@ -43,7 +43,6 @@ class ChucVuController {
 
     public function addChucVu($data) {
         $result = $this->chucVuModel->addChucVu($data);
-
         echo json_encode(['success' => $result]);
     }
 

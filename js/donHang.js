@@ -80,15 +80,12 @@ $(document).ready(function () {
 
     ////////////////////////////////////// MODAL CHI TIET //////////////////////////////////////
     
-    // Xử lý modal
     const donHangModal = $("#donHangModal");
     
-    // Đóng modal 
     $(".close, #closeModal").click(function() {
         donHangModal.hide();
     });
 
-    // Gắn event handler một lần duy nhất khi document ready
     $(document).on("click", ".detail-btn", function(e) {
         const donHangId = $(this).data("id");
         $.ajax({
@@ -117,7 +114,7 @@ $(document).ready(function () {
         });
     });
 
-    // Tương tự với nút duyệt đơn hàng
+    // duyệt đơn hàng
     $(document).on("click", "#updateDonHang", function() {
         const donHangId = $(this).data("id");  // Lấy id từ chính button duyệt
 
@@ -142,6 +139,34 @@ $(document).ready(function () {
             }
         });
     });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenDonHang() {
+        $("#updateDonHang").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 11:
+                                $("#updateDonHang").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenDonHang();
 })
 
 function renderDonHang(donHangs) {
@@ -187,7 +212,7 @@ function renderChiTietDonHang(ctDonHangs) {
             $("#ctDonHangList").append(row);
         });
     } else {
-        $("#ctDonHangList").append('<tr><td colspan="11">Không tìm thấy kết quả</td></tr>');
+        $("#ctDonHangList").append('<tr><td colspan="3">Không tìm thấy kết quả</td></tr>');
     }
     
 }

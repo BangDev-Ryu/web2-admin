@@ -79,32 +79,7 @@ $(document).ready(function () {
     loadKhuyenMais(currentPage, searchValue);
 
 
-    function renderKhuyenMai(khuyenMais) {
-        $("#khuyenMaiList").html("");
-        if (khuyenMais && khuyenMais.length > 0) {
-            khuyenMais.forEach(km => {
-                let row = `
-                    <tr> 
-                        <td>${km.id}</td>
-                        <td>${km.name}</td>
-                        <td>${km.code}</td>
-                        <td>${km.profit}</td>
-                        <td>${km.type}</td>
-                        <td>${km.startDate}</td>
-                        <td>${km.endDate}</td>
-                        <td>
-                            <button class="btn edit-btn" data-id="${km.id}">Sửa</button>
-                            <button class="btn delete-btn" data-id="${km.id}">Xóa</button>
-                        </td>
-                    </tr>
-                `;
-                $("#khuyenMaiList").append(row);
-            });
-        } else {
-            $("#khuyenMaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
-            return;
-        }
-    }
+    
 
     const minProfitRange = $("#minProfitRange");
     const maxProfitRange = $("#maxProfitRange");
@@ -198,14 +173,14 @@ $(document).ready(function () {
  
  
      
-     $(document).on("click", ".edit-btn", function() {
-         const id = $(this).data("id");
-         $.ajax({
-             url: "./controller/khuyenMai.controller.php",
-             type: "GET",
-             data: { action: "getKhuyenMai", id: id },
-             dataType: "json",
-             success: function(response) {
+    $(document).on("click", ".editKhuyenMai", function() {
+        const id = $(this).data("id");
+        $.ajax({
+            url: "./controller/khuyenMai.controller.php",
+            type: "GET",
+            data: { action: "getKhuyenMai", id: id },
+            dataType: "json",
+            success: function(response) {
                 khuyenMaiModal.show();
                 console.log(response);
                 $("#modalTitle").text("Sửa khuyến mãi");
@@ -220,68 +195,127 @@ $(document).ready(function () {
                     $("#khuyenMai-startDate").val(response.khuyenMai.startDate);
                     $("#khuyenMai-endDate").val(response.khuyenMai.endDate);
                 }, 50)
-             }
-         });
-     });
+            }
+        });
+    });
  
      // Submit form thêm/sửa
-     $("#khuyenMaiForm").submit(function(e) {
-         e.preventDefault();
+    $("#khuyenMaiForm").submit(function(e) {
+        e.preventDefault();
 
-         
-         const data = {
-             id: $("#khuyenMaiId").val(),
-             name: $("#khuyenMai-name").val(),
-             code: $("#khuyenMai-code").val(),
-             profit: $("#khuyenMai-profit").val(),
-             type: $("#khuyenMai-type").val(),
-             startDate: $("#startDate").val(),
-             endDate: $("#endDate").val(),
-             action: $("#khuyenMaiId").val() ? "updateKhuyenMai" : "addKhuyenMai"
-         };
+        
+        const data = {
+            id: $("#khuyenMaiId").val(),
+            name: $("#khuyenMai-name").val(),
+            code: $("#khuyenMai-code").val(),
+            profit: $("#khuyenMai-profit").val(),
+            type: $("#khuyenMai-type").val(),
+            startDate: $("#startDate").val(),
+            endDate: $("#endDate").val(),
+            action: $("#khuyenMaiId").val() ? "updateKhuyenMai" : "addKhuyenMai"
+        };
 
 
-    
+        $.ajax({
+            url: "./controller/khuyenMai.controller.php",
+            type: "POST",
+            data: data,
+            success: function(response) {
+                khuyenMaiModal.hide();
+                loadKhuyenMais(currentPage);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
 
- 
-         $.ajax({
-             url: "./controller/khuyenMai.controller.php",
-             type: "POST",
-             data: data,
-             success: function(response) {
-                 khuyenMaiModal.hide();
-                 loadKhuyenMais(currentPage);
-             },
-             error: function(xhr, status, error) {
-                 console.error(error);
-             }
-         });
-     });
- 
-     // Nút xóa thể loại
-     $(document).on("click", ".delete-btn", function() {
-         deleteId = $(this).data("id");
-         deleteModal.show();
-     });
+    // Nút xóa thể loại
+    $(document).on("click", ".deleteKhuyenMai", function() {
+        deleteId = $(this).data("id");
+        deleteModal.show();
+    });
  
      // Xác nhận xóa
-     $("#confirmDelete").click(function() {
-         if (deleteId) {
-             $.ajax({
-                 url: "./controller/khuyenMai.controller.php",
-                 type: "POST",
-                 data: { action: "deleteKhuyenMai", id: deleteId },
-                 success: function(response) {
-                     deleteModal.hide();
-                     loadKhuyenMais(currentPage, searchValue, filterData);
-                     alert("Xóa khuyến mãi thành công!");
-                 },
-                 error: function(xhr, status, error) {
-                     console.error(error);
-                     alert("Xóa khuyến mãi thất bại. Vui lòng thử lại.");
-                 }
-             });
-         }
-     });
+    $("#confirmDelete").click(function() {
+        if (deleteId) {
+            $.ajax({
+                url: "./controller/khuyenMai.controller.php",
+                type: "POST",
+                data: { action: "deleteKhuyenMai", id: deleteId },
+                success: function(response) {
+                    deleteModal.hide();
+                    loadKhuyenMais(currentPage, searchValue, filterData);
+                    alert("Xóa khuyến mãi thành công!");
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert("Xóa khuyến mãi thất bại. Vui lòng thử lại.");
+                }
+            });
+        }
+    });
 
-    })
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenKhuyenMai() {
+        $("#addKhuyenMai").hide();
+        $(".editKhuyenMai").hide();
+        $(".deleteKhuyenMai").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 38:
+                                $("#addKhuyenMai").show();
+                                break;
+                            case 39:
+                                $(".editKhuyenMai").show();
+                                break;
+                            case 40:
+                                $(".deleteKhuyenMai").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenKhuyenMai();
+
+    function renderKhuyenMai(khuyenMais) {
+        $("#khuyenMaiList").html("");
+        if (khuyenMais && khuyenMais.length > 0) {
+            khuyenMais.forEach(km => {
+                let row = `
+                    <tr> 
+                        <td>${km.id}</td>
+                        <td>${km.name}</td>
+                        <td>${km.code}</td>
+                        <td>${km.profit}</td>
+                        <td>${km.type}</td>
+                        <td>${km.startDate}</td>
+                        <td>${km.endDate}</td>
+                        <td>
+                            <button class="btn edit-btn editKhuyenMai" data-id="${km.id}">Sửa</button>
+                            <button class="btn delete-btn deleteKhuyenMai" data-id="${km.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#khuyenMaiList").append(row);
+            });
+            checkQuyenKhuyenMai();
+        } else {
+            $("#khuyenMaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
+})

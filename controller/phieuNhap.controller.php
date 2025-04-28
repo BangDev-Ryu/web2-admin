@@ -2,22 +2,24 @@
 require_once '../model/phieuNhap.model.php';
 require_once '../model/sanPham.model.php';
 require_once '../model/nhaCungCap.model.php';
+require_once '../model/sanPham.model.php';
 require_once "./nguoiDung.controller.php";
 require_once "./nhaCungCap.controller.php";
+require_once "./sanPham.controller.php";
 
 class PhieuNhapController {
     private $phieuNhapModel;
+    private $sanPhamController;
     private $sanPhamModel;
     private $nhaCungCapModel;
     private $nguoiDungController;
-    private $nhaCungCapController;
 
     public function __construct() {
         $this->phieuNhapModel = new PhieuNhapModel();
-        $this->sanPhamModel = new SanPhamModel();
         $this->nhaCungCapModel = new NhaCungCapModel();
         $this->nguoiDungController = new NguoiDungController();
-        $this->nhaCungCapController = new NhaCungCapController();
+        $this->sanPhamController = new SanPhamController();
+        $this->sanPhamModel = new SanPhamModel();
     }
 
     public function convertStatus($status) {
@@ -68,6 +70,19 @@ class PhieuNhapController {
         ]);
     }
 
+    public function listCTPhieuNhap($id) {
+        $ctPhieuNhaps = $this->phieuNhapModel->getCTPhieuNhapById($id);
+        
+        foreach ($ctPhieuNhaps as &$ctPhieuNhap) {
+            $sanPhamName = $this->sanPhamController->getNameById($ctPhieuNhap['sanpham_id']);
+            $ctPhieuNhap['sanpham_name'] = $sanPhamName;
+        }
+
+        echo json_encode([
+            'ctPhieuNhaps' => $ctPhieuNhaps
+        ]);
+    }
+
     public function addPhieuNhap($data) {
         // Validate dữ liệu
         if (!isset($data['nhaCungCap']) || !isset($data['nguoiTao']) || empty($data['sanPhamList'])) {
@@ -77,6 +92,7 @@ class PhieuNhapController {
             ]);
             return;
         }
+
 
         // Thêm phiếu nhập
         $result = $this->phieuNhapModel->addPhieuNhap([
@@ -92,12 +108,11 @@ class PhieuNhapController {
 
             // Thêm chi tiết phiếu nhập
             foreach ($data['sanPhamList'] as $sp) {
-                $donGia = $this->sanPhamModel->getSanPhamById($sp['id'])['selling_price'];
                 $this->phieuNhapModel->addChiTietPhieuNhap([
                     'phieunhap_id' => $phieuNhapId,
                     'sanpham_id' => $sp['id'],
                     'quantity' => $sp['quantity'],
-                    'price' => $donGia,
+                    'price' => $sp['price'],
                     'profit' => $sp['profit']
                 ]);
             }
@@ -109,9 +124,39 @@ class PhieuNhapController {
         } else {
             echo json_encode([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra'
+                'message' => 'Có lỗi xảy ra khi thêm phiếu nhập'
             ]);
         }
+    }
+
+    public function updateStatusPhieuNhap($id) {
+        $currentStatus = $this->phieuNhapModel->getPhieuNhapById($id)['trangthai_id'];
+        
+        if ($currentStatus == 8) { // nếu phiếu nhập đang giao 
+            $ctPhieuNhaps = $this->phieuNhapModel->getCTPhieuNhapById($id);
+            foreach ($ctPhieuNhaps as $ct) {
+                // Lấy thông tin sản phẩm hiện tại
+                $sanPham = $this->sanPhamModel->getSanPhamById($ct['sanpham_id']);
+                
+                // Cập nhật số lượng
+                $newStock = $sanPham['stock_quantity'] + $ct['quantity'];
+                $this->sanPhamModel->updateQuanity($ct['sanpham_id'], $newStock);
+                
+                // Tính giá bán mới từ giá nhập và lợi nhuận
+                $giaBanMoi = $ct['price'] + ($ct['price'] * $ct['profit'] / 100);
+                
+                // So sánh với giá bán hiện tại
+                if ($giaBanMoi > $sanPham['selling_price']) {
+                    // Cập nhật giá bán mới
+                    $this->sanPhamModel->updateSellingPrice($ct['sanpham_id'], $giaBanMoi);
+                }
+            }
+        }
+
+        $status = $currentStatus + 1;
+        $result = $this->phieuNhapModel->updateStatusPhieuNhap($id, $status);
+
+        echo json_encode(["success" => $result]);
     }
 
 }
@@ -122,16 +167,21 @@ if (isset($_GET['action'])) {
         case 'listPhieuNhap':
             $controller->listPhieuNhap($_GET['status'], $_GET['limit']);
             break;
+        case 'listCTPhieuNhap':
+            $controller->listCTPhieuNhap($_GET['id']);
+            break;
     }
 }
 
-if (isset($_POST['data'])) {
+if (isset($_POST['action'])) {
     $controller = new PhieuNhapController();
-    $data = $_POST['data'];
     
-    switch ($data['action']) {
+    switch ($_POST['action']) {
         case 'addPhieuNhap':
-            $controller->addPhieuNhap($data);
+            $controller->addPhieuNhap($_POST);
+            break;
+        case 'updateStatusPhieuNhap':
+            $controller->updateStatusPhieuNhap($_POST['id']);
             break;
     }
 }
