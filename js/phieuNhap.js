@@ -400,6 +400,39 @@ $(document).ready(function () {
             }
         });
     });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenPhieuNhap() {
+        $("#addPhieuNhap").hide();
+        $("#updatePhieuNhap").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 30:
+                                $("#addPhieuNhap").show();
+                                break;
+                            case 31:
+                                $("#updatePhieuNhap").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenPhieuNhap();
+
 })
 
 function renderPhieuNhap(phieuNhaps) {

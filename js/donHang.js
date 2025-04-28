@@ -139,6 +139,34 @@ $(document).ready(function () {
             }
         });
     });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenDonHang() {
+        $("#updateDonHang").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 11:
+                                $("#updateDonHang").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenDonHang();
 })
 
 function renderDonHang(donHangs) {

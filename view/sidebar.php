@@ -17,70 +17,70 @@
 
         <div class="sidebar-content">
             <ul class="item-list">
-                <li class="item">
+                <li class="item" data-id="1">
                     <a href="#" class="nav-link" data-page="trangChu">
                         <i class="fa-solid fa-house icon"></i>
                         <span class="link">Trang chủ</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="5">
                     <a href="#" class="nav-link" data-page="sanPham">
                         <i class="fa-solid fa-box icon"></i>
                         <span class="link">Sản phẩm</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="9">
                     <a href="#" class="nav-link" data-page="donHang">
                         <i class="fa-solid fa-cart-shopping icon"></i>
                         <span class="link">Đơn hàng</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="13">
                     <a href="#" class="nav-link" data-page="theLoai">
                         <i class="fa-solid fa-list icon"></i>
                         <span class="link">Thể loại</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="17">
                     <a href="#" class="nav-link" data-page="chuDe">
                         <i class="fa-solid fa-flag icon"></i>
                         <span class="link">Chủ đề</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="21">
                     <a href="#" class="nav-link" data-page="taiKhoan">
                         <i class="fa-solid fa-user icon"></i>
                         <span class="link">Tài khoản</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="25">
                     <a href="#" class="nav-link" data-page="chucVu">
                         <i class="fa-solid fa-wrench icon"></i>
                         <span class="link">Chức vụ</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="29">
                     <a href="#" class="nav-link" data-page="phieuNhap">
                         <i class="fa-solid fa-truck-fast icon"></i>
                         <span class="link">Phiếu nhập</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="33">
                     <a href="#" class="nav-link" data-page="nhaCungCap">
                         <i class="fa-solid fa-building-user icon"></i>
                         <span class="link">Nhà cung cấp</span>
                     </a>
                 </li>
 
-                <li class="item">
+                <li class="item" data-id="37">
                     <a href="#" class="nav-link" data-page="khuyenMai">
                         <i class="fa-solid fa-tags icon"></i>
                         <span class="link">Khuyến mãi</span>

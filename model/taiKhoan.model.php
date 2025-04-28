@@ -1,6 +1,5 @@
 <?php
 require_once '../model/connect.php';
-require_once '../model/nguoiDung.model.php';
 
 class TaiKhoanModel {
     private $db;
@@ -300,7 +299,7 @@ public function updateTaiKhoan($data) {
             // Kiểm tra mật khẩu
             if (password_verify($password, $result['password'])) {
                 // Kiểm tra trạng thái tài khoản
-                if ($result['trangthai_id'] == 1) { // Giả sử 1 là trạng thái active
+                if ($result['trangthai_id'] == 1) { 
                     return [
                         'success' => true,
                         'id' => $result['id'],

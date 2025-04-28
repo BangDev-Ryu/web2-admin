@@ -65,7 +65,7 @@ $(document).ready(function () {
 
         $(".page-btn").click(function () {
             const page = $(this).data("page");
-            loadProducts(page, searchValue); 
+            loadChucVus(page, searchValue); 
         });
     }
 
@@ -95,6 +95,7 @@ $(document).ready(function () {
     ];
 
     function renderQuyen() {
+        $("#quyenList").html("");
         for (let i = 0; i < chucVuModule.length; i++) {
             let row = `
                 <tr> 
@@ -111,10 +112,9 @@ $(document).ready(function () {
         $(`input[data-id="3"]`).attr("disabled", true);
         $(`input[data-id="4"]`).attr("disabled", true);
 
-        $(`input[data-id="11"]`).attr("disabled", true);
+        $(`input[data-id="10"]`).attr("disabled", true);
         $(`input[data-id="12"]`).attr("disabled", true);
 
-        $(`input[data-id="31"]`).attr("disabled", true);
         $(`input[data-id="32"]`).attr("disabled", true);
 
     }
@@ -123,12 +123,13 @@ $(document).ready(function () {
         $("#modalTitle").text("Thêm chức vụ");
         chucVuModal.show();
         renderQuyen();
+        $("#chucVuId").val("");
         $(`input[type="checkbox"]`).prop('checked', false);
         $("#chucVu-name").val("");
         $("#chucVu-description").val("");
     });
 
-    $(document).on("click", "#editChucVu", function() {
+    $(document).on("click", ".editChucVu", function() {
         const id = $(this).data("id");
         
         // Clear dữ liệu cũ
@@ -175,21 +176,20 @@ $(document).ready(function () {
 
         data.quyens = checkedPermissions;
 
-        const action = data.id ? "updateChucVu" : "addChucVu";
+        const action = $("#chucVuId").val() ? "updateChucVu" : "addChucVu";
 
+        console.log($("#chucVuId").val());
         $.ajax({
             url: "./controller/chucVu.controller.php", 
             type: "POST",
             data: { action: action, ...data },
             dataType: "json",
             success: function(response) {
-                if(response.success) {
-                    alert(action === "addChucVu" ? "Thêm chức vụ thành công!" : "Cập nhật chức vụ thành công!");
-                    chucVuModal.hide();
-                    loadChucVus(currentPage, searchValue);
-                } else {
-                    alert(response.message || "Có lỗi xảy ra!");
-                }
+                
+                alert(action === "addChucVu" ? "Thêm chức vụ thành công!" : "Cập nhật chức vụ thành công!");
+                chucVuModal.hide();
+                loadChucVus(currentPage, searchValue);
+              
             },
             error: function(xhr, status, error) {
                 console.error("Lỗi AJAX:", error);
@@ -197,27 +197,63 @@ $(document).ready(function () {
             }
         });
     })
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+
+    function checkQuyenChucVu() {
+        $("#addChucVu").hide();
+        $(".editChucVu").hide();
+        $(".deleteChucVu").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 26:
+                                $("#addChucVu").show();
+                                break;
+                            case 27:
+                                $(".editChucVu").show();
+                                break;
+                            case 28:
+                                $(".deleteChucVu").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    function renderChucVu(chucVus) {
+        $("#chucVuList").html("");
+        if (chucVus && chucVus.length > 0) {
+            chucVus.forEach(cv => {
+                let row = `
+                    <tr> 
+                        <td>${cv.id}</td>
+                        <td>${cv.role_name}</td>
+                        <td>${cv.role_description}</td>
+                        <td>
+                            <button class="btn edit-btn editChucVu" data-id="${cv.id}">Sửa</button>
+                            <button class="btn delete-btn deleteChucVu" data-id="${cv.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#chucVuList").append(row);
+            });
+        } else {
+            $("#chucVuList").append('<tr><td colspan="4">Không tìm thấy kết quả</td></tr>');
+        }
+    }
 })
 
-function renderChucVu(chucVus) {
-    $("#chucVuList").html("");
-    if (chucVus && chucVus.length > 0) {
-        chucVus.forEach(cv => {
-            let row = `
-                <tr> 
-                    <td>${cv.id}</td>
-                    <td>${cv.role_name}</td>
-                    <td>${cv.role_description}</td>
-                    <td>
-                        <button id="editChucVu" class="btn edit-btn" data-id="${cv.id}">Sửa</button>
-                        <button id="deleteChucVu" class="btn delete-btn" data-id="${cv.id}">Xóa</button>
-                    </td>
-                </tr>
-            `;
-            $("#chucVuList").append(row);
-        });
-    } else {
-        $("#chucVuList").append('<tr><td colspan="4">Không tìm thấy kết quả</td></tr>');
-    }
-}
 

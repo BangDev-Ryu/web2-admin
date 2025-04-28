@@ -1,12 +1,18 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-if (!isset($_SESSION['usernameAdmin'])) {
-    header("Location: ./view/pages/dangNhap.php");
-    exit();
-}
+    if (!isset($_SESSION['usernameAdmin'])) {
+        header("Location: ./view/pages/dangNhap.php");
+        exit();
+    }
+    // $list_quyen_id = array_column($_SESSION['quyens'], 'quyen_id');
+    // echo '<pre>';
+    // foreach($list_quyen_id as $quyen_id) {
+    //     echo $quyen_id . '<br>';
+    // }
+    // echo '</pre>';
 ?>
 
 <!DOCTYPE html>
@@ -24,10 +30,45 @@ if (!isset($_SESSION['usernameAdmin'])) {
     ?>
     <div id="content">
         <?php
-            $validPages = ['trangChu', 'sanPham', 'donHang', 'theLoai', 'chuDe', 'taiKhoan', 'chucVu', 'phieuNhap', 'nhaCungCap', 'khuyenMai'];
+            $validPages = [];
+            foreach ($_SESSION['quyens'] as $quyen) {
+                switch ($quyen['quyen_id']) {
+                    case 1: // Xem trang chủ
+                        $validPages[] = ['trangChu'];
+                        break;
+                    case 5: // Xem sản phẩm  
+                        $validPages[] = ['sanPham'];
+                        break;
+                    case 9: // Xem đơn hàng
+                        $validPages[] = ['donHang'];
+                        break;
+                    case 13: // Xem thể loại
+                        $validPages[] = ['theLoai'];
+                        break;
+                    case 17: // Xem chủ đề
+                        $validPages[] = ['chuDe'];
+                        break;
+                    case 21: // Xem tài khoản
+                        $validPages[] = ['taiKhoan'];
+                        break;
+                    case 25: // Xem chức vụ
+                        $validPages[] = ['chucVu'];
+                        break;
+                    case 29: // Xem phiếu nhập
+                        $validPages[] = ['phieuNhap'];
+                        break;
+                    case 33: // Xem nhà cung cấp
+                        $validPages[] = ['nhaCungCap'];
+                        break;
+                    case 37: // Xem khuyến mãi
+                        $validPages[] = ['khuyenMai'];
+                        break;
+                }
+            }
+            echo "<script>const validPages = " . json_encode($validPages) . ";</script>";
 
             // Kiểm tra trang từ URL, nếu không hợp lệ thì về home
-            $page = isset($_GET['page']) && in_array($_GET['page'], $validPages) ? $_GET['page'] : 'trangChu';
+            $page = isset($_GET['page']) && in_array($_GET['page'], $validPages) ? $_GET['page'] : '';
 
             // Định nghĩa đường dẫn file
             $viewPath = "view/pages/{$page}.php";

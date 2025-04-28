@@ -81,28 +81,7 @@ $(document).ready(function () {
 
     loadTheLoais(currentPage, searchValue, filterData);
 
-    function renderTheLoai(theLoais) {
-        $("#theLoaiList").html("");
-        if (theLoais && theLoais.length > 0) {
-            theLoais.forEach(tl => {
-                let row = `
-                    <tr> 
-                        <td>${tl.id}</td>
-                        <td>${tl.name}</td>
-                        <td>${tl.description}</td>
-                        <td>${tl.trangthai_name}</td>
-                        <td>
-                            <button class="btn edit-btn" data-id="${tl.id}">Sửa</button>
-                            <button class="btn delete-btn" data-id="${tl.id}">Xóa</button>
-                        </td>
-                    </tr>
-                `;
-                $("#theLoaiList").append(row);
-            });
-        } else {
-            $("#theLoaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
-        }
-    }
+    
 
     function loadTrangThaiFilter() {
         $.ajax({
@@ -193,7 +172,7 @@ $(document).ready(function () {
 
 
     // Nút sửa thể loại
-    $(document).on("click", ".edit-btn", function() {
+    $(document).on("click", ".editTheLoai", function() {
         const id = $(this).data("id");
         $.ajax({
             url: "./controller/theLoai.controller.php",
@@ -241,7 +220,7 @@ $(document).ready(function () {
     });
 
     // Nút xóa thể loại
-    $(document).on("click", ".delete-btn", function() {
+    $(document).on("click", ".deleteTheLoai", function() {
         deleteId = $(this).data("id");
         deleteModal.show();
     });
@@ -265,13 +244,64 @@ $(document).ready(function () {
         }
     });
 
-    $("#confirmDeleteTheLoai").prop("disabled", true);
-$.ajax({
-    // ...
-    complete: function() {
-        $("#confirmDeleteTheLoai").prop("disabled", false);
-    }
-});
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenTheLoai() {
+        $("#addTheLoai").hide();
+        $(".editTheLoai").hide();
+        $(".deleteTheLoai").hide();
 
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 14:
+                                $("#addTheLoai").show();
+                                break;
+                            case 15:
+                                $(".editTheLoai").show();
+                                break;
+                            case 16:
+                                $(".deleteTheLoai").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenTheLoai();
+    
+    function renderTheLoai(theLoais) {
+        $("#theLoaiList").html("");
+        if (theLoais && theLoais.length > 0) {
+            theLoais.forEach(tl => {
+                let row = `
+                    <tr> 
+                        <td>${tl.id}</td>
+                        <td>${tl.name}</td>
+                        <td>${tl.description}</td>
+                        <td>${tl.trangthai_name}</td>
+                        <td>
+                            <button class="btn edit-btn editTheLoai" data-id="${tl.id}">Sửa</button>
+                            <button class="btn delete-btn deleteTheLoai" data-id="${tl.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#theLoaiList").append(row);
+            });
+            checkQuyenTheLoai();
+        } else {
+            $("#theLoaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
 
 });

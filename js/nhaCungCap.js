@@ -81,31 +81,7 @@ $(document).ready(function () {
 
     loadNhaCungCaps(currentPage, searchValue, filterData);
 
-    function renderNhaCungCap(nhaCungCaps) {
-        $("#nhaCungCapList").html("");
-        if (nhaCungCaps && nhaCungCaps.length > 0) {
-            nhaCungCaps.forEach(ncc => {
-                let row = `
-                    <tr> 
-                        <td>${ncc.id}</td>
-                        <td>${ncc.name}</td>
-                        <td>${ncc.contact_person}</td>
-                        <td>${ncc.contact_email}</td>
-                        <td>${ncc.contact_phone}</td>
-                        <td>${ncc.address}</td>
-                        <td>${ncc.trangthai_name}</td>
-                        <td>
-                            <button class="btn edit-btn" data-id="${ncc.id}">Sửa</button>
-                            <button class="btn delete-btn" data-id="${ncc.id}">Xóa</button>
-                        </td>
-                    </tr>
-                `;
-                $("#nhaCungCapList").append(row);
-            });
-        } else {
-            $("#nhaCungCapList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
-        }
-    }
+    
 
     function loadTrangThaiFilter() {
         $.ajax({
@@ -126,7 +102,7 @@ $(document).ready(function () {
     loadTrangThaiFilter();
 
      // Reset filter
-     $("#resetFilter").click(function() {
+    $("#resetFilter").click(function() {
         $("#trangThaiFilter").val(0);
     });
 
@@ -159,28 +135,28 @@ $(document).ready(function () {
    });
 
 
-     // Xử lý modal
-     const nhaCungCapModal = $("#nhaCungCapModal");
-     const deleteModal = $("#deleteModal");
-     let deleteId = null;
- 
-     // Đóng modal 
-     $(".close, .cancel-btn").click(function() {
-         nhaCungCapModal.hide();
-         deleteModal.hide();
-     });
- 
-     // Nút thêm nhà cung cấp
-     $("#addNhaCungCap").click(function() {
-         $("#modalTitle").text("Thêm nhà cung cấp");
-         $("#nhaCungCapForm")[0].reset();
-         $("#nhaCungCapId").val("");
-         loadTrangThai();
-         nhaCungCapModal.show();
-     });
+    // Xử lý modal
+    const nhaCungCapModal = $("#nhaCungCapModal");
+    const deleteModal = $("#deleteModal");
+    let deleteId = null;
+
+    // Đóng modal 
+    $(".close, .cancel-btn").click(function() {
+        nhaCungCapModal.hide();
+        deleteModal.hide();
+    });
+
+    // Nút thêm nhà cung cấp
+    $("#addNhaCungCap").click(function() {
+        $("#modalTitle").text("Thêm nhà cung cấp");
+        $("#nhaCungCapForm")[0].reset();
+        $("#nhaCungCapId").val("");
+        loadTrangThai();
+        nhaCungCapModal.show();
+    });
  
      // Load danh sách trạng thái
-     function loadTrangThai() {
+    function loadTrangThai() {
         return $.ajax({
             url: "./controller/trangThai.controller.php",
             type: "GET",
@@ -196,14 +172,14 @@ $(document).ready(function () {
     }
  
      // Nút sửa 
-     $(document).on("click", ".edit-btn", function() {
-         const id = $(this).data("id");
-         $.ajax({
-             url: "./controller/nhaCungCap.controller.php",
-             type: "GET",
-             data: { action: "getNhaCungCap", id: id },
-             dataType: "json",
-             success: function(response) {
+    $(document).on("click", ".editNhaCungCap", function() {
+        const id = $(this).data("id");
+        $.ajax({
+            url: "./controller/nhaCungCap.controller.php",
+            type: "GET",
+            data: { action: "getNhaCungCap", id: id },
+            dataType: "json",
+            success: function(response) {
                 nhaCungCapModal.show();
                 console.log(response);
                 $("#modalTitle").text("Sửa nhà cung cấp");
@@ -217,61 +193,122 @@ $(document).ready(function () {
                 setTimeout(() => {
                     $("#nhaCungCap-trangThai").val(response.nhaCungCap.trangthai_id);
                 }, 50)
-             }
-         });
-     });
+            }
+        });
+    });
  
-     // Submit form thêm/sửa
-     $("#nhaCungCapForm").submit(function(e) {
-         e.preventDefault();
-         const data = {
-             id: $("#nhaCungCapId").val(),
-             name: $("#nhaCungCap-name").val(),
-             contact_person: $("#contact-person").val(),
-             contact_email: $("#contact-email").val(),
-             contact_phone: $("#contact-phone").val(),
-             address: $("#address").val(),
-             trangthai_id: $("#nhaCungCap-trangThai").val(),
-             action: $("#nhaCungCapId").val() ? "updateNhaCungCap" : "addNhaCungCap"
-         };
+    // Submit form thêm/sửa
+    $("#nhaCungCapForm").submit(function(e) {
+        e.preventDefault();
+        const data = {
+            id: $("#nhaCungCapId").val(),
+            name: $("#nhaCungCap-name").val(),
+            contact_person: $("#contact-person").val(),
+            contact_email: $("#contact-email").val(),
+            contact_phone: $("#contact-phone").val(),
+            address: $("#address").val(),
+            trangthai_id: $("#nhaCungCap-trangThai").val(),
+            action: $("#nhaCungCapId").val() ? "updateNhaCungCap" : "addNhaCungCap"
+        };
+
+        $.ajax({
+            url: "./controller/nhaCungCap.controller.php",
+            type: "POST",
+            data: data,
+            success: function(response) {
+                nhaCungCapModal.hide();
+                loadNhaCungCaps(currentPage, searchValue, filterData);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    // Nút xóa 
+    $(document).on("click", ".deleteNhaCungCap", function() {
+        deleteId = $(this).data("id");
+        deleteModal.show();
+    });
  
-         $.ajax({
-             url: "./controller/nhaCungCap.controller.php",
-             type: "POST",
-             data: data,
-             success: function(response) {
-                 nhaCungCapModal.hide();
-                 loadNhaCungCaps(currentPage, searchValue, filterData);
-             },
-             error: function(xhr, status, error) {
-                 console.error(error);
-             }
-         });
-     });
+    // Xác nhận xóa
+    $("#confirmDelete").click(function() {
+        if (deleteId) {
+            $.ajax({
+                url: "./controller/nhaCungCap.controller.php",
+                type: "POST",
+                data: { action: "deleteNhaCungCap", id: deleteId },
+                success: function(response) {
+                    deleteModal.hide();
+                    loadNhaCungCaps(currentPage, searchValue, filterData);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    });
+
+    ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
+    function checkQuyenNhaCungCap() {
+        $("#addNhaCungCap").hide();
+        $(".editNhaCungCap").hide();
+        $(".deleteNhaCungCap").hide();
+
+        $.ajax({
+            url: "./controller/quyen.controller.php",
+            type: "GET",
+            data: { action: "checkQuyen" },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.quyens) {
+                    response.quyens.forEach(function(quyen) {
+                        switch(quyen) {
+                            case 34:
+                                $("#addNhaCungCap").show();
+                                break;
+                            case 35:
+                                $(".editNhaCungCap").show();
+                                break;
+                            case 36:
+                                $(".deleteNhaCungCap").show();
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi AJAX:", error);
+            }
+        });
+    }
+
+    checkQuyenNhaCungCap();
  
-     // Nút xóa 
-     $(document).on("click", ".delete-btn", function() {
-         deleteId = $(this).data("id");
-         deleteModal.show();
-     });
- 
-     // Xác nhận xóa
-     $("#confirmDelete").click(function() {
-         if (deleteId) {
-             $.ajax({
-                 url: "./controller/nhaCungCap.controller.php",
-                 type: "POST",
-                 data: { action: "deleteNhaCungCap", id: deleteId },
-                 success: function(response) {
-                     deleteModal.hide();
-                     loadNhaCungCaps(currentPage, searchValue, filterData);
-                 },
-                 error: function(xhr, status, error) {
-                     console.error(error);
-                 }
-             });
-         }
-     });
- 
-    
+    function renderNhaCungCap(nhaCungCaps) {
+        $("#nhaCungCapList").html("");
+        if (nhaCungCaps && nhaCungCaps.length > 0) {
+            nhaCungCaps.forEach(ncc => {
+                let row = `
+                    <tr> 
+                        <td>${ncc.id}</td>
+                        <td>${ncc.name}</td>
+                        <td>${ncc.contact_person}</td>
+                        <td>${ncc.contact_email}</td>
+                        <td>${ncc.contact_phone}</td>
+                        <td>${ncc.address}</td>
+                        <td>${ncc.trangthai_name}</td>
+                        <td>
+                            <button class="btn edit-btn editNhaCungCap" data-id="${ncc.id}">Sửa</button>
+                            <button class="btn delete-btn deleteNhaCungCap" data-id="${ncc.id}">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                $("#nhaCungCapList").append(row);
+            });
+            checkQuyenNhaCungCap();
+        } else {
+            $("#nhaCungCapList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
+        }
+    }
 });
