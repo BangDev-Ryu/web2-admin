@@ -19,11 +19,11 @@ if(isset($_SESSION['usernameAdmin'])) {
 <body>
     <div class="login-container">
         <div class="login-header">
-            <!-- <i class="fas fa-user-shield"></i> -->
             <h2>ADMIN LOGIN</h2>
         </div>
 
-        <form id="loginForm">
+        <!-- Thêm onsubmit="return false" vào form -->
+        <form id="loginForm" onsubmit="return false">
             <div id="error-message" class="error-message"></div>
 
             <div class="input-group">
@@ -31,7 +31,7 @@ if(isset($_SESSION['usernameAdmin'])) {
                     <label for="username">Username</label>
                     <div class="input-with-icon">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="username" id="username" required>
+                        <input type="text" name="username" id="username">
                     </div>
                 </div>
 
@@ -39,15 +39,13 @@ if(isset($_SESSION['usernameAdmin'])) {
                     <label for="password">Password</label>
                     <div class="input-with-icon">
                         <i class="fas fa-lock"></i>
-                        <input type="password" name="password" id="password" required>
-                        <span class="toggle-password">
-                            <!-- <i class="fas fa-eye"></i>  -->
-                        </span>
+                        <input type="password" name="password" id="password">
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="login-btn">
+            <!-- Đổi type từ "submit" thành "button" -->
+            <button type="submit" id="loginBtn" class="login-btn">
                 <i class="fas fa-sign-in-alt"></i>
                 Login
             </button>

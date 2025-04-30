@@ -439,15 +439,13 @@ function renderPhieuNhap(phieuNhaps) {
     $("#phieuNhapList").html("");
     if (phieuNhaps && phieuNhaps.length > 0) {
         phieuNhaps.forEach(pn => {
-            console.log("Processing phieuNhap:", pn);
             let row = `
                 <tr> 
                     <td>${pn.id}</td>
                     <td>${pn.nhacungcap_name}</td>
                     <td>${pn.nguoitao_name}</td>
-                    <td>${pn.date}</td>
-                    <td>${pn.total_amount}</td>
-                    
+                    <td>${formatDate(pn.date)}</td>
+                    <td>${formatCurrency(pn.total_amount)}</td>
                     <td>
                         <button class="btn edit-btn pn-detail-btn" data-id="${pn.id}">Chi tiết</button>
                     </td>
@@ -499,7 +497,18 @@ function renderChiTietPhieuNhap(ctPhieuNhaps) {
     }
 }
 
+// Hàm format tiền tệ
 function formatCurrency(value) {
     return parseInt(value).toLocaleString('vi-VN') + 'đ';
+}
+
+// Hàm format ngày tháng
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-EN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
 }
 

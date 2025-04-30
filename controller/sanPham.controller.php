@@ -1,27 +1,28 @@
 <?php
 require_once "../model/sanPham.model.php";
+require_once "../model/chuDe.model.php";
 require_once "./trangThai.controller.php";
 require_once "./chuDe.controller.php";
+require_once "./theLoai.controller.php";
 
 class SanPhamController {
     private $sanPhamModel;
+    private $chuDeModel;
     private $trangThaiController;
     private $chuDeController;
+    private $theLoaiController;
 
     public function __construct() {
         $this->sanPhamModel = new SanPhamModel();
+        $this->chuDeModel = new ChuDeModel();
         $this->trangThaiController = new TrangThaiController();
         $this->chuDeController = new ChuDeController();
+        $this->theLoaiController = new TheLoaiController();
     }
 
     public function listAllSanPham() {
         $products = $this->sanPhamModel->getAllSanPhams();
-        // foreach ($products as &$product) {
-        //     $trangThaiName = $this->trangThaiController->getNameById($product['trangthai_id']);
-        //     $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
-        //     $product['chude_name'] = $chuDeName;
-        //     $product['trangthai_name'] = $trangThaiName;
-        // }
+        
         echo json_encode([
             "products" => $products,
         ]);
@@ -41,6 +42,10 @@ class SanPhamController {
             $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
             $product['chude_name'] = $chuDeName;
             $product['trangthai_name'] = $trangThaiName;
+
+            $chuDe = $this->chuDeModel->getChuDeById($product['chude_id']);
+            $theLoaiName = $this->theLoaiController->getNameById($chuDe['theloai_id']);
+            $product['theloai_name'] = $theLoaiName;
         }
 
         echo json_encode([
@@ -66,6 +71,10 @@ class SanPhamController {
             $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
             $product['chude_name'] = $chuDeName;
             $product['trangthai_name'] = $trangThaiName;
+
+            $chuDe = $this->chuDeModel->getChuDeById($product['chude_id']);
+            $theLoaiName = $this->theLoaiController->getNameById($chuDe['theloai_id']);
+            $product['theloai_name'] = $theLoaiName;
         }
 
         echo json_encode([
@@ -91,6 +100,10 @@ class SanPhamController {
             $chuDeName = $this->chuDeController->getNameById($product['chude_id']);
             $product['chude_name'] = $chuDeName;
             $product['trangthai_name'] = $trangThaiName;
+
+            $chuDe = $this->chuDeModel->getChuDeById($product['chude_id']);
+            $theLoaiName = $this->theLoaiController->getNameById($chuDe['theloai_id']);
+            $product['theloai_name'] = $theLoaiName;
         }
 
         echo json_encode([
@@ -118,6 +131,20 @@ class SanPhamController {
     public function updateSanPham($data) {
         $result = $this->sanPhamModel->updateSanPham($data);
         echo json_encode(['success' => $result]);
+    }
+
+    public function deleteSanPham($id) {
+        $existed = $this->sanPhamModel->checkExistInPhieuNhap($id);
+        
+        if ($existed) {
+            $result = $this->sanPhamModel->hideSanPham($id);
+        } else {
+            $result = $this->sanPhamModel->deleteSanPham($id);
+        }
+        
+        echo json_encode([
+            'success' => $result
+        ]);
     }
 }
 
@@ -157,6 +184,9 @@ if (isset($_POST['action'])) {
                 $_POST['img'] = $_FILES['img'];
             }
             $controller->updateSanPham($_POST);
+            break;
+        case 'deleteSanPham':
+            $controller->deleteSanPham($_POST['id']);
             break;
     }
 }

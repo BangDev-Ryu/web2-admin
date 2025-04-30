@@ -10,7 +10,6 @@ $(document).ready(function() {
         loadPage(page);
     });
 
-    // Khi load lại trang, kiểm tra localStorage
     function checkCurrentPage() {
         const currentPage = localStorage.getItem('currentPage');
         if(currentPage) {
@@ -18,7 +17,6 @@ $(document).ready(function() {
             $('.nav-link').removeClass('active');
             $(`.nav-link[data-page="${currentPage}"]`).addClass('active');
             
-            // Load nội dung trang
             loadPage(currentPage);
         } else {
             // Nếu không có page trong localStorage, load trang chủ

@@ -152,24 +152,25 @@ $(document).ready(function () {
         });
     }
 
-    function loadTrangThaiFilter() {
+    function loadTheLoaiFilter() {
         $.ajax({
-            url: "./controller/trangThai.controller.php",
+            url: "./controller/theLoai.controller.php",
             type: "GET",
-            data: { action: "listTrangThai", type: "sanPham" },
+            data: { action: "listAllTheLoai" },
             dataType: "json",
             success: function(response) {
-                $("#trangThaiFilter").html("");
-                $("#trangThaiFilter").append(`<option value="0">Tất cả</option>`);
-                response.trangThais.forEach(tt => {
-                    $("#trangThaiFilter").append(`<option value="${tt.id}">${tt.name}</option>`);
+                $("#theLoaiFilter").html("");
+                $("#theLoaiFilter").append(`<option value="0">Tất cả</option>`);
+                response.theLoais.forEach(tl => {
+                    $("#theLoaiFilter").append(`<option value="${tl.id}">${tl.name}</option>`);
                 });
             }
         });
-    } 
+    }
+
 
     loadChuDeFilter();
-    loadTrangThaiFilter();
+    loadTheLoaiFilter();
 
     // Reset filter
     $("#resetFilter").click(function() {
@@ -177,9 +178,8 @@ $(document).ready(function () {
         maxPriceRange.val(10000000);
         updatePriceRanges();
         $("#chuDeFilter").val(0);
-        $("#trangThaiFilter").val(0);
-        $("#startDate").val("");
-        $("#endDate").val("");
+        $("#theLoaiFilter").val(0);
+        
     });
 
     // Apply filter
@@ -188,9 +188,8 @@ $(document).ready(function () {
             min_price: minPriceRange.val(),
             max_price: maxPriceRange.val(),
             chude_id: $("#chuDeFilter").val(),
-            trangthai_id: $("#trangThaiFilter").val(),
-            start_date: $("#startDate").val(),
-            end_date: $("#endDate").val()
+            theloai_id: $("#theLoaiFilter").val(),
+            
         };
 
         currentPage = 1; 
@@ -225,30 +224,16 @@ $(document).ready(function () {
         });
     }
 
-    // Load danh sách trạng thái
-    function loadTrangThai() {
-        $.ajax({
-            url: "./controller/trangThai.controller.php",
-            type: "GET",
-            data: { action: "listTrangThai", type: "sanPham" },
-            dataType: "json",
-            success: function(response) {
-                $("#sanPham-trangThai").html("");
-                response.trangThais.forEach(tt => {
-                    $("#sanPham-trangThai").append(`<option value="${tt.id}">${tt.name}</option>`);
-                });
-            }
-        });
-    }
 
     // Nút thêm sản phẩm
     $("#addProduct").click(function() {
         $("#modalTitle").text("Thêm Sản Phẩm");
         $("#sanPhamForm")[0].reset();
         $("#sanPhamId").val("");
+        $("#sanPham-quantity").attr("disabled", true);
+        $("#sanPham-quantity").val(0);
         $("#imagePreview").attr("src", "");
         loadChuDe();
-        loadTrangThai();
         sanPhamModal.show();
     });
 
@@ -266,17 +251,16 @@ $(document).ready(function () {
                 $("#sanPhamId").val(response.sanPham.id);
                 $("#sanPham-name").val(response.sanPham.name);
                 $("#sanPham-description").val(response.sanPham.description);
-                $("#sanPham-price").val(response.sanPham.selling_price);
+                // Hiển thị giá gốc không định dạng cho input
+                $("#sanPham-price").val(parseInt(response.sanPham.selling_price));
+                $("#sanPham-quantity").attr("disabled", true);
                 $("#sanPham-quantity").val(response.sanPham.stock_quantity);
-                $("#sanPham-warranty").val(response.sanPham.warranty_days);
                 $("#imagePreview").attr("src", response.sanPham.image_url);
                 
                 loadChuDe();
-                loadTrangThai();
                 
                 setTimeout(() => {
                     $("#sanPham-chuDe").val(response.sanPham.chude_id);
-                    $("#sanPham-trangThai").val(response.sanPham.trangthai_id);
                 }, 50);
             }
         });
@@ -307,8 +291,6 @@ $(document).ready(function () {
         formData.append("selling_price", $("#sanPham-price").val());
         formData.append("stock_quantity", $("#sanPham-quantity").val());
         formData.append("chude_id", $("#sanPham-chuDe").val());
-        formData.append("trangthai_id", $("#sanPham-trangThai").val());
-        formData.append("warranty_days", $("#sanPham-warranty").val());
         formData.append("updated_at", now);
 
         // const data = {
@@ -355,6 +337,44 @@ $(document).ready(function () {
         });
     });
 
+    const deleteModal = $("#deleteModal");
+    let deleteId = null;
+
+    $(document).on("click", ".cancel-btn", function() {
+        deleteModal.hide();
+    });
+
+    // Nút xóa sản phẩm
+    $(document).on("click", ".deleteProduct", function() {
+        deleteId = $(this).data("id");
+        deleteModal.show();
+    });
+
+    // Xác nhận xóa
+    $("#confirmDeleteSanPham").click(function() {
+        if (deleteId) {
+            $.ajax({
+                url: "./controller/sanPham.controller.php",
+                type: "POST",
+                dataType: "json",
+                data: { 
+                    action: "deleteSanPham", 
+                    id: deleteId 
+                },
+                success: function(response) {
+                    deleteModal.hide();
+                    loadProducts(currentPage, searchValue, filterData);
+                    alert("Xóa sản phẩm thành công!");
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert("Có lỗi xảy ra khi xóa sản phẩm!");
+                }
+            });
+        }
+    });
+
     ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////
     function checkQuyenSanPham() {
         $("#addProduct").hide();
@@ -391,6 +411,12 @@ $(document).ready(function () {
 
     checkQuyenSanPham();
 
+    // Thêm hàm format currency cho hiển thị
+    function formatCurrency(value) {
+        return parseInt(value).toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Chỉnh sửa phần renderSanPham
     function renderSanPham(products) {
         $("#productList").html("");
         if (products && products.length > 0) {
@@ -400,11 +426,10 @@ $(document).ready(function () {
                         <td>${product.id}</td>
                         <td><img src="${product.image_url}" alt="Product Image" width="60"></td>
                         <td>${product.name}</td>
-                        <td>${product.selling_price}</td>
+                        <td>${formatCurrency(product.selling_price)}</td>
                         <td>${product.stock_quantity}</td>
+                        <td>${product.theloai_name}</td>
                         <td>${product.chude_name}</td>
-                        <td>${product.trangthai_name}</td>
-                        <td>${product.updated_at}</td>
                         <td>
                             <button class="btn edit-btn editProduct" data-id="${product.id}">Sửa</button>
                             <button class="btn delete-btn deleteProduct" data-id="${product.id}">Xóa</button>
@@ -419,6 +444,8 @@ $(document).ready(function () {
             $("#productList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
         }
     }
+
+    
 });
 
 

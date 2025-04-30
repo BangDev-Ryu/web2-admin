@@ -23,6 +23,7 @@ class ChuDeModel {
         return $result->fetch_assoc()['name'];
     }
 
+
     public function getChuDes($limit, $offset) {
         $sql = "SELECT * FROM chude
                 LIMIT ? OFFSET ?";

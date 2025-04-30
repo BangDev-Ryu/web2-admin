@@ -28,16 +28,19 @@
 
         <div class="filter-row">
             <div class="filter-group">
-                <label>Khoảng giá:</label>
                 <label class="sub-label">Giá từ: <span id="minPriceValue">0đ</span></label>
                 <input type="range" id="minPriceRange" min="0" max="10000000" step="100000" value="0">
+                
+            </div>
+
+            <div class="filter-group">
                 <label class="sub-label">Giá đến: <span id="maxPriceValue">10,000,000đ</span></label>
                 <input type="range" id="maxPriceRange" min="0" max="10000000" step="100000" value="10000000">
             </div>
 
             <div class="filter-group">
-                <label>Trạng thái:</label>
-                <select id="trangThaiFilter">
+                <label>Thể loại:</label>
+                <select id="theLoaiFilter">
                 </select>
             </div>
 
@@ -47,15 +50,6 @@
                 </select>
             </div>
             
-            <div class="filter-group">
-                 <label>Từ ngày:</label>
-                 <input type="date" id="startDate">
-             </div>
- 
-             <div class="filter-group">
-                 <label>Đến ngày:</label>
-                 <input type="date" id="endDate">
-             </div>
         </div>
 
         <div class="filter-actions">
@@ -73,9 +67,8 @@
                     <th>Tên sản phẩm</th>
                     <th>Giá</th>
                     <th>Số lượng</th>
+                    <th>Thể loại</th>
                     <th>Chủ đề</th>
-                    <th>Trạng thái</th>
-                    <th>Ngày cập nhật</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -118,16 +111,8 @@
 
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="sanPham-trangThai">Trạng thái:</label>
-                    <select id="sanPham-trangThai" name="sanPham-trangThai" required>
-
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="sanPham-warranty">Ngày bảo hành:</label>
-                    <input type="number" id="sanPham-warranty" name="sanPham-warranty" required>
-                </div>
+                
+                
                 <div class="form-group">
                     <label for="sanPham-image">Hình ảnh sản phẩm:</label>
                     <div class="file-upload">
