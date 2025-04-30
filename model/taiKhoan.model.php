@@ -288,9 +288,9 @@ public function updateTaiKhoan($data) {
     }
 
     public function checkLogin($username, $password) {
-        // Tìm người dùng theo username
-        $sql = "SELECT *
+        $sql = "SELECT taikhoan.*, nguoidung.chucvu_id 
                 FROM taikhoan 
+                LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
                 WHERE username = ? AND type_account = 0";
                 
         $result = $this->db->executePrepared($sql, [$username])->fetch_assoc();
@@ -303,7 +303,7 @@ public function updateTaiKhoan($data) {
                     return [
                         'success' => true,
                         'id' => $result['id'],
-                        'role_id' => $result['chucvu_id']
+                        'role_id' => $result['chucvu_id'] 
                     ];
                 } else {
                     return [
