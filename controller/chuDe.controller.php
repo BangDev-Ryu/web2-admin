@@ -96,6 +96,8 @@ class ChuDeController {
         $name = $this->chuDeModel->getNameById($id);
         return $name;
     }
+
+
     public function getChuDeById($id) {
         $chuDe = $this->chuDeModel->getChuDeById($id);
         echo json_encode(['chuDe' => $chuDe]);

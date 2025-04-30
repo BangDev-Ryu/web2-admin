@@ -11,6 +11,10 @@ class TheLoaiController {
         $this->trangThaiController = new TrangThaiController();
     }
 
+    public function listAllTheLoais() {
+        $theLoais = $this->theLoaiModel->getAllTheLoais();
+        echo json_encode(['theLoais' => $theLoais]);
+    }
 
     public function listTheLoai($limit) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -111,6 +115,9 @@ if (isset($_GET['action'])) {
     $limit = isset($_GET['limit']) && intval($_GET['limit']) > 0 ? intval($_GET['limit']) : 10; // gán mặc định nếu thiếu
 
     switch ($_GET['action']) {
+        case 'listAllTheLoai':
+            $controller->listAllTheLoais();
+            break;
         case 'listTheLoai':
             $controller->listTheLoai($limit);
             break;
@@ -126,7 +133,7 @@ if (isset($_GET['action'])) {
             break;
 
         case 'getTheLoai':
-                    $id = isset($_GET['id']) ? $_GET['id'] : null;
+            $id = isset($_GET['id']) ? $_GET['id'] : null;
             if ($id !== null) {
                 $controller->getTheLoaiById($id); 
             }

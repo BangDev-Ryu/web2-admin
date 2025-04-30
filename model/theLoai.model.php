@@ -12,6 +12,11 @@ class TheLoaiModel {
         return $this->db->totalByCondition('theloai', '', '1=1', []);
     }
 
+    public function getAllTheLoais() {
+        $result = $this->db->selectAll('theloai');
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getNameById($id) {
         $sql = "SELECT name FROM theloai WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);

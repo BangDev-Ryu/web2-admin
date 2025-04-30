@@ -303,8 +303,8 @@ $(document).ready(function () {
                         <td>${km.code}</td>
                         <td>${km.profit}</td>
                         <td>${km.type}</td>
-                        <td>${km.startDate}</td>
-                        <td>${km.endDate}</td>
+                        <td>${formatDate(km.startDate)}</td>
+                        <td>${formatDate(km.endDate)}</td>
                         <td>
                             <button class="btn edit-btn editKhuyenMai" data-id="${km.id}">Sửa</button>
                             <button class="btn delete-btn deleteKhuyenMai" data-id="${km.id}">Xóa</button>
@@ -317,5 +317,15 @@ $(document).ready(function () {
         } else {
             $("#khuyenMaiList").append('<tr><td colspan="9">Không tìm thấy kết quả</td></tr>');
         }
+    }
+
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-EN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
     }
 })

@@ -66,6 +66,31 @@ class DonHangController {
         ]);
     }
 
+    public function listDonHangByFilter($limit, $filter) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $filter = isset($_GET['filter']) ? $filter : [];
+        $donHangs = $this->donHangModel->filterDonHang($filter, $limit, $offset);
+        $totalDonHangs = $this->donHangModel->getTotalFilterDonHang($filter);
+        $totalPages = ceil($totalDonHangs / $limit);
+
+        foreach ($donHangs as &$donHang) {
+            $nguoiDungName = $this->nguoiDungController->getFullNameById($donHang['nguoidung_id']);
+            $donHang['nguoidung_name'] = $nguoiDungName;
+
+            if ($donHang['khuyenmai_id'] === null) {
+                $donHang['khuyenmai_name'] = "Không có";
+            }
+        }
+
+        echo json_encode([
+            "donHangs" => $donHangs,
+            "totalPages" => $totalPages,
+            "currentPage" => $page
+        ]);
+    }
+
     public function listCTDonHang($id) {
         $ctDonHangs = $this->donHangModel->getCTDonHangById($id);
         foreach ($ctDonHangs as &$ct) {
@@ -113,6 +138,8 @@ class DonHangController {
         $orders = $this->donHangModel->getDonHangNguoiDung($nguoiDungId, $startDate, $endDate);
         echo json_encode(['orders' => $orders]);
     }
+
+    
 }
 
 if (isset($_GET['action'])) {
@@ -129,6 +156,9 @@ if (isset($_GET['action'])) {
             break;
         case 'getDonHangNguoiDung':
             $controller->getDonHangNguoiDung($_GET['nguoiDungId'], $_GET['startDate'], $_GET['endDate']);
+            break;
+        case 'listDonHangByFilter':
+            $controller->listDonHangByFilter($_GET['limit'], $_GET['filter']);
             break;
     }
 }

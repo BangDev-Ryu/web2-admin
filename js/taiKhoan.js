@@ -417,11 +417,10 @@ $(document).ready(function () {
                         <td>${taiKhoan.username}</td>
                         <td>${taiKhoan.email}</td>
                         <td>${taiKhoan.phone}</td>
-                        <td>${taiKhoan.date_of_birth}</td>
+                        <td>${formatDate(taiKhoan.date_of_birth)}</td>
                         <td>${taiKhoan.chucvu}</td>
                         <td>${taiKhoan.role_name}</td>
                         <td>${taiKhoan.trangthai_name}</td>
-                        <td>${taiKhoan.created_at}</td>
                         <td>
                             <button class="btn edit-btn editTaiKhoan" data-id="${taiKhoan.id}">Sửa</button>
                             <button class="btn delete-btn deleteTaiKhoan" data-id="${taiKhoan.id}">Xóa</button>
@@ -434,6 +433,15 @@ $(document).ready(function () {
         } else {
             $("#taiKhoanList").append("<tr><td colspan='12'>Không có dữ liệu</td></tr>");
         }   
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-EN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
     }
 });
 

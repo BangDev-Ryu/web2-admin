@@ -65,10 +65,7 @@
                         break;
                 }
             }
-            echo "<script>const validPages = " . json_encode($validPages) . ";</script>";
 
-            // Kiểm tra trang từ URL, nếu không hợp lệ thì về home
-            $page = isset($_GET['page']) && in_array($_GET['page'], $validPages) ? $_GET['page'] : '';
 
             // Định nghĩa đường dẫn file
             $viewPath = "view/pages/{$page}.php";

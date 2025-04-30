@@ -18,8 +18,10 @@ class SanPhamModel {
         return $this->db->totalByCondition('sanpham', '', '1=1', []);
     }
 
+    // Cập nhật lại hàm getSanPhams để chỉ lấy sản phẩm có trạng thái = 4 (đang kinh doanh)
     public function getSanPhams($limit, $offset) {
-        $sql = "SELECT * FROM sanpham
+        $sql = "SELECT * FROM sanpham 
+                WHERE trangthai_id = 4
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -56,18 +58,16 @@ class SanPhamModel {
                     stock_quantity, 
                     chude_id, 
                     trangthai_id, 
-                    warranty_days, 
                     image_url, 
                     updated_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['description'],
             $data['selling_price'],
             $data['stock_quantity'],
             $data['chude_id'],
-            $data['trangthai_id'],
-            $data['warranty_days'],
+            4, // trạng thái đang kinh doanh
             $data['image_url'],
             $data['updated_at']
         ]);
@@ -91,7 +91,6 @@ class SanPhamModel {
                     stock_quantity = ?, 
                     chude_id = ?, 
                     trangthai_id = ?, 
-                    warranty_days = ?, 
                     image_url = ?, 
                     updated_at = ?
                 WHERE id = ?";
@@ -101,8 +100,7 @@ class SanPhamModel {
             $data['selling_price'],
             $data['stock_quantity'],
             $data['chude_id'],
-            $data['trangthai_id'],
-            $data['warranty_days'],
+            4, // trạng thái đang kinh doanh
             $data['image_url'],
             $data['updated_at'],
             $data['id']
@@ -119,10 +117,26 @@ class SanPhamModel {
         return $this->db->executePrepared($sql, [$price, $id]);
     }
 
+    public function checkExistInPhieuNhap($id) {
+        $sql = "SELECT COUNT(*) as total FROM chitietphieunhap WHERE sanpham_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['total'] > 0;
+    }
+
+    public function hideSanPham($id) {
+        $sql = "UPDATE sanpham SET trangthai_id = 5 WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
+    }
+
+    public function deleteSanPham($id) {
+        $sql = "DELETE FROM sanpham WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
+    }
+
     // search
     public function getTotalSearchSanPham($search) {
         $sql = "SELECT COUNT(*) as total FROM sanpham 
-                WHERE id LIKE ? OR LOWER(name) LIKE ?";
+                WHERE id LIKE ? OR LOWER(name) LIKE ? AND trangthai_id = 4";
         $searchParam = "%$search%";
         $result = $this->db->executePrepared($sql, [$searchParam, $searchParam]);
         return $result->fetch_assoc()['total'];
@@ -130,7 +144,7 @@ class SanPhamModel {
 
     public function searchSanPham($search, $limit, $offset) {
         $sql = "SELECT * FROM sanpham 
-                WHERE id LIKE ? OR LOWER(name) LIKE ?
+                WHERE id LIKE ? OR LOWER(name) LIKE ? AND trangthai_id = 4
                 LIMIT ? OFFSET ?";
         $searchParam = "%$search%";
         $result = $this->db->executePrepared($sql, [$searchParam, $searchParam, $limit, $offset]);
@@ -139,29 +153,40 @@ class SanPhamModel {
 
     // filter
     public function filterSanPham($filter, $limit, $offset) {
-        $sql = "SELECT * FROM sanpham 
-            WHERE selling_price BETWEEN ? AND ?";
+        $sql = "SELECT sanpham.* FROM sanpham";
+        
+        $params = [];
 
-        $params = [
-            $filter['min_price'],
-            $filter['max_price']
-        ];
+        // Nếu có theloai_id, join với bảng chude
+        if (!empty($filter['theloai_id'])) {
+            $sql .= " INNER JOIN chude ON sanpham.chude_id = chude.id 
+                      WHERE chude.theloai_id = ? AND";
+            $params[] = $filter['theloai_id'];
+        } else {
+            $sql .= " WHERE";
+        }
+
+        $sql .= " selling_price BETWEEN ? AND ?";
+        $params[] = $filter['min_price'];
+        $params[] = $filter['max_price'];
 
         if (!empty($filter['chude_id'])) {
-            $sql .= " AND chude_id = ?";
+            $sql .= " AND sanpham.chude_id = ?";
             $params[] = $filter['chude_id'];
         }
+
         if (!empty($filter['trangthai_id'])) {
-            $sql .= " AND trangthai_id = ?";
+            $sql .= " AND sanpham.trangthai_id = ?";
             $params[] = $filter['trangthai_id'];
         }
 
         if (!empty($filter['start_date']) && !empty($filter['end_date'])) {
-            $sql .= " AND updated_at BETWEEN ? AND ?";
+            $sql .= " AND sanpham.updated_at BETWEEN ? AND ?";
             $params[] = $filter['start_date'];
             $params[] = $filter['end_date'];
         }
 
+        $sql .= " AND sanpham.trangthai_id = 4";
         $sql .= " LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
@@ -171,29 +196,39 @@ class SanPhamModel {
     }
 
     public function getTotalFilterSanPham($filter) {
-        $sql = "SELECT COUNT(*) as total FROM sanpham 
-                WHERE selling_price BETWEEN ? AND ?";
+        $sql = "SELECT COUNT(*) as total FROM sanpham";
+        $params = [];
 
-        $params = [
-            $filter['min_price'],
-            $filter['max_price']
-        ];
+        // Nếu có theloai_id, join với bảng chude
+        if (!empty($filter['theloai_id'])) {
+            $sql .= " INNER JOIN chude ON sanpham.chude_id = chude.id 
+                      WHERE chude.theloai_id = ? AND";
+            $params[] = $filter['theloai_id'];
+        } else {
+            $sql .= " WHERE";
+        }
+
+        $sql .= " selling_price BETWEEN ? AND ?";
+        $params[] = $filter['min_price'];
+        $params[] = $filter['max_price'];
 
         if (!empty($filter['chude_id'])) {
-            $sql .= " AND chude_id = ?";
+            $sql .= " AND sanpham.chude_id = ?";
             $params[] = $filter['chude_id'];
         }
+
         if (!empty($filter['trangthai_id'])) {
-            $sql .= " AND trangthai_id = ?";
+            $sql .= " AND sanpham.trangthai_id = ?";
             $params[] = $filter['trangthai_id'];
         }
 
         if (!empty($filter['start_date']) && !empty($filter['end_date'])) {
-            $sql .= " AND updated_at BETWEEN ? AND ?";
+            $sql .= " AND sanpham.updated_at BETWEEN ? AND ?";
             $params[] = $filter['start_date'];
             $params[] = $filter['end_date'];
         }
-         
+        $sql .= " AND sanpham.trangthai_id = 4";
+
         $result = $this->db->executePrepared($sql, $params);
         return $result->fetch_assoc()['total'];
     }

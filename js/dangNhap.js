@@ -1,7 +1,6 @@
 $(document).ready(function() {
-    $("#loginForm").submit(function(e) {
-        e.preventDefault();
-        
+    // Đổi từ submit form sang click button
+    $("#loginBtn").click(function(e) {
         const username = $("#username").val().trim();
         const password = $("#password").val().trim();
 
@@ -19,18 +18,15 @@ $(document).ready(function() {
                 password: password
             },
             success: function(response) {
-                window.location.href = "../../index.php";
                 const result = JSON.parse(response);
                 if (result.success) {
+                    localStorage.setItem('currentPage', 'welcome');
+                    window.location.href = "../../index.php?page=welcome";
                 } else {
                     $("#error-message")
                         .text(result.message || "Đăng nhập thất bại")
                         .removeClass("success-message");
                 }
-                // try {
-                // } catch (e) {
-                //     $("#error-message").text("Có lỗi xảy ra khi xử lý dữ liệu");
-                // }
             },
             error: function() {
                 $("#error-message").text("Có lỗi xảy ra trong quá trình đăng nhập");
@@ -38,7 +34,13 @@ $(document).ready(function() {
         });
     });
 
-    // Xóa thông báo lỗi khi người dùng nhập
+    // Cho phép người dùng nhấn Enter để đăng nhập
+    $(document).keypress(function(e) {
+        if(e.which == 13) { // 13 là mã phím Enter
+            $("#loginBtn").click();
+        }
+    });
+
     $('input').on('input', function() {
         $("#error-message").text('').removeClass("success-message");
     });

@@ -74,5 +74,67 @@ class DonHangModel {
         $result = $this->db->executePrepared($sql, [$nguoiDungId, $startDate, $endDate]);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function filterDonHang($filter, $limit, $offset) {
+        $sql = "SELECT * FROM phieuban WHERE 1=1";
+        $params = [];
+
+        if (!empty($filter['city'])) {
+            $sql .= " AND city = ?";
+            $params[] = $filter['city'];
+        }
+
+        if (!empty($filter['district'])) {
+            $sql .= " AND district = ?";
+            $params[] = $filter['district'];
+        }
+
+        if (!empty($filter['ward'])) {
+            $sql .= " AND ward = ?";
+            $params[] = $filter['ward'];
+        }
+
+        if (!empty($filter['start_date']) && !empty($filter['end_date'])) {
+            $sql .= " AND order_date BETWEEN ? AND ?";
+            $params[] = $filter['start_date'];
+            $params[] = $filter['end_date'];
+        }
+
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTotalFilterDonHang($filter) {
+        $sql = "SELECT COUNT(*) as total FROM phieuban WHERE 1=1";
+        $params = [];
+
+        if (!empty($filter['city'])) {
+            $sql .= " AND city = ?";
+            $params[] = $filter['city'];
+        }
+
+        if (!empty($filter['district'])) {
+            $sql .= " AND district = ?";
+            $params[] = $filter['district'];
+        }
+
+        if (!empty($filter['ward'])) {
+            $sql .= " AND ward = ?";
+            $params[] = $filter['ward'];
+        }
+
+        if (!empty($filter['start_date']) && !empty($filter['end_date'])) {
+            $sql .= " AND order_date BETWEEN ? AND ?";
+            $params[] = $filter['start_date'];
+            $params[] = $filter['end_date'];
+        }
+
+        $result = $this->db->executePrepared($sql, $params);
+        return $result->fetch_assoc()['total'];
+    }
 }
 ?>

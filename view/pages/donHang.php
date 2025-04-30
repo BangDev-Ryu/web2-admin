@@ -21,7 +21,45 @@
         
     </div>
 
-    
+    <div class="filter-section">
+
+        <div class="filter-row">
+            
+
+            <div class="filter-group">
+                <label>Thành phố:</label>
+                <select id="thanhPhoFilter">
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Quận:</label>
+                <select id="quanFilter">
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Huyện/phường:</label>
+                <select id="huyenPhuongFilter">
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Từ ngày:</label>
+                <input type="date" id="startDate">
+            </div>
+
+            <div class="filter-group">
+                <label>Đến ngày:</label>
+                <input type="date" id="endDate">
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <button class="btn" id="resetFilter">Đặt lại</button>
+            <button class="btn save-btn" id="applyFilter">Áp dụng</button>
+        </div>
+    </div>
 
     <div class="tab-section">
         <div class="tab-item" data-status="chuaXuLy">

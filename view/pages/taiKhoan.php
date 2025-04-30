@@ -17,10 +17,7 @@
             <div class="search-box">
                 <input type="text" id="searchTaiKhoan" placeholder="Tìm kiếm tài khoản...">
             </div>
-            <button id="filterTaiKhoan" class="btn filter-btn">
-                <i class="fa-solid fa-filter"></i>
-                <span>Lọc</span>
-            </button>
+            
         </div>
         <button id="addTaiKhoan" class="btn add-btn">
             <i class="fa-solid fa-plus"></i>
@@ -74,7 +71,6 @@
                     <th>Chức vụ</th>
                     <th>Loại tài khoản</th>
                     <th>Trạng thái</th>
-                    <th>Ngày tạo</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
