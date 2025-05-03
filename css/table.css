@@ -65,6 +65,42 @@ table .delete-btn:hover {
     background-color: #da190b;
 }
 
+table .lock-btn {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+table .lock-btn:hover {
+    background-color: #e68a00;
+}
+
+table .unlock-btn {
+    background-color: #1fd1c1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+table .unlock-btn:hover {
+    background-color: #108f84;
+}
+
 #pagination {
     display: flex;
     justify-content: right;

@@ -104,8 +104,15 @@ class TheLoaiController {
     }
 
     public function deleteTheLoai($id) {
-        $result = $this->theLoaiModel->deleteTheLoai($id);
-        echo json_encode(['success' => $result]);
+        $existed = $this->theLoaiModel->checkExistInChuDe($id);
+        if ($existed) {
+            $result = $this->theLoaiModel->hideTheLoai($id);
+        } else {
+            $result = $this->theLoaiModel->deleteTheLoai($id);
+        }
+        echo json_encode([
+            'success' => $result
+        ]);
     }
 }
 

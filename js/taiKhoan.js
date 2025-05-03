@@ -139,9 +139,9 @@ $(document).ready(function () {
     
     $("#applyFilter").click(function() {
         filterData = {
-            type_account: $("#loaiTKFilter").val()  === "2" ? "" : $("#loaiTKFilter").val(),
-            chucvu_id: $("#chucVuFilter").val(),
-            trangthai_id: $("#trangThaiFilter").val(),
+            type_account: $("#loaiTKFilter").val() === "2" ? "" : $("#loaiTKFilter").val(),
+            chucvu_id: $("#chucVuFilter").val() === "0" ? "" : $("#chucVuFilter").val(),
+            trangthai_id: $("#trangThaiFilter").val() === "0" ? "" : $("#trangThaiFilter").val(),
         };
         currentPage = 1; 
         searchValue = "";
@@ -228,7 +228,6 @@ $(document).ready(function () {
                     $("#email").val(response.taiKhoan.email)
                     $("#phone").val(response.taiKhoan.phone);
                     $("#date_of_birth").val(response.taiKhoan.date_of_birth);    
-                    $("#trangthai_id").val(response.taiKhoan.trangthai_id);
                     $("#type_account").val(response.taiKhoan.type_account);
                     $("#imagePreview").attr("src", response.taiKhoan.picture);
                 });
@@ -305,7 +304,6 @@ $(document).ready(function () {
         formData.append("taiKhoan_id", $("#taiKhoanId").val());
         formData.append("date_of_birth", $("#date_of_birth").val());
         formData.append("chucvu_id", $("#chucvu_id").val());
-        formData.append("trangthai_id", $("#trangthai_id").val());
         formData.append("type_account", $("#type_account").val());
 
         const imageFile = $("#picture")[0].files[0];
@@ -345,6 +343,12 @@ $(document).ready(function () {
         });
     });
 
+    const deleteModal = $("#deleteModal");
+    let deleteId = null;
+
+    $(document).on("click", ".cancel-btn", function() {
+        deleteModal.hide();
+    });
     // Nút xóa tài khoản
     $(document).on("click", ".deleteTaiKhoan", function() {
         deleteId = $(this).data("id");
@@ -360,10 +364,60 @@ $(document).ready(function () {
                 data: { action: "deleteTaiKhoan", id: deleteId },
                 success: function(response) {
                     deleteModal.hide();
-                    loadTheLoais(currentPage);
+                    loadTaiKhoans(currentPage, searchValue, filterData);
+                    alert("Xóa tài khoản thành công!");
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
+                    alert("Có lỗi xảy ra khi xóa tài khoản!");
+                }
+            });
+        }
+    });
+
+    const lockModal = $("#lockModal");
+    let lockId = null;
+
+    $(document).on("click", ".cancel-btn", function() {
+        lockModal.hide();
+    });
+
+    $(document).on("click", ".lockTaiKhoan", function() {
+        lockId = $(this).data("id");
+        const status = $(this).data("status");
+        
+        if (status == 3) {
+            $("#lockModalTitle").text("Xác nhận mở khóa");
+            $("#lockModalMessage").text("Bạn có chắc chắn muốn mở khóa tài khoản này?");
+            $("#confirmLock").text("Mở khóa").removeClass("confirm-lock-btn").addClass("confirm-unlock-btn");
+        } else {
+            $("#lockModalTitle").text("Xác nhận khóa");
+            $("#lockModalMessage").text("Bạn có chắc chắn muốn khóa tài khoản này?");
+            $("#confirmLock").text("Khóa").removeClass("confirm-unlock-btn").addClass("confirm-lock-btn");
+        }
+        
+        lockModal.show();
+    });
+
+    $("#confirmLock").click(function() {
+        if (lockId) {
+            const action = $("#confirmLock").hasClass("confirm-unlock-btn") ? "unlockTaiKhoan" : "lockTaiKhoan";
+            $.ajax({
+                url: "./controller/taiKhoan.controller.php",
+                type: "POST",
+                data: { 
+                    action: action, 
+                    id: lockId,
+                    trangthai_id: action === "unlockTaiKhoan" ? 1 : 3 
+                },
+                success: function(response) {
+                    lockModal.hide();
+                    loadTaiKhoans(currentPage, searchValue, filterData);
+                    alert(action === "unlockTaiKhoan" ? "Mở khóa tài khoản thành công!" : "Khóa tài khoản thành công!");
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert("Có lỗi xảy ra khi xử lý yêu cầu!");
                 }
             });
         }
@@ -374,6 +428,7 @@ $(document).ready(function () {
         $("#addTaiKhoan").hide();
         $(".editTaiKhoan").hide();
         $(".deleteTaiKhoan").hide();
+        $(".lockTaiKhoan").hide();
 
         $.ajax({
             url: "./controller/quyen.controller.php",
@@ -392,6 +447,7 @@ $(document).ready(function () {
                                 break;
                             case 24:
                                 $(".deleteTaiKhoan").show();
+                                $(".lockTaiKhoan").show();
                                 break;
                         }
                     });
@@ -409,6 +465,13 @@ $(document).ready(function () {
         $("#taiKhoanList").html("");
         if (taiKhoans && taiKhoans.length > 0) {
             taiKhoans.forEach(taiKhoan => {
+                let actionButton = '';
+                if (taiKhoan.trangthai_id == 3) {
+                    actionButton = `<button class="btn unlock-btn lockTaiKhoan" data-id="${taiKhoan.id}" data-status="3">Mở khóa</button>`;
+                } else if (taiKhoan.trangthai_id == 1) {
+                    actionButton = `<button class="btn lock-btn lockTaiKhoan" data-id="${taiKhoan.id}" data-status="1">Khóa</button>`;
+                }
+
                 let row = `
                     <tr>
                         <td>${taiKhoan.id}</td>
@@ -424,6 +487,7 @@ $(document).ready(function () {
                         <td>
                             <button class="btn edit-btn editTaiKhoan" data-id="${taiKhoan.id}">Sửa</button>
                             <button class="btn delete-btn deleteTaiKhoan" data-id="${taiKhoan.id}">Xóa</button>
+                            ${actionButton}
                         </td>
                     </tr>
                 `;

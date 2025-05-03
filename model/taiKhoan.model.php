@@ -9,7 +9,7 @@ class TaiKhoanModel {
     }
 
     public function getTotalTaiKhoans() {
-        return $this->db->totalByCondition('taikhoan', '', '1=1', []);
+        return $this->db->totalByCondition('taikhoan', '', 'trangthai_id IN (1,3)', []);
     }
 
     public function getAllTaiKhoans() {
@@ -58,6 +58,8 @@ class TaiKhoanModel {
                     nguoidung.picture
                 FROM taikhoan
                 LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
+                WHERE taikhoan.trangthai_id IN (1,3)
+                ORDER BY taikhoan.id
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -80,7 +82,7 @@ class TaiKhoanModel {
         $hashed_password = password_hash($data["password"], PASSWORD_BCRYPT);
         $sql = "INSERT INTO taikhoan (username, password, trangthai_id, type_account, created_at) 
                 VALUES (?, ?, ?, ?, NOW())";
-            $resultAddAccount = $this->db->executePrepared($sql, [$data['username'], $hashed_password, $data['trangthai_id'], $data['type_account']]);
+            $resultAddAccount = $this->db->executePrepared($sql, [$data['username'], $hashed_password, 1, $data['type_account']]);
         if ($resultAddAccount) {
             $taikhoan_id = $this->getLastId();
             $sql = "INSERT INTO nguoidung (taikhoan_id, fullname, email, phone, date_of_birth, chucvu_id, picture) 
@@ -113,7 +115,7 @@ public function updateTaiKhoan($data) {
                 WHERE id = ?";
         $params = [
             $data['username'], 
-            $data['trangthai_id'], 
+            1, 
             $data['type_account'],
             $hashed_password,
             $data['id']
@@ -138,11 +140,44 @@ public function updateTaiKhoan($data) {
     return false;
 }
 
-    public function deleteTaiKhoan($id) {
-        $sql = "DELETE FROM taikhoan WHERE id = ?";
+    public function checkExistInPhieuBan($id) {
+        $sql = "SELECT COUNT(*) as total 
+                FROM phieuban 
+                WHERE nguoidung_id = (
+                    SELECT nguoidung.id 
+                    FROM nguoidung 
+                    WHERE nguoidung.taikhoan_id = ?
+                )";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['total'] > 0;
+    }
+
+    public function hideTaiKhoan($id) {
+        $sql = "UPDATE taikhoan SET trangthai_id = 2 WHERE id = ?";
         return $this->db->executePrepared($sql, [$id]);
     }
 
+    public function deleteTaiKhoan($id) {
+        $sqlDeleteNguoiDung = "DELETE FROM nguoidung WHERE taikhoan_id = ?";
+        $resultDeleteNguoiDung = $this->db->executePrepared($sqlDeleteNguoiDung, [$id]);
+        
+        if ($resultDeleteNguoiDung) {
+            $sqlDeleteTaiKhoan = "DELETE FROM taikhoan WHERE id = ?";
+            return $this->db->executePrepared($sqlDeleteTaiKhoan, [$id]);
+        }
+        return false;
+    }
+
+    public function lockTaiKhoan($id) {
+        $sql = "UPDATE taikhoan SET trangthai_id = 3 WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
+    }
+
+    public function unlockTaiKhoan($id) {
+        $sql = "UPDATE taikhoan SET trangthai_id = 1 WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
+    }
+    
     public function getLastId() {
         $sql = "SELECT id FROM taikhoan ORDER BY id DESC LIMIT 1";
         $result = $this->db->executePrepared($sql, []);
@@ -154,10 +189,11 @@ public function updateTaiKhoan($data) {
         $sql = "SELECT COUNT(*) as total 
                 FROM taikhoan 
                 LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
-                WHERE taikhoan.id LIKE ? 
+                WHERE (taikhoan.id LIKE ? 
                     OR LOWER(taikhoan.username) LIKE ? 
                     OR LOWER(nguoidung.fullname) LIKE ? 
-                    OR LOWER(nguoidung.email) LIKE ?";
+                    OR LOWER(nguoidung.email) LIKE ?)
+                AND taikhoan.trangthai_id IN (1,3)";
         
         $searchParam = '%' . strtolower($search) . '%';
         $params = array_fill(0, 4, $searchParam);
@@ -181,10 +217,11 @@ public function updateTaiKhoan($data) {
                 nguoidung.picture
                 FROM taikhoan 
                 LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
-                WHERE taikhoan.id LIKE ? 
+                WHERE (taikhoan.id LIKE ? 
                     OR LOWER(taikhoan.username) LIKE ? 
                     OR LOWER(nguoidung.fullname) LIKE ? 
-                    OR LOWER(nguoidung.email) LIKE ?
+                    OR LOWER(nguoidung.email) LIKE ?)
+                AND taikhoan.trangthai_id IN (1,3)
                 LIMIT ? OFFSET ?";
     
         $searchParam = '%' . strtolower($search) . '%';
@@ -200,26 +237,26 @@ public function updateTaiKhoan($data) {
         $sql = "SELECT taikhoan.*, nguoidung.* 
                 FROM taikhoan 
                 LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
-                WHERE 1 = 1";
+                WHERE taikhoan.trangthai_id IN (1,3)";
     
         $params = [];
     
-        if (!empty($filter['trangthai_id'])) {
+        if (isset($filter['trangthai_id']) && $filter['trangthai_id'] !== "") {
             $sql .= " AND taikhoan.trangthai_id = ?";
             $params[] = $filter['trangthai_id'];
         }
     
-        if (!empty($filter['type_account'])) {
+        if (isset($filter['type_account']) && $filter['type_account'] !== "") {
             $sql .= " AND taikhoan.type_account = ?";
             $params[] = $filter['type_account'];
         }
     
-        if (!empty($filter['chucvu_id'])) {
+        if (isset($filter['chucvu_id']) && $filter['chucvu_id'] !== "") {
             $sql .= " AND nguoidung.chucvu_id = ?";
             $params[] = $filter['chucvu_id'];
         }
     
-        $sql .= " LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY taikhoan.id LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
     
@@ -319,5 +356,7 @@ public function updateTaiKhoan($data) {
             'message' => 'Tên đăng nhập hoặc mật khẩu không đúng'
         ];
     }
+
+
 }
 ?>

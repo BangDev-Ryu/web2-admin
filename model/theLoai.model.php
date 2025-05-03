@@ -32,6 +32,7 @@ class TheLoaiModel {
 
     public function getTheLoais($limit, $offset) {
         $sql = "SELECT * FROM theloai
+                WHERE trangthai_id = 1
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -42,7 +43,7 @@ class TheLoaiModel {
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['description'],
-            $data['trangthai_id']
+            1
         ]);
     }
 
@@ -51,9 +52,20 @@ class TheLoaiModel {
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['description'],
-            $data['trangthai_id'],
+            1,
             $data['id']
         ]);
+    }
+
+    public function checkExistInChuDe($id) {
+        $sql = "SELECT COUNT(*) as count FROM chude WHERE theloai_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['count'] > 0;
+    }
+
+    public function hideTheLoai($id) {
+        $sql = "UPDATE theloai SET trangthai_id = 2 WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
     }
 
     public function deleteTheLoai($id) {
