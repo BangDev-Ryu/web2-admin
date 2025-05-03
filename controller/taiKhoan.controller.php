@@ -115,29 +115,24 @@ class TaiKhoanController {
     public function validateTaiKhoan($data, $isUpdate = false) {
         $errors = [];
         
-        // Validate username format
         if (!preg_match('/^[a-zA-Z0-9]+$/', $data['username'])) {
             $errors[] = "Tên đăng nhập chỉ được chứa chữ cái và số, không dấu, không khoảng trắng và ký tự đặc biệt";
         }
 
-        // Validate password
         if (!$isUpdate || !empty($data['password'])) {
             if (strlen($data['password']) < 6) {
                 $errors[] = "Mật khẩu phải có ít nhất 6 ký tự";
             }
         }
 
-        // Validate email
         if ($this->taiKhoanModel->checkEmailExists($data['email'], $isUpdate ? $data['id'] : null)) {
             $errors[] = "Email đã tồn tại trong hệ thống";
         }
 
-        // Validate username
         if ($this->taiKhoanModel->checkUsernameExists($data['username'], $isUpdate ? $data['id'] : null)) {
             $errors[] = "Tên đăng nhập đã tồn tại trong hệ thống";
         }
 
-        // Validate date of birth
         if (!empty($data['date_of_birth'])) {
             if (!$this->taiKhoanModel->validateDateOfBirth($data['date_of_birth'])) {
                 $errors[] = "Ngày sinh không hợp lệ";
@@ -170,7 +165,22 @@ class TaiKhoanController {
     }
     
     public function deleteTaiKhoan($id) {
-        $result = $this->taiKhoanModel->deleteTaiKhoan($id);
+        $existed = $this->taiKhoanModel->checkExistInPhieuBan($id);
+        if ($existed) {
+            $result = $this->taiKhoanModel->hideTaiKhoan($id);
+        } else {
+            $result = $this->taiKhoanModel->deleteTaiKhoan($id);
+        }
+        echo json_encode(['success' => $result]);
+    }
+
+    public function lockTaiKhoan($id) {
+        $result = $this->taiKhoanModel->lockTaiKhoan($id);
+        echo json_encode(['success' => $result]);
+    }
+
+    public function unlockTaiKhoan($id) {
+        $result = $this->taiKhoanModel->unlockTaiKhoan($id);
         echo json_encode(['success' => $result]);
     }
 
@@ -221,7 +231,12 @@ if (isset($_POST['action'])) {
         case 'deleteTaiKhoan':
             $controller->deleteTaiKhoan($_POST['id']);
             break;
-        
+        case 'lockTaiKhoan':
+            $controller->lockTaiKhoan($_POST['id']);
+            break;
+        case 'unlockTaiKhoan':
+            $controller->unlockTaiKhoan($_POST['id']);
+            break;
     }
 }
 ?>

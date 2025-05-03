@@ -79,6 +79,11 @@
     color: white;
 }
 
+.confirm-lock-btn {
+    background-color: #ff9800;
+    color: white;
+}
+
 /* ilter section */
 .filter-section {
     background: white;

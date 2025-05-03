@@ -117,12 +117,6 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="trangthai_id">Trạng thái:</label>
-                    <select id="trangthai_id" name="trangthai_id" required>
-
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="type_account">Loại tài khoản:</label>
                     <select id="type_account" name="type_account" required>
                         <option value="1">Người dùng</option>
@@ -157,6 +151,19 @@
             </div>
         </div>
     </div>
+
+    <div class="modal" id="lockModal">
+        <div class="modal-content">
+            <h2 id="lockModalTitle">Xác nhận khóa</h2>
+            <p id="lockModalMessage">Bạn có chắc chắn muốn khóa tài khoản này?</p>
+            <div class="form-actions">
+                <button id="confirmLock" class="btn confirm-lock-btn">Khóa</button>
+                <button class="btn cancel-btn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    
 
 </body>
 </html>
