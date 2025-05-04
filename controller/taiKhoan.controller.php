@@ -165,7 +165,7 @@ class TaiKhoanController {
     }
     
     public function deleteTaiKhoan($id) {
-        $existed = $this->taiKhoanModel->checkExistInPhieuBan($id);
+        $existed = $this->taiKhoanModel->checkExistInPhieu($id);
         if ($existed) {
             $result = $this->taiKhoanModel->hideTaiKhoan($id);
         } else {

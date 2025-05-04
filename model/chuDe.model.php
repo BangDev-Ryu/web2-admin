@@ -26,6 +26,7 @@ class ChuDeModel {
 
     public function getChuDes($limit, $offset) {
         $sql = "SELECT * FROM chude
+                WHERE trangthai_id = 1
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -54,6 +55,17 @@ class ChuDeModel {
             $data['trangthai_id'],
             $data['id']
         ]);
+    }
+
+    public function checkExistInSanPham($id) {
+        $sql = "SELECT COUNT(*) as count FROM sanpham WHERE chude_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['count'] > 0;
+    }
+
+    public function hideChuDe($id) {
+        $sql = "UPDATE chude SET trangthai_id = 2 WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
     }
 
     public function deleteChuDe($id) {

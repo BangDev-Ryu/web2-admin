@@ -15,6 +15,7 @@ class KhuyenMaiModel {
 
     public function getKhuyenMais($limit, $offset) {
         $sql = "SELECT * FROM khuyenmai
+                -- WHERE traingthai_id = 1
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -50,6 +51,17 @@ class KhuyenMaiModel {
             $data['id']
         ]);
     }
+
+    public function checkExistInPhieuBan($id) {
+        $sql = "SELECT COUNT(*) as total FROM phieuban WHERE khuyenmai_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['total'] > 0;
+    }
+
+    // public function hideKhuyenMai($id) {
+    //     $sql = "UPDATE khuyenmai SET trangthai_id = 2 WHERE id = ?";
+    //     return $this->db->executePrepared($sql, [$id]);
+    // }
 
     public function deleteKhuyenMai($id) {
         $sql = "DELETE FROM khuyenmai WHERE id = ?";

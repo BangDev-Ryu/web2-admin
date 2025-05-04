@@ -20,6 +20,7 @@ class NhaCungCapModel {
 
     public function getNhaCungCaps($limit, $offset) {
         $sql = "SELECT * FROM nhacungcap
+                WHERE trangthai_id = 1
                 LIMIT ? OFFSET ?";
         $result = $this->db->executePrepared($sql, [$limit, $offset]);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -60,6 +61,17 @@ class NhaCungCapModel {
             $data['trangthai_id'],
             $data['id']
         ]);
+    }
+
+    public function checkExistInPhieuNhap($id) {
+        $sql = "SELECT COUNT(*) as count FROM phieunhap WHERE nhacungcap_id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['count'] > 0;
+    }
+
+    public function hideNhaCungCap($id) {
+        $sql = "UPDATE nhacungcap SET trangthai_id = 2 WHERE id = ?";
+        return $this->db->executePrepared($sql, [$id]);
     }
 
     public function deleteNhaCungCap($id) {

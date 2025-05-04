@@ -59,25 +59,34 @@ class KhuyenMaiController {
     
     
 
-public function getKhuyenMaiById($id) {
-    $khuyenMai = $this->khuyenMaiModel->getKhuyenMaiById($id);
-    echo json_encode(['khuyenMai' => $khuyenMai]);
-}
+    public function getKhuyenMaiById($id) {
+        $khuyenMai = $this->khuyenMaiModel->getKhuyenMaiById($id);
+        echo json_encode(['khuyenMai' => $khuyenMai]);
+    }
 
-public function addKhuyenMai($data) {
-    $result = $this->khuyenMaiModel->addKhuyenMai($data);
-    echo json_encode(['success' => $result]);
-}
+    public function addKhuyenMai($data) {
+        $result = $this->khuyenMaiModel->addKhuyenMai($data);
+        echo json_encode(['success' => $result]);
+    }
 
-public function updateKhuyenMai($data) {
-    $result = $this->khuyenMaiModel->updateKhuyenMai($data);
-    echo json_encode(['success' => $result]);
-}
+    public function updateKhuyenMai($data) {
+        $result = $this->khuyenMaiModel->updateKhuyenMai($data);
+        echo json_encode(['success' => $result]);
+    }
 
-public function deleteKhuyenMai($id) {
-    $result = $this->khuyenMaiModel->deleteKhuyenMai($id);
-    echo json_encode(['success' => $result]);
-}
+    public function deleteKhuyenMai($id) {
+        $result = $this->khuyenMaiModel->deleteKhuyenMai($id);
+        echo json_encode(['success' => $result]);
+    }
+
+    // public function deleteKhuyenMai($id) {
+    //     $existed = $this->khuyenMaiModel->checkExistInPhieuBan($id);
+    //     if ($existed) {
+    //         $result = $this->khuyenMaiModel->hideKhuyenMai($id);
+    //     } else {
+    //         $result = $this->khuyenMaiModel->deleteKhuyenMai($id);
+    //     } echo json_encode(['success' => $result]);
+    // }
 }
 
 // Xử lý các request

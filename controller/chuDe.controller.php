@@ -114,7 +114,14 @@ class ChuDeController {
     }
     
     public function deleteChuDe($id) {
-        $result = $this->chuDeModel->deleteChuDe($id);
+        $existed = $this->chuDeModel->checkExistInSanPham($id);
+        if ($existed) {
+            $result = $this->chuDeModel->hideChuDe($id);
+            echo json_encode(['success' => $result]);
+        } else {
+            $result = $this->chuDeModel->deleteChuDe($id);
+            echo json_encode(['success' => $result]);
+        }
         echo json_encode(['success' => $result]);
     }
     
