@@ -103,8 +103,12 @@ class NhaCungCapController {
     }
 
     public function deleteNhaCungCap($id) {
-        $result = $this->nhaCungCapModel->deleteNhaCungCap($id);
-        echo json_encode(['success' => $result]);
+        $existed = $this->nhaCungCapModel->checkExistInPhieuNhap($id);
+        if ($existed) {
+            $result = $this->nhaCungCapModel->hideNhaCungCap($id);
+        } else {
+            $result = $this->nhaCungCapModel->deleteNhaCungCap($id);
+        } echo json_encode(['success' => $result]);
     }
 
 }

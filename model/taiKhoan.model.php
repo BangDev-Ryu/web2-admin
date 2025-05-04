@@ -140,15 +140,26 @@ public function updateTaiKhoan($data) {
     return false;
 }
 
-    public function checkExistInPhieuBan($id) {
+    public function checkExistInPhieu($id) {
         $sql = "SELECT COUNT(*) as total 
-                FROM phieuban 
-                WHERE nguoidung_id = (
-                    SELECT nguoidung.id 
-                    FROM nguoidung 
-                    WHERE nguoidung.taikhoan_id = ?
-                )";
-        $result = $this->db->executePrepared($sql, [$id]);
+                FROM (
+                    SELECT nguoidung_id 
+                    FROM phieuban 
+                    WHERE nguoidung_id = (
+                        SELECT nguoidung.id 
+                        FROM nguoidung 
+                        WHERE nguoidung.taikhoan_id = ?
+                    )
+                    UNION 
+                    SELECT nguoidung_id 
+                    FROM phieunhap 
+                    WHERE nguoidung_id = (
+                        SELECT nguoidung.id 
+                        FROM nguoidung 
+                        WHERE nguoidung.taikhoan_id = ?
+                    )
+                ) AS combined_checks";
+        $result = $this->db->executePrepared($sql, [$id, $id]);
         return $result->fetch_assoc()['total'] > 0;
     }
 
