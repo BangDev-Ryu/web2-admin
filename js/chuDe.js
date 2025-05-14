@@ -221,11 +221,11 @@ $(document).ready(function () {
             $("#chuDeId").val(response.chuDe.id);
             $("#chuDe-name").val(response.chuDe.name);
             loadTheLoai();
-            loadTrangThai();
-            setTimeout(() => {
-                $("#chuDe-theLoai").val(response.chuDe.theloai_id);
-                $("#chuDe-trangThai").val(response.chuDe.trangthai_id);
-            }, 50)
+            // loadTrangThai();
+            // setTimeout(() => {
+            //     $("#chuDe-theLoai").val(response.chuDe.theloai_id);
+            //     $("#chuDe-trangThai").val(response.chuDe.trangthai_id);
+            // }, 50)
             }
         });
     });
@@ -237,7 +237,7 @@ $(document).ready(function () {
             id: $("#chuDeId").val(),
             name: $("#chuDe-name").val(),
             theloai_id: $("#chuDe-theLoai").val(),
-            trangthai_id: $("#chuDe-trangThai").val(),
+            // trangthai_id: $("#chuDe-trangThai").val(),
             action: $("#chuDeId").val() ? "updateChuDe" : "addChuDe"
         };
 
@@ -324,7 +324,6 @@ $(document).ready(function () {
                         <td>${cd.id}</td>
                         <td>${cd.name}</td>
                         <td>${cd.theloai_name}</td>
-                        <td>${cd.trangthai_name}</td>
                         <td>
                             <button class="btn edit-btn editChuDe" data-id="${cd.id}">Sửa</button>
                             <button class="btn delete-btn deleteChude" data-id="${cd.id}">Xóa</button>

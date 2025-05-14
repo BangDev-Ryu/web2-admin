@@ -189,10 +189,10 @@ $(document).ready(function () {
                 $("#nhaCungCap-contact-email").val(response.nhaCungCap.contact_email);
                 $("#nhaCungCap-contact-phone").val(response.nhaCungCap.contact_phone);
                 $("#nhaCungCap-address").val(response.nhaCungCap.address);
-                loadTrangThai();
-                setTimeout(() => {
-                    $("#nhaCungCap-trangThai").val(response.nhaCungCap.trangthai_id);
-                }, 50)
+                // loadTrangThai();
+                // setTimeout(() => {
+                //     $("#nhaCungCap-trangThai").val(response.nhaCungCap.trangthai_id);
+                // }, 50)
             }
         });
     });
@@ -207,7 +207,7 @@ $(document).ready(function () {
             contact_email: $("#contact-email").val(),
             contact_phone: $("#contact-phone").val(),
             address: $("#address").val(),
-            trangthai_id: $("#nhaCungCap-trangThai").val(),
+            // trangthai_id: $("#nhaCungCap-trangThai").val(),
             action: $("#nhaCungCapId").val() ? "updateNhaCungCap" : "addNhaCungCap"
         };
 
@@ -297,7 +297,6 @@ $(document).ready(function () {
                         <td>${ncc.contact_email}</td>
                         <td>${ncc.contact_phone}</td>
                         <td>${ncc.address}</td>
-                        <td>${ncc.trangthai_name}</td>
                         <td>
                             <button class="btn edit-btn editNhaCungCap" data-id="${ncc.id}">Sửa</button>
                             <button class="btn delete-btn deleteNhaCungCap" data-id="${ncc.id}">Xóa</button>
