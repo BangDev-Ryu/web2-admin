@@ -46,7 +46,7 @@ class NhaCungCapModel {
             $data['contact_email'],
             $data['contact_phone'],
             $data['address'],
-            $data['trangthai_id']
+            1
         ]);
     }
 
@@ -58,7 +58,7 @@ class NhaCungCapModel {
             $data['contact_email'],
             $data['contact_phone'],
             $data['address'],
-            $data['trangthai_id'],
+            1,
             $data['id']
         ]);
     }

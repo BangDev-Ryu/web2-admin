@@ -43,7 +43,7 @@ class ChuDeModel {
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['theloai_id'],
-            $data['trangthai_id']
+            1
         ]);
     }
 
@@ -52,7 +52,7 @@ class ChuDeModel {
         return $this->db->executePrepared($sql, [
             $data['name'],
             $data['theloai_id'],
-            $data['trangthai_id'],
+            1,
             $data['id']
         ]);
     }

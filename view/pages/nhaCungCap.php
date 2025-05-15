@@ -74,20 +74,20 @@
                         <input type="text" id="nhaCungCap-name" name="nhaCungCap-name" required>
                     </div>
                     <div class="form-group">
-                        <label for="contact-person">Người liên hệ:</label>
-                        <input type="text" id="contact-person" name="contact-person" required>
+                        <label for="nhaCungCap-contact-person">Người liên hệ:</label>
+                        <input type="text" id="nhaCungCap-contact-person" name="nhaCungCap-contact-person" required>
                     </div>
                     <div class="form-group">
-                        <label for="contact-email">Email:</label>
-                        <input type="text" id="contact-email" name="contact-email" required>
+                        <label for="nhaCungCap-contact-email">Email:</label>
+                        <input type="text" id="nhaCungCap-contact-email" name="nhaCungCap-contact-email" required>
                     </div>
                     <div class="form-group">
-                        <label for="contact-phone">Số điện thoại:</label>
-                        <input type="text" id="contact-phone" name="contact-phone" required>
+                        <label for="nhaCungCap-contact-phone">Số điện thoại:</label>
+                        <input type="text" id="nhaCungCap-contact-phone" name="nhaCungCap-contact-phone" required>
                     </div>
                     <div class="form-group">
-                        <label for="contact-email">Địa chỉ:</label>
-                        <input type="text" id="address" name="address" required>
+                        <label for="nhaCungCap-address">Địa chỉ:</label>
+                        <input type="text" id="nhaCungCap-address" name="nhaCungCap-address" required>
                     </div>
                     <!-- <div class="form-group">
                         <label for="nhaCungCap-trangThai">Trạng thái:</label>
