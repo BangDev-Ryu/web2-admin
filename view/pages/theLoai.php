@@ -24,20 +24,7 @@
         </button>
     </div>
     
-    <!-- <div class="filter-Mirylsection">
-        <div class="filter-Mirylrow">
-            <div class="filter-Mirylgroup">
-                <label>Trạng thái:</label>
-                <select id="trangThaiFilter">
-                </select>
-            </div>
-        </div>
 
-        <div class="filter-actions">
-            <button class="btn" id="resetFilter">Đặt lại</button>
-            <button class="btn save-btn" id="applyFilter">Áp dụng</button>
-        </div>
-    </div> -->
 
     <div class="table-content">
         <table>
@@ -46,7 +33,7 @@
                     <th>ID</th>
                     <th>Tên thể loại</th>
                     <th>Mô tả</th>
-                    <th>Trạng thái</th>
+                    <!-- <th>Trạng thái</th> -->
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -71,12 +58,6 @@
                 <div class="form-group">
                     <label for="theLoai-description">Mô tả:</label>
                     <textarea id="theLoai-description" name="theLoai-description"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="theLoai-trangThai">Trạng thái:</label>
-                    <select id="theLoai-trangThai" name="theLoai-trangThai" required>
-
-                    </select>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn save-btn">Lưu</button>
