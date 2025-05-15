@@ -93,3 +93,16 @@ $(document).ready(function() {
         });
     }
 });
+
+// function getRandomColor() {
+//     var letters = '0123456789ABCDEF';
+//     var color = '#';
+//     for (var i = 0; i < 6; i++) {
+//       color += letters[Math.floor(Math.random() * 16)];
+//     }
+//     return color;
+// }
+
+// setInterval(function() {
+//     document.querySelector('.sidebar').style.boxShadow = "0px 8px 24px" + getRandomColor();
+// }, 200)

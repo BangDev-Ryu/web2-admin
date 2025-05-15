@@ -338,9 +338,26 @@ public function updateTaiKhoan($data) {
         $sql = "SELECT taikhoan.*, nguoidung.chucvu_id 
                 FROM taikhoan 
                 LEFT JOIN nguoidung ON taikhoan.id = nguoidung.taikhoan_id
-                WHERE username = ? AND type_account = 0";
+                WHERE username = ?";
                 
         $result = $this->db->executePrepared($sql, [$username])->fetch_assoc();
+
+        $message = '';
+
+        if ($result['type_account'] != 0) {
+            return [
+                'success' => false,
+                'message' => 'Tài khoản không phải là tài khoản quản trị'
+            ];
+            
+        }
+
+        if ($result['trangthai_id'] == 3) {
+            return [
+                'success' => false,
+                'message' => 'Tài khoản đã bị khóa'
+            ];
+        }
         
         if ($result) {
             // Kiểm tra mật khẩu
@@ -363,7 +380,7 @@ public function updateTaiKhoan($data) {
         
         return [
             'success' => false,
-            'message' => 'Tên đăng nhập hoặc mật khẩu không đúng'
+            'message' => $message
         ];
     }
 

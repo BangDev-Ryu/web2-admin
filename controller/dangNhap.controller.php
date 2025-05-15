@@ -37,7 +37,7 @@ class DangNhapController {
         
         return [
             'success' => false,
-            'message' => 'Tên đăng nhập hoặc mật khẩu không đúng'
+            'message' => $result['message']
         ];
     }
 
