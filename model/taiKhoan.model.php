@@ -104,18 +104,17 @@ public function updateTaiKhoan($data) {
     }
 
     // Tạo câu SQL cơ bản không có password
-    $sql = "UPDATE taikhoan SET username = ?, trangthai_id = ?, type_account = ? WHERE id = ?";
-    $params = [$data['username'], $data['trangthai_id'], $data['type_account'], $data['id']];
+    $sql = "UPDATE taikhoan SET username = ?, type_account = ? WHERE id = ?";
+    $params = [$data['username'],  $data['type_account'], $data['id']];
 
     // Nếu có password mới thì thêm vào câu SQL
     if (isset($data["password"]) && $data["password"] !== "") {
         $hashed_password = password_hash($data["password"], PASSWORD_BCRYPT);
         $sql = "UPDATE taikhoan 
-                SET username = ?, trangthai_id = ?, type_account = ?, password = ?
+                SET username = ?, type_account = ?, password = ?
                 WHERE id = ?";
         $params = [
             $data['username'], 
-            1, 
             $data['type_account'],
             $hashed_password,
             $data['id']

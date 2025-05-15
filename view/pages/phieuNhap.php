@@ -39,9 +39,7 @@
         <div class="tab-item" data-status="daGiao">
             Đã giao
         </div>
-        <div class="tab-item" data-status="daHuy">
-            Đã hủy
-        </div>
+        
     </div>
 
     <div class="table-content">

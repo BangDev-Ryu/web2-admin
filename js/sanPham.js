@@ -317,7 +317,7 @@ $(document).ready(function () {
         else if ($("#imagePreview").attr("src")) {
             // Nếu không có file mới, giữ lại ảnh cũ
             // data.image_url = $("#imagePreview").attr("src");
-            formData.append("image_url", data.image_url);
+            formData.append("image_url", $("#imagePreview").attr("src"));
         }
         console.log(formData);
 

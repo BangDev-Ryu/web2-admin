@@ -26,11 +26,7 @@
 
 
 
-        <div class="filter-actions">
-            <button class="btn" id="resetFilter">Đặt lại</button>
-            <button class="btn save-btn" id="applyFilter">Áp dụng</button>
-        </div>
-    </div> -->
+        
 
     <div class="table-content">
         <table>
