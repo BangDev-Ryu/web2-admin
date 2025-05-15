@@ -24,20 +24,7 @@
         </button>
     </div>
     
-    <!-- <div class="filter-Mirylsection">
-    <div class="filter-Mirylrow">
-        <div class="filter-Mirylgroup">
-            <label>Trạng thái:</label>
-            <select id="trangThaiFilter">
-            </select>
-        </div>
-    </div>
 
-    <div class="filter-actions">
-        <button class="btn" id="resetFilter">Đặt lại</button>
-        <button class="btn save-btn" id="applyFilter">Áp dụng</button>
-    </div>
-</div> -->
 
     <div class="table-content">
         <table>

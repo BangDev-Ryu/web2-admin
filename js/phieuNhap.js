@@ -24,7 +24,7 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error("Lỗi AJAX:", error);
-                console.error("Trạng thái:", status);
+                console.error("Trạng thái:", status);z
                 console.error("Phản hồi từ server:", xhr.responseText);
             }
         })
@@ -342,6 +342,9 @@ $(document).ready(function () {
                 console.error("Lỗi AJAX:", error);
             }
         });
+
+        
+
     });
     
     

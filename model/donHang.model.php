@@ -75,9 +75,10 @@ class DonHangModel {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function filterDonHang($filter, $limit, $offset) {
-        $sql = "SELECT * FROM phieuban WHERE 1=1";
+    public function filterDonHang($status, $filter, $limit, $offset) {
+        $sql = "SELECT * FROM phieuban WHERE trangthai_id = ?";
         $params = [];
+        $params[] = $status;
 
         if (!empty($filter['city'])) {
             $sql .= " AND city = ?";
@@ -108,9 +109,10 @@ class DonHangModel {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getTotalFilterDonHang($filter) {
-        $sql = "SELECT COUNT(*) as total FROM phieuban WHERE 1=1";
+    public function getTotalFilterDonHang($status, $filter) {
+        $sql = "SELECT COUNT(*) as total FROM phieuban WHERE trangthai_id = ?";
         $params = [];
+        $params[] = $status;
 
         if (!empty($filter['city'])) {
             $sql .= " AND city = ?";

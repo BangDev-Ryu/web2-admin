@@ -589,7 +589,6 @@ $(document).ready(function () {
             limit: limit
         }
 
-        // Add filter data if exists
         if(Object.keys(filterData).length > 0) {
             data.action = 'listDonHangByFilter';
             data.filter = filterData;
@@ -673,35 +672,36 @@ $(document).ready(function () {
     $(document).on("click", ".detail-btn", function(e) {
         const donHangId = $(this).data("id");
         $.ajax({
-            url: "./controller/donHang.controller.php",
-            type: "GET",
-            data: {
-                action: 'listCTDonHang',
-                id: donHangId
-            },
-            dataType: "json",
-            success: function(response) {
-                $("#updateDonHang").data("id", donHangId);
-                
-                if (currentStatus === "daGiao" || currentStatus === "daHuy") {
-                    $("#updateDonHang").hide();
-                } else {
-                    $("#updateDonHang").show();
-                }
-                
-                donHangModal.show();
-                renderChiTietDonHang(response.ctDonHangs);
-            },
-            error: function(xhr, status, error) {
-                console.error("Lỗi AJAX:", error);
-            }
-        });
+          url: "./controller/donHang.controller.php",
+          type: "GET",
+          data: {
+              action: 'listCTDonHang',
+              id: donHangId
+          },
+          dataType: "json",
+          success: function(response) {
+              $("#updateDonHang").data("id", donHangId);
+              
+              if (currentStatus === "daGiao" || currentStatus === "daHuy") {
+                  $("#updateDonHang").hide();
+              } else {
+                  $("#updateDonHang").show();
+              }
+              
+              donHangModal.show();
+              renderChiTietDonHang(response.ctDonHangs);
+          },
+          error: function(xhr, status, error) {
+              console.error("Lỗi AJAX:", error);
+          }
+      });
+       
     });
 
     // duyệt đơn hàng
     $(document).on("click", "#updateDonHang", function() {
         const donHangId = $(this).data("id");  // Lấy id từ chính button duyệt
-
+        
         $.ajax({
             url: "./controller/donHang.controller.php",
             type: "POST",
@@ -722,6 +722,7 @@ $(document).ready(function () {
                 console.error("Phản hồi từ server:", xhr.responseText);
             }
         });
+        
     });
 
     ////////////////////////////////////////// CHECK QUYEN //////////////////////////////////////////

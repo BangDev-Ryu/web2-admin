@@ -12,7 +12,7 @@
     <script src="./js/chuDe.js?v=<?= time() ?>"></script>
 </head>
 <body>
-<div class="table-actions">
+    <div class="table-actions">
         <div class="search-section">
             <div class="search-box">
                 <input type="text" id="searchChuDe" placeholder="Tìm kiếm chủ đề...">
@@ -24,26 +24,13 @@
         </button>
     </div>
 
-    <div class="filter-Mirylsection">
-    <div class="filter-Mirylrow">
-    <div class="filter-Mirylgroup">
-                <label>Thể loại:</label>
-                <select id="theLoaiFilter">
-                </select>
-            </div>
 
-            <!-- <div class="filter-group">
-                <label>Trạng thái:</label>
-                <select id="trangThaiFilter">
-                </select>
-            </div> -->
-    </div>
 
-    <div class="filter-actions">
-        <button class="btn" id="resetFilter">Đặt lại</button>
-        <button class="btn save-btn" id="applyFilter">Áp dụng</button>
-    </div>
-</div>
+        <div class="filter-actions">
+            <button class="btn" id="resetFilter">Đặt lại</button>
+            <button class="btn save-btn" id="applyFilter">Áp dụng</button>
+        </div>
+    </div> -->
 
     <div class="table-content">
         <table>
