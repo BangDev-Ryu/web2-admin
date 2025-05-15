@@ -185,10 +185,10 @@ $(document).ready(function () {
                 $("#theLoaiId").val(response.theLoai.id);
                 $("#theLoai-name").val(response.theLoai.name);
                 $("#theLoai-description").val(response.theLoai.description);
-                loadTrangThai();
-                setTimeout(() => {
-                    $("#theLoai-trangThai").val(response.theLoai.trangthai_id);
-                }, 50)
+                // loadTrangThai();
+                // setTimeout(() => {
+                //     $("#theLoai-trangThai").val(response.theLoai.trangthai_id);
+                // }, 50)
             },
 
         });
@@ -201,7 +201,7 @@ $(document).ready(function () {
             id: $("#theLoaiId").val(),
             name: $("#theLoai-name").val(),
             description: $("#theLoai-description").val(),
-            trangthai_id: $("#theLoai-trangThai").val(),
+            // trangthai_id: $("#theLoai-trangThai").val(),
             action: $("#theLoaiId").val() ? "updateTheLoai" : "addTheLoai"
         };
 
@@ -289,7 +289,6 @@ $(document).ready(function () {
                         <td>${tl.id}</td>
                         <td>${tl.name}</td>
                         <td>${tl.description}</td>
-                        <td>${tl.trangthai_name}</td>
                         <td>
                             <button class="btn edit-btn editTheLoai" data-id="${tl.id}">Sửa</button>
                             <button class="btn delete-btn deleteTheLoai" data-id="${tl.id}">Xóa</button>

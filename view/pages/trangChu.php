@@ -31,6 +31,9 @@
                     <label for="statsType">Loại thống kê:</label>
                     <select id="statsType">
                         <option value="top5customers">Top 5 khách hàng tiềm năng</option>
+                        <!-- <option value="top5products">Top 5 sản phẩm bán chạy</option>
+                        <option value="top5customersHN">Top 5 khách hàng ở Hà Nội</option>
+                        <option value="top5customersHCM">Top 5 khách hàng ở Hồ Chí Minh</option> -->
                     </select>
                 </div>
             </div>

@@ -24,19 +24,19 @@
         </button>
     </div>
 
-    <div class="filter-chuDesection">
-    <div class="filter-chuDerow">
-    <div class="filter-group">
+    <div class="filter-Mirylsection">
+    <div class="filter-Mirylrow">
+    <div class="filter-Mirylgroup">
                 <label>Thể loại:</label>
                 <select id="theLoaiFilter">
                 </select>
             </div>
 
-            <div class="filter-group">
+            <!-- <div class="filter-group">
                 <label>Trạng thái:</label>
                 <select id="trangThaiFilter">
                 </select>
-            </div>
+            </div> -->
     </div>
 
     <div class="filter-actions">
@@ -52,7 +52,7 @@
                     <th>ID</th>
                     <th>Tên chủ đề</th>
                     <th>Thể loại</th>
-                    <th>Trạng thái</th>
+                    <!-- <th>Trạng thái</th> -->
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -81,12 +81,12 @@
 
                     </select>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="chuDe-trangThai">Trạng thái:</label>
                     <select id="chuDe-trangThai" name="chuDe-trangThai" required>
 
                     </select>
-                </div>
+                </div> -->
                 <div class="form-actions">
                     <button type="submit" class="btn save-btn">Lưu</button>
                     <button type="button" class="btn cancel-btn">Hủy</button>

@@ -23,7 +23,7 @@
     </div>
 
 
-    <div class="filter-Mirylsection">
+    <!-- <div class="filter-Mirylsection">
         <div class="filter-Mirylrow">
             <div class="filter-Mirylgroup">
                 <label>Trạng thái:</label>
@@ -36,7 +36,7 @@
             <button class="btn" id="resetFilter">Đặt lại</button>
             <button class="btn save-btn" id="applyFilter">Áp dụng</button>
         </div>
-    </div>
+    </div> -->
 
         <div class="table-content">
             <table>
@@ -48,7 +48,7 @@
                         <th>Email</th>
                         <th>Số điện thoại</th>
                         <th>Địa chỉ</th>
-                        <th>Trạng thái</th>
+                        <!-- <th>Trạng thái</th> -->
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -89,12 +89,12 @@
                         <label for="contact-email">Địa chỉ:</label>
                         <input type="text" id="address" name="address" required>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="nhaCungCap-trangThai">Trạng thái:</label>
                         <select id="nhaCungCap-trangThai" name="nhaCungCap-trangThai" required>
 
                         </select>
-                    </div>
+                    </div> -->
                     <div class="form-actions">
                         <button type="submit" class="btn save-btn">Lưu</button>
                         <button type="button" class="btn cancel-btn">Hủy</button>

@@ -139,7 +139,25 @@ class DonHangController {
         echo json_encode(['orders' => $orders]);
     }
 
-    
+    public function getTop5Products($startDate, $endDate) {
+        $products = $this->donHangModel->getTop5Products($startDate, $endDate);
+        
+        foreach ($products as &$product) {
+            $product['name'] = $this->sanPhamModel->getTenSanPhamById($product['id']);
+        }
+
+        echo json_encode(['products' => $products]);
+    }
+
+    public function getTop5CustomersByCity($startDate, $endDate, $city) {
+        $customers = $this->donHangModel->getTop5CustomersByCity($startDate, $endDate, $city);
+        
+        foreach ($customers as &$customer) {
+            $customer['name'] = $this->nguoiDungModel->getFullNameById($customer['id']);
+        }        
+
+        echo json_encode(['customers' => $customers]);
+    }
 }
 
 if (isset($_GET['action'])) {
@@ -159,6 +177,12 @@ if (isset($_GET['action'])) {
             break;
         case 'listDonHangByFilter':
             $controller->listDonHangByFilter($_GET['limit'], $_GET['filter']);
+            break;
+        case 'getTop5Products':
+            $controller->getTop5Products($_GET['startDate'], $_GET['endDate']);
+            break;
+        case 'getTop5CustomersByCity':
+            $controller->getTop5CustomersByCity($_GET['startDate'], $_GET['endDate'], $_GET['city']);
             break;
     }
 }
