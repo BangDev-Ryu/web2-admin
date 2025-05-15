@@ -1,6 +1,7 @@
 <?php
 require_once '../model/donHang.model.php';
 require_once '../model/sanPham.model.php';
+require_once '../model/khuyenMai.model.php';
 require_once "./nguoiDung.controller.php";
 require_once "./sanPham.controller.php";
 
@@ -9,6 +10,7 @@ class DonHangController {
     private $nguoiDungController;
     private $sanPhamController;
     private $sanPhamModel;
+    private $khuyenMaiModel;
     private $nguoiDungModel;
 
     public function __construct() {
@@ -17,6 +19,7 @@ class DonHangController {
         $this->sanPhamController = new SanPhamController();
         $this->sanPhamModel = new SanPhamModel();
         $this->nguoiDungModel = new NguoiDungModel();
+        $this->khuyenMaiModel = new KhuyenMaiModel();
     }
 
     public function convertStatus($status) {
@@ -57,6 +60,9 @@ class DonHangController {
             if ($donHang['khuyenmai_id'] === null) {
                 $donHang['khuyenmai_name'] = "Không có";
             }
+            else {
+                $donHang['khuyenmai_name'] = $this->khuyenMaiModel->getKhuyenMaiById($donHang['khuyenmai_id'])['name'];
+            }
         }
 
         echo json_encode([
@@ -66,13 +72,14 @@ class DonHangController {
         ]);
     }
 
-    public function listDonHangByFilter($limit, $filter) {
+    public function listDonHangByFilter($status, $limit, $filter) {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
         $filter = isset($_GET['filter']) ? $filter : [];
-        $donHangs = $this->donHangModel->filterDonHang($filter, $limit, $offset);
-        $totalDonHangs = $this->donHangModel->getTotalFilterDonHang($filter);
+        $status = $this->convertStatus($status);
+        $donHangs = $this->donHangModel->filterDonHang($status, $filter, $limit, $offset);
+        $totalDonHangs = $this->donHangModel->getTotalFilterDonHang($status, $filter);
         $totalPages = ceil($totalDonHangs / $limit);
 
         foreach ($donHangs as &$donHang) {
@@ -158,7 +165,7 @@ if (isset($_GET['action'])) {
             $controller->getDonHangNguoiDung($_GET['nguoiDungId'], $_GET['startDate'], $_GET['endDate']);
             break;
         case 'listDonHangByFilter':
-            $controller->listDonHangByFilter($_GET['limit'], $_GET['filter']);
+            $controller->listDonHangByFilter($_GET['status'], $_GET['limit'], $_GET['filter']);
             break;
     }
 }
