@@ -27,6 +27,12 @@ class SanPhamModel {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getTenSanPhamById($id) {
+        $sql = "SELECT name FROM sanpham WHERE id = ?";
+        $result = $this->db->executePrepared($sql, [$id]);
+        return $result->fetch_assoc()['name'];
+    }
+
     public function getSanPhamById($id) {
         $sql = "SELECT * FROM sanpham WHERE id = ?";
         $result = $this->db->executePrepared($sql, [$id]);

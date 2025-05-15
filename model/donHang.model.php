@@ -136,5 +136,33 @@ class DonHangModel {
         $result = $this->db->executePrepared($sql, $params);
         return $result->fetch_assoc()['total'];
     }
+
+    public function getTop5Products($startDate, $endDate) {
+        $sql = "SELECT sp.id, sp.name, SUM(ct.quantity) as total_sold, SUM(ct.quantity * ct.price) as revenue
+                FROM chitietdonhang ct
+                JOIN sanpham sp ON ct.sanpham_id = sp.id
+                JOIN donhang dh ON ct.donhang_id = dh.id
+                WHERE dh.order_date BETWEEN ? AND ?
+                GROUP BY sp.id, sp.name
+                ORDER BY total_sold DESC
+                LIMIT 5";
+                
+        $result = $this->db->executePrepared($sql, [$startDate, $endDate]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTop5CustomersByCity($startDate, $endDate, $city) {
+        $sql = "SELECT nd.id, nd.fullname as name, SUM(dh.total_amount) as total_spending
+                FROM donhang dh
+                JOIN nguoidung nd ON dh.nguoidung_id = nd.id
+                WHERE dh.order_date BETWEEN ? AND ?
+                AND nd.city = ?
+                GROUP BY nd.id, nd.fullname
+                ORDER BY total_spending DESC
+                LIMIT 5";
+                
+        $result = $this->db->executePrepared($sql, [$startDate, $endDate, $city]);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>
